@@ -74,12 +74,6 @@
               <ShieldLockIcon class="w-4 h-4 text-[#0D6847]" />
               <span>Panel Admin</span>
             </button>
-
-            <!-- Masuk Warga Button -->
-            <button class="hidden sm:flex items-center gap-2 px-4.5 py-2 bg-[#0D6847] text-white text-xs font-semibold rounded-full hover:bg-[#0A5238] transition-all duration-200 hover:shadow-md active:scale-95 cursor-pointer">
-              <LogInIcon class="w-4 h-4" />
-              <span>Masuk Warga</span>
-            </button>
           </div>
         </div>
       </div>

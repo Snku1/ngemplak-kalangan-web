@@ -54,8 +54,8 @@
                 />
               </div>
               <div class="pt-5 pb-2 text-center">
-                <h3 class="text-xl font-extrabold text-gray-900 leading-tight">Bapak Supriyanto</h3>
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Kepala Dukuh Ngemplak Kalangan</p>
+                <h3 class="text-xl font-extrabold text-gray-900 leading-tight">{{ store.padukuhanProfile?.nama_dukuh || 'Kepala Dukuh' }}</h3>
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Kepala Dukuh {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }}</p>
               </div>
             </div>
           </div>

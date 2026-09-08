@@ -742,7 +742,9 @@ const formatRupiah = (val) => {
 
 // WhatsApp Direct Link Generator
 const getWhatsAppUrl = (product) => {
-  const phone = '6281234567890';
+  const phone = product.sellerPhone
+    ? product.sellerPhone.replace(/[^0-9]/g, '')
+    : '6281234567890';
   const text = encodeURIComponent(
     `Halo, saya berminat untuk memesan produk "${product.name}" (${formatRupiah(product.price)}) yang ada di Website Padukuhan Ngemplak Kalangan. Mohon informasi pemesanan & ketersediaannya. Terima kasih!`
   );

@@ -50,18 +50,20 @@
     <section class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row items-stretch justify-center gap-6 -mt-16 md:-mt-24">
         
-        <!-- Stat Card 1 -->
+        <!-- Stat Card 1: Penduduk -->
         <div class="flex-1 max-w-xs bg-white rounded-2xl p-6.5 shadow-xl shadow-gray-200/50 border border-gray-100 hover:shadow-2xl transition-all duration-300 group hover:-translate-y-1">
           <div class="flex items-start justify-between mb-4">
             <div>
               <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Total Penduduk</p>
-              <h3 class="text-3xl font-extrabold text-gray-900 mt-1">4,829 Jiwa</h3>
+              <h3 class="text-3xl font-extrabold text-gray-900 mt-1">
+                {{ store.padukuhanProfile?.jumlah_penduduk ? store.padukuhanProfile.jumlah_penduduk.toLocaleString('id-ID') + ' Jiwa' : '4,829 Jiwa' }}
+              </h3>
             </div>
             <div class="p-3.5 rounded-xl bg-blue-50 text-blue-600 group-hover:scale-110 transition-transform duration-300">
               <UsersIcon class="w-6 h-6" />
             </div>
           </div>
-          <p class="text-xs text-gray-400 font-medium">Berdasarkan data kependudukan terbaru 2026.</p>
+          <p class="text-xs text-gray-400 font-medium">{{ store.padukuhanProfile?.kecamatan ? store.padukuhanProfile.kecamatan + ', ' + store.padukuhanProfile.kabupaten : 'Berdasarkan data kependudukan terbaru.' }}</p>
         </div>
 
         <!-- Stat Card 2 -->
@@ -78,18 +80,20 @@
           <p class="text-xs text-gray-400 font-medium">Pengrajin Anyaman, Batik Tulis, & Hasil Bumi.</p>
         </div>
 
-        <!-- Stat Card 3 -->
+        <!-- Stat Card 3: Wilayah RT/RW -->
         <div class="flex-1 max-w-xs bg-white rounded-2xl p-6.5 shadow-xl shadow-gray-200/50 border border-gray-100 hover:shadow-2xl transition-all duration-300 group hover:-translate-y-1">
           <div class="flex items-start justify-between mb-4">
             <div>
               <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Wilayah RT / RW</p>
-              <h3 class="text-3xl font-extrabold text-gray-900 mt-1">12 RT / 4 RW</h3>
+              <h3 class="text-3xl font-extrabold text-gray-900 mt-1">
+                {{ store.padukuhanProfile?.jumlah_rt ? store.padukuhanProfile.jumlah_rt + ' RT / ' + store.padukuhanProfile.jumlah_rw + ' RW' : '12 RT / 4 RW' }}
+              </h3>
             </div>
             <div class="p-3.5 rounded-xl bg-amber-50 text-amber-600 group-hover:scale-110 transition-transform duration-300">
               <MapPinIcon class="w-6 h-6" />
             </div>
           </div>
-          <p class="text-xs text-gray-400 font-medium">Tersebar di Dusun Ngemplak & Kalangan.</p>
+          <p class="text-xs text-gray-400 font-medium">{{ store.padukuhanProfile?.jumlah_kk ? store.padukuhanProfile.jumlah_kk + ' KK terdaftar' : 'Tersebar di Dusun Ngemplak & Kalangan.' }}</p>
         </div>
 
       </div>

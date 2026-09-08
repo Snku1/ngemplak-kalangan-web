@@ -24,6 +24,7 @@ export const store = reactive({
   pengumuman: [],
   potensiWisata: [],
   demographics: [],
+  padukuhanProfile: null,
 
   // Alias untuk AdminDashboardView
   get facilities() { return this.potensiWisata; },
@@ -36,7 +37,7 @@ export const store = reactive({
       const [
         beritaRes, produkRes, galeriRes,
         strukturRes, faqRes, kategoriRes, umkmRes,
-        agendaRes, pengumumanRes, potensiRes, demografiRes
+        agendaRes, pengumumanRes, potensiRes, demografiRes, profilRes
       ] = await Promise.all([
         api.get('/berita'),
         api.get('/produk'),
@@ -48,38 +49,46 @@ export const store = reactive({
         api.get('/agenda'),
         api.get('/pengumuman'),
         api.get('/potensi-wisata'),
-        api.get('/demografi')
+        api.get('/demografi'),
+        api.get('/profil')
       ]);
 
       this.categories = kategoriRes.data;
       this.umkms = umkmRes.data;
 
-      // Map Berita
-      this.news = beritaRes.data.map(item => ({
+      this.news = beritaRes.data
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .map(item => ({
         id: item.id,
         title: item.title,
         category: this.categories.find(c => c.id === item.category_id)?.nama || 'Kegiatan',
         date: new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-        image: '/images/hero-bg.png',
-        excerpt: item.content?.substring(0, 100) + '...' || '',
+        created_at: item.created_at,
+        image: item.thumbnail || '/images/hero-bg.png',
+        foto_url: item.thumbnail || '',
+        excerpt: item.content?.substring(0, 150) + '...' || '',
         content: item.content || '',
         author: item.author?.nama_lengkap || 'Admin'
       }));
 
       // Map Produk
-      this.products = produkRes.data.map(item => ({
-        id: item.id,
-        name: item.nama_produk,
-        category: this.categories.find(c => c.id === item.category_id)?.nama || 'Produk',
-        price: item.harga || 0,
-        unit: 'pcs',
-        rating: 5.0,
-        isBestSeller: item.is_unggulan || false,
-        seller: this.umkms.find(u => u.id === item.penjual_id)?.nama_usaha || 'Warga',
-        image: '/images/anyaman-bambu.png',
-        description: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.',
-        fullDescription: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.'
-      }));
+      this.products = produkRes.data.map(item => {
+        const umkm = this.umkms.find(u => u.id === item.penjual_id);
+        return {
+          id: item.id,
+          name: item.nama_produk,
+          category: this.categories.find(c => c.id === item.category_id)?.nama || 'Produk',
+          price: item.harga || 0,
+          unit: 'pcs',
+          rating: 5.0,
+          isBestSeller: item.is_unggulan || false,
+          seller: umkm?.nama_usaha || 'Warga',
+          sellerPhone: umkm?.nomor_whatsapp || '',
+          image: item.foto_produk || '/images/anyaman-bambu.png',
+          description: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.',
+          fullDescription: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.'
+        };
+      });
 
       // Map Galeri
       this.gallery = galeriRes.data.map(item => ({
@@ -136,7 +145,7 @@ export const store = reactive({
       this.potensiWisata = potensiRes.data.map(item => ({
         id: item.id,
         nama: item.nama,
-        kategori: item.kategori === 'wisata' ? 'Fasilitas / Wisata' : 'Potensi Desa',
+        kategori: item.kategori || 'potensi_desa',
         deskripsi: item.deskripsi || '',
         lokasi: item.link_gmaps || '-'
       }));
@@ -149,6 +158,31 @@ export const store = reactive({
         jumlah_jiwa: item.jumlah_jiwa || 0,
         persentase: item.persentase || 0
       }));
+
+      // Map Padukuhan Profile (ambil data pertama jika ada)
+      if (profilRes.data && profilRes.data.length > 0) {
+        const p = profilRes.data[0];
+        this.padukuhanProfile = {
+          id: p.id,
+          nama_padukuhan: p.nama_padukuhan || 'Ngemplak Kalangan',
+          kecamatan: p.kecamatan || 'Kalasan',
+          kabupaten: p.kabupaten || 'Sleman',
+          provinsi: p.provinsi || 'D.I. Yogyakarta',
+          jumlah_penduduk: p.jumlah_penduduk || 0,
+          jumlah_kk: p.jumlah_kk || 0,
+          jumlah_rt: p.jumlah_rt || 0,
+          jumlah_rw: p.jumlah_rw || 0,
+          luas_wilayah: p.luas_wilayah || '',
+          sejarah: p.sejarah || '',
+          cita_cita: p.cita_cita || '',
+          nama_dukuh: p.nama_dukuh || '',
+          sambutan_dukuh: p.sambutan_dukuh || '',
+          foto_dukuh: p.foto_dukuh || '',
+          alamat_kantor: p.alamat_kantor || '',
+          telepon: p.telepon || '',
+          email: p.email || ''
+        };
+      }
 
       if (this.isAuthenticated) {
         this.fetchInbox();
@@ -209,11 +243,13 @@ export const store = reactive({
   // --- NEWS ---
   async addNews(item) {
     try {
+      const catObj = this.categories.find(c => c.nama === item.category);
       await api.post('/berita', {
         title: item.title,
-        slug: item.title.toLowerCase().replace(/ /g, '-') + '-' + Date.now(),
+        slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now(),
         content: item.content || item.excerpt || 'Konten berita',
-        category_id: 1,
+        thumbnail: item.foto_url || '',
+        category_id: catObj?.id || 1,
         author_id: 1,
         status: 'published'
       });
@@ -222,11 +258,13 @@ export const store = reactive({
   },
   async updateNews(id, item) {
     try {
+      const catObj = this.categories.find(c => c.nama === item.category);
       await api.put(`/berita/${id}`, {
         title: item.title,
-        slug: item.title.toLowerCase().replace(/ /g, '-') + '-' + Date.now(),
+        slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now(),
         content: item.content || item.excerpt,
-        category_id: 1,
+        thumbnail: item.foto_url || '',
+        category_id: catObj?.id || 1,
         author_id: 1,
         status: 'published'
       });
@@ -243,24 +281,46 @@ export const store = reactive({
   // --- PRODUCTS ---
   async addProduct(item) {
     try {
+      const catObj = this.categories.find(c => c.nama === item.category);
+      // Buat/cari UMKM penjual
+      let penjualId = this.umkms.find(u => u.nama_usaha === item.seller)?.id;
+      if (!penjualId) {
+        const umkmRes = await api.post('/umkm', {
+          nama_penjual: item.seller || 'Warga Desa',
+          nama_usaha: item.seller || 'Usaha Desa',
+          nomor_whatsapp: item.sellerPhone || '',
+          alamat_lokasi: 'Ngemplak Kalangan'
+        });
+        penjualId = umkmRes.data?.id || 1;
+      } else if (item.sellerPhone) {
+        // update no wa jika ada
+        await api.put(`/umkm/${penjualId}`, { nomor_whatsapp: item.sellerPhone });
+      }
       await api.post('/produk', {
         nama_produk: item.name,
         harga: Number(item.price) || 0,
-        category_id: 2,
-        penjual_id: 1,
-        deskripsi: item.description || ''
+        category_id: catObj?.id || 2,
+        penjual_id: penjualId || 1,
+        deskripsi: item.description || '',
+        foto_produk: item.foto_url || '',
+        is_unggulan: item.isBestSeller ? 1 : 0
       });
       await this.initData();
     } catch (error) { console.error(error); alert(error.message); }
   },
   async updateProduct(id, item) {
     try {
+      const catObj = this.categories.find(c => c.nama === item.category);
+      if (item.sellerPhone && item.penjual_id) {
+        await api.put(`/umkm/${item.penjual_id}`, { nomor_whatsapp: item.sellerPhone }).catch(() => {});
+      }
       await api.put(`/produk/${id}`, {
         nama_produk: item.name,
         harga: Number(item.price) || 0,
-        category_id: 2,
-        penjual_id: 1,
-        deskripsi: item.description || ''
+        category_id: catObj?.id || 2,
+        deskripsi: item.description || '',
+        foto_produk: item.foto_url || '',
+        is_unggulan: item.isBestSeller ? 1 : 0
       });
       await this.initData();
     } catch (error) { console.error(error); alert(error.message); }
@@ -370,11 +430,11 @@ export const store = reactive({
     try {
       await api.post('/agenda', {
         nama_kegiatan: item.title,
-        tanggal_kegiatan: new Date().toISOString().split('T')[0],
+        tanggal_kegiatan: item.date || new Date().toISOString().split('T')[0],
         waktu: item.time || '08:00 - 17:00',
         lokasi: item.location || 'Lapangan Desa',
         deskripsi: item.details || '',
-        status: 'mendatang'
+        status: item.status || 'mendatang'
       });
       await this.initData();
     } catch (e) { console.error(e); alert(e.message); }
@@ -383,11 +443,11 @@ export const store = reactive({
     try {
       await api.put(`/agenda/${id}`, {
         nama_kegiatan: item.title,
-        tanggal_kegiatan: new Date().toISOString().split('T')[0],
+        tanggal_kegiatan: item.date || new Date().toISOString().split('T')[0],
         waktu: item.time,
         lokasi: item.location,
         deskripsi: item.details,
-        status: item.status
+        status: item.status || 'mendatang'
       });
       await this.initData();
     } catch (e) { console.error(e); alert(e.message); }
@@ -485,6 +545,18 @@ export const store = reactive({
   async deleteDemographic(id) {
     try {
       await api.delete(`/demografi/${id}`);
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+
+  // --- PADUKUHAN PROFILE ---
+  async updatePadukuhanProfile(data) {
+    try {
+      if (this.padukuhanProfile?.id) {
+        await api.put(`/profil/${this.padukuhanProfile.id}`, data);
+      } else {
+        await api.post('/profil', data);
+      }
       await this.initData();
     } catch (e) { console.error(e); alert(e.message); }
   }
