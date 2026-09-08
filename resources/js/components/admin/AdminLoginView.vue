@@ -35,7 +35,7 @@
             <span>Kredensial Login Admin:</span>
           </p>
           <p class="text-[11px] font-mono text-emerald-800">
-            User: <strong class="text-[#0D6847]">admin</strong> | Sandi: <strong class="text-[#0D6847]">admin12345</strong>
+            Email: <strong class="text-[#0D6847]">admin@gmail.com</strong> | Sandi: <strong class="text-[#0D6847]">admin123</strong>
           </p>
         </div>
         <button 
@@ -57,18 +57,18 @@
 
       <!-- Login Form -->
       <form @submit.prevent="handleLogin" class="space-y-4.5">
-        <!-- Username Input -->
+        <!-- Email Input -->
         <div>
-          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nama Pengguna (Username)</label>
+          <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Alamat Email</label>
           <div class="relative">
             <div class="w-10 h-full absolute left-0 top-0 flex items-center justify-center text-gray-400">
               <UserIcon class="w-4.5 h-4.5" />
             </div>
             <input 
-              v-model="username" 
-              type="text" 
+              v-model="email" 
+              type="email" 
               required
-              placeholder="Masukkan username"
+              placeholder="Masukkan email"
               class="w-full pl-10 pr-4 py-3 bg-gray-50/80 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#0D6847] focus:bg-white focus:ring-2 focus:ring-[#0D6847]/20 transition-all font-medium"
             />
           </div>
@@ -139,15 +139,15 @@ import { store } from '../../store';
 
 const emit = defineEmits(['navigate', 'login-success']);
 
-const username = ref('');
+const email = ref('');
 const password = ref('');
 const showPassword = ref(false);
 const errorMessage = ref('');
 const isLoading = ref(false);
 
 const fillDemoCredentials = () => {
-  username.value = 'admin';
-  password.value = 'admin12345';
+  email.value = 'admin@gmail.com';
+  password.value = 'admin123';
   errorMessage.value = '';
 };
 
@@ -155,8 +155,8 @@ const handleLogin = () => {
   errorMessage.value = '';
   isLoading.value = true;
 
-  setTimeout(() => {
-    const res = store.login(username.value.trim(), password.value.trim());
+  setTimeout(async () => {
+    const res = await store.login(email.value.trim(), password.value.trim());
     isLoading.value = false;
 
     if (res.success) {

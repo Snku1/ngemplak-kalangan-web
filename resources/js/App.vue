@@ -193,7 +193,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { 
   Search as SearchIcon, 
   LogIn as LogInIcon, 
@@ -251,6 +251,10 @@ const navigateTo = (page) => {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+onMounted(() => {
+  store.initData();
+});
 </script>
 
 <style>

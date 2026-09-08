@@ -453,7 +453,95 @@
             </div>
           </div>
 
-          <!-- 6. TAB: KELOLA TANYA JAWAB / FAQ (CRUD) -->
+          <!-- 6. TAB: KELOLA DEMOGRAFI (CRUD) -->
+          <div v-else-if="activeTab === 'demographics'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-6 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-150">
+              <div>
+                <h2 class="text-xl font-black text-gray-900">Kelola Statistik Kependudukan</h2>
+                <p class="text-xs text-gray-500">Statistik demografi di halaman Profil (Usia, Jenis Kelamin, dll)</p>
+              </div>
+
+              <button 
+                @click="openAddModal('demographics')"
+                class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+              >
+                <PlusIcon class="w-4 h-4" />
+                <span>Tambah Statistik</span>
+              </button>
+            </div>
+
+            <!-- Demographics Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Kategori</th>
+                    <th class="py-3 px-4">Label</th>
+                    <th class="py-3 px-4 text-right">Jumlah Jiwa</th>
+                    <th class="py-3 px-4 text-right">Persentase (%)</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr v-for="item in store.demographics" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
+                    <td class="py-3 px-4 font-bold text-gray-900 uppercase">{{ item.kategori.replace('_', ' ') }}</td>
+                    <td class="py-3 px-4 font-semibold text-[#0D6847]">{{ item.label }}</td>
+                    <td class="py-3 px-4 text-right">{{ item.jumlah_jiwa }} Jiwa</td>
+                    <td class="py-3 px-4 text-right">{{ item.persentase }}%</td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap space-x-2">
+                      <button @click="openEditModal('demographics', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
+                      <button @click="confirmDelete('demographics', item.id, item.label)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 7. TAB: KELOLA FASILITAS & POTENSI (CRUD) -->
+          <div v-else-if="activeTab === 'facilities'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-6 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-150">
+              <div>
+                <h2 class="text-xl font-black text-gray-900">Kelola Potensi & Fasilitas Desa</h2>
+                <p class="text-xs text-gray-500">Sarana prasarana dan potensi dusun di halaman Profil & Tentang Kami</p>
+              </div>
+
+              <button 
+                @click="openAddModal('facilities')"
+                class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2"
+              >
+                <PlusIcon class="w-4 h-4" />
+                <span>Tambah Potensi/Fasilitas</span>
+              </button>
+            </div>
+
+            <!-- Facilities Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Nama</th>
+                    <th class="py-3 px-4">Kategori</th>
+                    <th class="py-3 px-4">Lokasi</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr v-for="item in store.facilities" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
+                    <td class="py-3 px-4 font-bold text-gray-900">{{ item.nama }}</td>
+                    <td class="py-3 px-4 font-semibold text-[#0D6847]">{{ item.kategori === 'wisata' ? 'Fasilitas / Wisata' : 'Potensi Desa' }}</td>
+                    <td class="py-3 px-4 text-gray-500">{{ item.lokasi || '-' }}</td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap space-x-2">
+                      <button @click="openEditModal('facilities', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
+                      <button @click="confirmDelete('facilities', item.id, item.nama)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 8. TAB: KELOLA TANYA JAWAB / FAQ (CRUD) -->
           <div v-else-if="activeTab === 'faqs'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-6 animate-fade-in">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-150">
               <div>
@@ -704,6 +792,56 @@
             </div>
           </template>
 
+          <!-- FORM FIELDS: DEMOGRAPHICS -->
+          <template v-else-if="currentModalType === 'demographics'">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Kategori Statistik</label>
+              <select v-model="formData.kategori" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                <option value="usia">Kelompok Usia</option>
+                <option value="jenis_kelamin">Jenis Kelamin</option>
+                <option value="pendidikan">Tingkat Pendidikan</option>
+                <option value="pekerjaan">Profesi / Pekerjaan</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Label (Contoh: Laki-laki / Anak-anak)</label>
+              <input v-model="formData.label" type="text" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Jiwa</label>
+                <input v-model="formData.jumlah_jiwa" type="number" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Persentase (%)</label>
+                <input v-model="formData.persentase" type="number" step="0.1" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              </div>
+            </div>
+          </template>
+
+          <!-- FORM FIELDS: FACILITIES & POTENSI -->
+          <template v-else-if="currentModalType === 'facilities'">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Nama Potensi / Fasilitas</label>
+              <input v-model="formData.nama" type="text" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Kategori</label>
+              <select v-model="formData.kategori" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                <option value="potensi_desa">Potensi Ekonomi & Dusun</option>
+                <option value="wisata">Sarana Umum & Wisata</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Lokasi (Opsional)</label>
+              <input v-model="formData.lokasi" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Singkat</label>
+              <textarea v-model="formData.deskripsi" rows="3" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+            </div>
+          </template>
+
           <!-- FORM FIELDS: FAQS -->
           <template v-else-if="currentModalType === 'faqs'">
             <div>
@@ -800,7 +938,9 @@ import {
   AlertCircle as AlertCircleIcon,
   CheckCircle2 as CheckCircle2Icon,
   Sparkles as SparklesIcon,
-  MessageSquare as MessageSquareIcon
+  MessageSquare as MessageSquareIcon,
+  PieChart as PieChartIcon,
+  MapPin as MapPinIcon
 } from 'lucide-vue-next';
 import { store } from '../../store';
 
@@ -814,6 +954,8 @@ const menuItems = computed(() => [
   { id: 'products', label: 'Produk UMKM', icon: ShoppingBagIcon, count: store.products.length },
   { id: 'gallery', label: 'Galeri Foto & Video', icon: ImageIcon, count: store.gallery.length },
   { id: 'leaders', label: 'Tokoh & Perangkat', icon: UsersIcon, count: store.leaders.length },
+  { id: 'demographics', label: 'Statistik Kependudukan', icon: PieChartIcon, count: store.demographics.length },
+  { id: 'facilities', label: 'Potensi & Fasilitas', icon: MapPinIcon, count: store.facilities.length },
   { id: 'faqs', label: 'Tanya Jawab (FAQ)', icon: HelpCircleIcon, count: store.faqs.length },
   { id: 'inbox', label: 'Pesan Masuk', icon: MailIcon, count: store.inbox.length }
 ]);
@@ -852,9 +994,8 @@ const handleLogout = () => {
 };
 
 const confirmResetData = () => {
-  if (confirm('Apakah Anda yakin ingin mengembalikan semua data ke data default bawaan?')) {
-    store.resetToDefaults();
-    triggerToast('Seluruh data berhasil di-reset ke pengaturan awal.');
+  if (confirm('Apakah Anda yakin ingin menghapus semua data? Ini tidak bisa dibatalkan.')) {
+    alert('Fitur reset data belum tersedia.');
   }
 };
 
@@ -881,14 +1022,18 @@ const saveModalData = () => {
     else if (type === 'gallery') store.updateGallery(formData.value.id, formData.value);
     else if (type === 'leaders') store.updateLeader(formData.value.id, formData.value);
     else if (type === 'faqs') store.updateFaq(formData.value.id, formData.value);
-    triggerToast(`Data ${type} berhasil diperbarui!`);
+    else if (type === 'demographics') store.updateDemographic(formData.value.id, formData.value);
+    else if (type === 'facilities') store.updatePotensi(formData.value.id, formData.value);
+    triggerToast(`Data berhasil diperbarui!`);
   } else {
     if (type === 'news') store.addNews(formData.value);
     else if (type === 'products') store.addProduct(formData.value);
     else if (type === 'gallery') store.addGallery(formData.value);
     else if (type === 'leaders') store.addLeader(formData.value);
     else if (type === 'faqs') store.addFaq(formData.value);
-    triggerToast(`Data ${type} baru berhasil ditambahkan!`);
+    else if (type === 'demographics') store.addDemographic(formData.value);
+    else if (type === 'facilities') store.addPotensi(formData.value);
+    triggerToast(`Data baru berhasil ditambahkan!`);
   }
   showModal.value = false;
 };
@@ -906,7 +1051,9 @@ const executeDelete = () => {
   else if (type === 'leaders') store.deleteLeader(id);
   else if (type === 'faqs') store.deleteFaq(id);
   else if (type === 'inbox') store.deleteInbox(id);
-  triggerToast(`Data "${name}" berhasil dihapus.`);
+  else if (type === 'demographics') store.deleteDemographic(id);
+  else if (type === 'facilities') store.deletePotensi(id);
+  triggerToast(`Data "${name || 'terpilih'}" berhasil dihapus.`);
   deleteTarget.value = null;
 };
 </script>

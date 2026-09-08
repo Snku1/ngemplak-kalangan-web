@@ -130,161 +130,41 @@
           </p>
         </div>
 
-        <!-- 4 Numeric Cards Grid -->
+        <!-- Dynamic Demographics Cards Grid -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
-          <!-- Card 1 -->
-          <div class="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div class="p-3.5 rounded-xl bg-blue-50 text-blue-600">
-              <UsersIcon class="w-5 h-5" />
+          <div v-for="item in store.demographics" :key="item.id" class="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100 flex flex-col justify-center hover:shadow-md transition-shadow relative overflow-hidden">
+            <div class="absolute -right-4 -bottom-4 opacity-5">
+               <UsersIcon class="w-24 h-24" />
             </div>
-            <div>
-              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jumlah Penduduk</span>
-              <span class="text-lg md:text-xl font-extrabold text-gray-900">4,829 Jiwa</span>
-            </div>
-          </div>
-          <!-- Card 2 -->
-          <div class="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div class="p-3.5 rounded-xl bg-purple-50 text-purple-600">
-              <HomeIcon class="w-5 h-5" />
-            </div>
-            <div>
-              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Kepala Keluarga</span>
-              <span class="text-lg md:text-xl font-extrabold text-gray-900">897 KK</span>
-            </div>
-          </div>
-          <!-- Card 3 -->
-          <div class="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div class="p-3.5 rounded-xl bg-emerald-50 text-[#0D6847]">
-              <MaleIcon class="w-5 h-5" />
-            </div>
-            <div>
-              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Laki-laki</span>
-              <span class="text-lg md:text-xl font-extrabold text-gray-900">49% <span class="text-[10px] text-gray-400 font-medium">dari total</span></span>
-            </div>
-          </div>
-          <!-- Card 4 -->
-          <div class="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div class="p-3.5 rounded-xl bg-pink-50 text-pink-600">
-              <FemaleIcon class="w-5 h-5" />
-            </div>
-            <div>
-              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Perempuan</span>
-              <span class="text-lg md:text-xl font-extrabold text-gray-900">51% <span class="text-[10px] text-gray-400 font-medium">dari total</span></span>
-            </div>
+            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1 relative z-10">{{ item.kategori.replace('_', ' ') }} - {{ item.label }}</span>
+            <span class="text-lg md:text-xl font-extrabold text-gray-900 relative z-10">{{ item.jumlah_jiwa }} Jiwa</span>
+            <span class="text-xs text-emerald-600 font-bold relative z-10 mt-1" v-if="item.persentase > 0">{{ item.persentase }}% dari total</span>
           </div>
         </div>
 
-        <!-- Charts Grid (2 columns on large screen) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch mb-16">
-          
-          <!-- Gender Bar Chart Card -->
-          <div class="bg-white rounded-3xl p-6.5 border border-gray-100 shadow-sm flex flex-col justify-between">
+        <!-- Dynamic Bar Charts Grid -->
+        <div class="grid grid-cols-1 gap-8 items-stretch mb-16">
+          <div class="bg-white rounded-3xl p-6.5 border border-gray-100 shadow-sm">
             <div>
-              <h3 class="font-extrabold text-gray-950 text-base mb-1">Jenis Kelamin Penduduk</h3>
-              <p class="text-xs text-gray-400 font-medium mb-6">Persentase perbandingan kependudukan laki-laki dan perempuan.</p>
+              <h3 class="font-extrabold text-gray-950 text-base mb-1">Rincian Demografi</h3>
+              <p class="text-xs text-gray-400 font-medium mb-6">Persentase data demografi yang tercatat di sistem.</p>
             </div>
             
             <div class="space-y-6">
-              <!-- Laki-laki Bar -->
-              <div class="space-y-2">
+              <div v-for="item in store.demographics" :key="'bar-'+item.id" class="space-y-2">
                 <div class="flex items-center justify-between text-xs font-bold text-gray-700">
-                  <span class="flex items-center gap-1.5">
+                  <span class="flex items-center gap-1.5 uppercase">
                     <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
-                    Laki-Laki
+                    {{ item.label }} ({{ item.kategori.replace('_', ' ') }})
                   </span>
-                  <span>49% (2,366 Jiwa)</span>
+                  <span>{{ item.persentase }}% ({{ item.jumlah_jiwa }} Jiwa)</span>
                 </div>
                 <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-600 rounded-full" style="width: 49%"></div>
+                  <div class="h-full bg-emerald-600 rounded-full" :style="{ width: item.persentase + '%' }"></div>
                 </div>
               </div>
-              
-              <!-- Perempuan Bar -->
-              <div class="space-y-2">
-                <div class="flex items-center justify-between text-xs font-bold text-gray-700">
-                  <span class="flex items-center gap-1.5">
-                    <span class="w-3 h-3 rounded-full bg-teal-500"></span>
-                    Perempuan
-                  </span>
-                  <span>51% (2,463 Jiwa)</span>
-                </div>
-                <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-teal-500 rounded-full" style="width: 51%"></div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="mt-8 flex justify-center gap-6 border-t border-gray-50 pt-4.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-              <span class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-[#0D6847]"></span> Laki-laki
-              </span>
-              <span class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full bg-teal-400"></span> Perempuan
-              </span>
             </div>
           </div>
-
-          <!-- Age Donut Chart Card -->
-          <div class="bg-white rounded-3xl p-6.5 border border-gray-100 shadow-sm flex flex-col justify-between">
-            <div>
-              <h3 class="font-extrabold text-gray-950 text-base mb-1">Profil Rentang Usia</h3>
-              <p class="text-xs text-gray-400 font-medium mb-6">Distribusi penduduk berdasarkan rentang usia produktif & non-produktif.</p>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row items-center justify-around gap-6">
-              <!-- Custom Interactive SVG Donut Chart -->
-              <div class="relative w-36 h-36 flex items-center justify-center">
-                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                  <!-- Donut background circle -->
-                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#E2E8F0" stroke-width="3"></circle>
-                  
-                  <!-- Segment 1: Anak-anak 15% (stroke-dasharray: "15 85") -->
-                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#3B82F6" stroke-width="4.2" stroke-dasharray="15 85" stroke-dashoffset="0"></circle>
-                  
-                  <!-- Segment 2: Produktif 65% (stroke-dasharray: "65 35", offset = -15) -->
-                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#0D6847" stroke-width="4.2" stroke-dasharray="65 35" stroke-dashoffset="-15"></circle>
-                  
-                  <!-- Segment 3: Lansia 20% (stroke-dasharray: "20 80", offset = -80) -->
-                  <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#94A3B8" stroke-width="4.2" stroke-dasharray="20 80" stroke-dashoffset="-80"></circle>
-                </svg>
-                
-                <div class="absolute flex flex-col items-center justify-center text-center">
-                  <span class="text-xs font-extrabold text-gray-400 uppercase tracking-widest leading-none">Usia</span>
-                  <span class="text-lg font-black text-gray-800 mt-0.5">Donut</span>
-                </div>
-              </div>
-
-              <!-- Legend / Details List -->
-              <div class="space-y-3.5 w-full sm:w-auto">
-                <div class="flex items-center justify-between gap-6 text-xs">
-                  <span class="flex items-center gap-2 font-bold text-gray-600">
-                    <span class="w-3 h-3 rounded bg-blue-500"></span>
-                    Anak-anak (0-14 th)
-                  </span>
-                  <span class="font-extrabold text-gray-800 text-right">15%</span>
-                </div>
-                <div class="flex items-center justify-between gap-6 text-xs">
-                  <span class="flex items-center gap-2 font-bold text-gray-600">
-                    <span class="w-3 h-3 rounded bg-[#0D6847]"></span>
-                    Produktif (15-64 th)
-                  </span>
-                  <span class="font-extrabold text-gray-800 text-right">65%</span>
-                </div>
-                <div class="flex items-center justify-between gap-6 text-xs">
-                  <span class="flex items-center gap-2 font-bold text-gray-600">
-                    <span class="w-3 h-3 rounded bg-slate-400"></span>
-                    Lansia (>65 th)
-                  </span>
-                  <span class="font-extrabold text-gray-800 text-right">20%</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="mt-8 border-t border-gray-50 pt-4.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center">
-              Total Data Populasi Teranalisis
-            </div>
-          </div>
-
         </div>
 
         <!-- Population Table -->
@@ -360,112 +240,16 @@
           </p>
         </div>
 
-        <div class="space-y-12">
-          
-          <!-- Level 1: Dukuh (Leader) -->
-          <div class="flex justify-center">
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm max-w-xs w-full text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-[#0D6847] w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border border-gray-100 bg-gray-50">
-                <img 
-                  src="/images/kepala-desa.png" 
-                  alt="Bapak Supriyanto" 
-                  class="w-full h-full object-cover object-top"
-                  @error="handleImageError($event, 'kepala-desa')"
-                />
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Bapak Supriyanto</h3>
-              <p class="text-[10px] font-bold text-[#0D6847] uppercase tracking-wider mt-1.5">Dukuh / Kepala Padukuhan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Masa Bakti: 2021 - 2027</div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="leader in store.leaders" :key="leader.id" class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
+            <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-[#0D6847] w-12 rounded-full"></div>
+            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border border-gray-100 bg-gray-50 flex items-center justify-center font-bold text-emerald-700 text-xl">
+              {{ leader.name.charAt(0) }}
             </div>
+            <h3 class="font-extrabold text-gray-950 text-base leading-tight">{{ leader.name }}</h3>
+            <p class="text-[10px] font-bold text-[#0D6847] uppercase tracking-wider mt-1.5">{{ leader.role }}</p>
+            <div class="text-[10px] text-gray-400 font-semibold mt-1">{{ leader.focus || leader.description }}</div>
           </div>
-
-          <!-- Connecting Arrow/Line (Desktop Decorative) -->
-          <div class="hidden md:flex justify-center">
-            <div class="h-8 w-0.5 bg-gray-250"></div>
-          </div>
-
-          <!-- Level 2: Core Officers (3 Columns: Sekretaris, Pembangunan, Bendahara) -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            
-            <!-- Sekretaris -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-blue-500 w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full bg-blue-50 text-blue-600 font-extrabold text-lg flex items-center justify-center mx-auto mb-4 border border-blue-100">
-                SR
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Ibu Sitti Rahma</h3>
-              <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider mt-1.5">Sekretaris Padukuhan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Melayani Administrasi & Surat</div>
-            </div>
-
-            <!-- Seksi Pembangunan -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-[#0D6847] w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full bg-emerald-50 text-[#0D6847] font-extrabold text-lg flex items-center justify-center mx-auto mb-4 border border-emerald-100">
-                S
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Bapak Supari</h3>
-              <p class="text-[10px] font-bold text-[#0D6847] uppercase tracking-wider mt-1.5">Seksi Pembangunan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Fokus Infrastruktur & Jalan</div>
-            </div>
-
-            <!-- Bendahara -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-purple-500 w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full bg-purple-50 text-purple-600 font-extrabold text-lg flex items-center justify-center mx-auto mb-4 border border-purple-100">
-                BH
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Bapak Bambang Heru</h3>
-              <p class="text-[10px] font-bold text-purple-600 uppercase tracking-wider mt-1.5">Bendahara Padukuhan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Manajemen Anggaran & Kas</div>
-            </div>
-
-          </div>
-
-          <!-- Connecting Arrow/Line (Desktop Decorative) -->
-          <div class="hidden md:flex justify-center">
-            <div class="h-8 w-0.5 bg-gray-250"></div>
-          </div>
-
-          <!-- Level 3: Auxiliary Officers (3 Columns: Kesejahteraan, Pelayanan, Keamanan) -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            
-            <!-- Seksi Kesejahteraan -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-amber-500 w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-600 font-extrabold text-lg flex items-center justify-center mx-auto mb-4 border border-amber-100">
-                JP
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Bapak Joko Pranoto</h3>
-              <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mt-1.5">Seksi Kesejahteraan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Fokus Sosial & UMKM Desa</div>
-            </div>
-
-            <!-- Seksi Pelayanan -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-pink-500 w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full bg-pink-50 text-pink-600 font-extrabold text-lg flex items-center justify-center mx-auto mb-4 border border-pink-100">
-                L
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Ibu Lestari</h3>
-              <p class="text-[10px] font-bold text-pink-600 uppercase tracking-wider mt-1.5">Seksi Pelayanan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Fokus Pelayanan & Posyandu</div>
-            </div>
-
-            <!-- Seksi Keamanan -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-              <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-red-500 w-12 rounded-full"></div>
-              <div class="w-16 h-16 rounded-full bg-red-50 text-red-600 font-extrabold text-lg flex items-center justify-center mx-auto mb-4 border border-red-100">
-                W
-              </div>
-              <h3 class="font-extrabold text-gray-950 text-base leading-tight">Bapak Wardoyo</h3>
-              <p class="text-[10px] font-bold text-red-600 uppercase tracking-wider mt-1.5">Seksi Keamanan</p>
-              <div class="text-[10px] text-gray-400 font-semibold mt-1">Fokus Linmas & Siskamling</div>
-            </div>
-
-          </div>
-
         </div>
 
         <!-- Call to Action for Admin services inside structure -->
@@ -502,37 +286,20 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-12">
           
-          <!-- Potensi 1: Pertanian Organik -->
-          <div class="bg-[#F0FAF5] border border-[#E0F2E9] rounded-2xl p-8 flex flex-col justify-between group hover:shadow-md transition-shadow">
+          <div v-for="potensi in store.facilities" :key="potensi.id" class="bg-[#F0FAF5] border border-[#E0F2E9] rounded-2xl p-8 flex flex-col justify-between group hover:shadow-md transition-shadow">
             <div>
               <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center mb-6 shadow-md shadow-emerald-500/10 group-hover:scale-105 transition-transform">
-                <LeafIcon class="w-6 h-6" />
+                <LeafIcon v-if="potensi.kategori === 'potensi_desa'" class="w-6 h-6" />
+                <MapPinIcon v-else class="w-6 h-6" />
               </div>
-              <h3 class="text-xl font-extrabold text-gray-900 leading-snug">Pertanian Organik</h3>
+              <h3 class="text-xl font-extrabold text-gray-900 leading-snug">{{ potensi.nama }}</h3>
               <p class="text-xs text-gray-500 leading-relaxed mt-3">
-                Dengan lahan sawah yang subur di area Ngemplak Kalangan, petani kami memprioritaskan padi organik bebas bahan kimia buatan, menghasilkan beras sehat bernilai tinggi yang melestarikan tanah warisan leluhur.
+                {{ potensi.deskripsi }}
               </p>
             </div>
             <div class="mt-8 pt-4 border-t border-[#E0F2E9] flex items-center justify-between text-xs font-bold text-[#0D6847]">
-              <span>Komoditas Unggulan</span>
-              <span>Beras Organik Sehat</span>
-            </div>
-          </div>
-
-          <!-- Potensi 2: UMKM Kreatif -->
-          <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-8 flex flex-col justify-between group hover:shadow-md transition-shadow">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-blue-500 text-white flex items-center justify-center mb-6 shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform">
-                <ShoppingBagIcon class="w-6 h-6" />
-              </div>
-              <h3 class="text-xl font-extrabold text-gray-900 leading-snug">UMKM Kreatif</h3>
-              <p class="text-xs text-gray-500 leading-relaxed mt-3">
-                Kami mendukung pengrajin lokal di Dusun Kalangan yang membuat anyaman bambu premium untuk kebutuhan rumah tangga ramah lingkungan. Produk kuliner tradisional khas desa juga aktif dikembangkan oleh ibu-ibu PKK.
-              </p>
-            </div>
-            <div class="mt-8 pt-4 border-t border-blue-100 flex items-center justify-between text-xs font-bold text-blue-600">
-              <span>Sektor Perekonomian</span>
-              <span>Kerajinan Bambu & Kuliner</span>
+              <span>{{ potensi.kategori === 'wisata' ? 'Fasilitas Umum / Wisata' : 'Potensi Desa' }}</span>
+              <span v-if="potensi.lokasi">{{ potensi.lokasi }}</span>
             </div>
           </div>
 
@@ -550,6 +317,7 @@
 </template>
 
 <script setup>
+import { store } from '../store';
 import { 
   ArrowRight as ArrowRightIcon,
   MapPin as MapPinIcon,

@@ -282,52 +282,14 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          
-          <!-- Leader 1: Kepala Padukuhan -->
-          <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm hover:shadow-lg transition-all text-center group">
-            <div class="w-24 h-24 mx-auto rounded-2xl overflow-hidden mb-4 bg-gray-100 border border-gray-200">
-              <img 
-                src="/images/kepala-desa.png" 
-                alt="Bapak Supriyanto" 
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                @error="handleImageFallback($event)"
-              />
+          <div v-for="leader in store.leaders" :key="leader.id" class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm hover:shadow-lg transition-all text-center group">
+            <div class="w-24 h-24 mx-auto rounded-2xl overflow-hidden mb-4 bg-gray-100 border border-gray-200 flex items-center justify-center text-3xl font-bold text-gray-400">
+              {{ leader.name.charAt(0) }}
             </div>
-            <h3 class="font-bold text-sm text-gray-900">Bapak Supriyanto</h3>
-            <p class="text-[11px] font-bold text-[#0D6847] mt-0.5">Kepala Dukuh</p>
-            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">Memimpin jalannya tata kelola padukuhan dan pelayanan kemasyarakatan dengan penuh integritas.</p>
+            <h3 class="font-bold text-sm text-gray-900">{{ leader.name }}</h3>
+            <p class="text-[11px] font-bold text-[#0D6847] mt-0.5">{{ leader.role }}</p>
+            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">{{ leader.description || leader.focus }}</p>
           </div>
-
-          <!-- Leader 2: KWT & PKK -->
-          <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm hover:shadow-lg transition-all text-center group">
-            <div class="w-24 h-24 mx-auto rounded-2xl overflow-hidden mb-4 bg-emerald-50 text-[#0D6847] flex items-center justify-center font-bold text-2xl border border-emerald-100">
-              SR
-            </div>
-            <h3 class="font-bold text-sm text-gray-900">Ibu Siti Rahmawati</h3>
-            <p class="text-[11px] font-bold text-emerald-600 mt-0.5">Ketua Penggerak PKK &amp; KWT</p>
-            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">Mendorong peran wanita dalam ketahanan pangan pekarangan dan usaha kerajinan rumah tangga.</p>
-          </div>
-
-          <!-- Leader 3: Karang Taruna -->
-          <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm hover:shadow-lg transition-all text-center group">
-            <div class="w-24 h-24 mx-auto rounded-2xl overflow-hidden mb-4 bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-2xl border border-blue-100">
-              DP
-            </div>
-            <h3 class="font-bold text-sm text-gray-900">Mas Dimas Prasetyo</h3>
-            <p class="text-[11px] font-bold text-blue-600 mt-0.5">Ketua Karang Taruna</p>
-            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">Menggerakkan pemuda dalam kegiatan sosial, olahraga, kreativitas digital, dan festival desa.</p>
-          </div>
-
-          <!-- Leader 4: Seni Rodat & Budaya -->
-          <div class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm hover:shadow-lg transition-all text-center group">
-            <div class="w-24 h-24 mx-auto rounded-2xl overflow-hidden mb-4 bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-2xl border border-amber-100">
-              SD
-            </div>
-            <h3 class="font-bold text-sm text-gray-900">Bapak Sudarso</h3>
-            <p class="text-[11px] font-bold text-amber-600 mt-0.5">Ketua Paguyuban Seni Rodat</p>
-            <p class="text-[11px] text-gray-500 mt-2 leading-relaxed">Menjaga kelestarian kesenian tradisional bernafaskan Islam-Jawa bagi generasi penerus dusun.</p>
-          </div>
-
         </div>
 
       </div>
@@ -352,37 +314,16 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+          <div v-for="facility in store.facilities" :key="facility.id" class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
             <div class="w-12 h-12 rounded-xl bg-emerald-100 text-[#0D6847] flex items-center justify-center mb-4">
-              <BuildingIcon class="w-6 h-6" />
+              <BuildingIcon v-if="facility.kategori === 'wisata'" class="w-6 h-6" />
+              <ShieldCheckIcon v-else class="w-6 h-6" />
             </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Balai Pertemuan Warga</h3>
+            <h3 class="text-base font-bold text-gray-900 mb-2">{{ facility.nama }}</h3>
             <p class="text-xs text-gray-600 leading-relaxed mb-3">
-              Tempat musyawarah dusun, rapat RT/RW, pelatihan UMKM, dan perayaan hari besar kemerdekaan warga.
+              {{ facility.deskripsi }}
             </p>
-            <span class="inline-block text-[10px] font-bold text-[#0D6847] bg-emerald-100/60 px-2.5 py-1 rounded-md">Dusun Kalangan</span>
-          </div>
-
-          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
-              <BookOpenIcon class="w-6 h-6" />
-            </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Masjid &amp; TPA Warga</h3>
-            <p class="text-xs text-gray-600 leading-relaxed mb-3">
-              TPA El Mutaqi dan TPA Supit Urang sebagai sarana pembinaan keagamaan, akhlak, dan hafalan Al-Qur'an anak-anak.
-            </p>
-            <span class="inline-block text-[10px] font-bold text-blue-700 bg-blue-100/60 px-2.5 py-1 rounded-md">Ngemplak &amp; Kalangan</span>
-          </div>
-
-          <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
-            <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center mb-4">
-              <ShieldCheckIcon class="w-6 h-6" />
-            </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Pos Ronda &amp; Kamling</h3>
-            <p class="text-xs text-gray-600 leading-relaxed mb-3">
-              Pos keamanan lingkungan swadaya warga yang aktif bergiliran menjaga ketertiban serta keamanan lingkungan.
-            </p>
-            <span class="inline-block text-[10px] font-bold text-amber-700 bg-amber-100/60 px-2.5 py-1 rounded-md">Tersebar di Tiap RT</span>
+            <span v-if="facility.lokasi" class="inline-block text-[10px] font-bold text-[#0D6847] bg-emerald-100/60 px-2.5 py-1 rounded-md">{{ facility.lokasi }}</span>
           </div>
 
         </div>

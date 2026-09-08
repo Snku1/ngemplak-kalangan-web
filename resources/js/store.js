@@ -1,328 +1,5 @@
-import { reactive, watch } from 'vue';
-
-// Initial Mock Data
-const initialNews = [
-  {
-    id: 1,
-    title: 'Semarak Lomba Kemerdekaan RI ke-81 di Lapangan Polowidi',
-    category: 'Kegiatan Warga',
-    date: '18 Agustus 2026',
-    image: '/images/lomba-polowidi.png',
-    excerpt: 'Ratusan warga dari dusun Ngemplak dan Kalangan berkumpul memeriahkan berbagai perlombaan tradisional untuk mempererat persaudaraan.',
-    content: 'Ratusan warga dari dusun Ngemplak dan Kalangan berkumpul memeriahkan berbagai perlombaan tradisional untuk mempererat persaudaraan dan kebersamaan antarwarga desa. Acara berlangsung meriah sejak pagi hingga sore hari dengan beragam perlombaan anak-anak, ibu-ibu PKK, serta bapak-bapak.'
-  },
-  {
-    id: 2,
-    title: 'Keceriaan Anak-Anak Kalangan dalam Pawai Budaya dan Kostum Unik',
-    category: 'Generasi Muda',
-    date: '17 Agustus 2026',
-    image: '/images/lomba-kalangan.png',
-    excerpt: 'Anak-anak dan remaja dusun menampilkan kreasi busana adat nusantara dan daur ulang ramah lingkungan sebagai wujud kecintaan pada budaya.',
-    content: 'Anak-anak dan remaja dusun menampilkan kreasi busana adat nusantara dan daur ulang ramah lingkungan sebagai wujud kreativitas dan kecintaan pada budaya tanah air. Kegiatan karnaval ini menyusuri jalan utama dusun diiringi tabuhan musik gamelan.'
-  },
-  {
-    id: 3,
-    title: 'Malam Tirakatan dan Doa Bersama: Merawat Kerukunan dan Kebersamaan Warga',
-    category: 'Tradisi Luhur',
-    date: '16 Agustus 2026',
-    image: '/images/tirakatan.png',
-    excerpt: 'Malam tirakatan merupakan tradisi refleksi dan doa bersama warga Padukuhan Ngemplak Kalangan dalam rangka mensyukuri kemerdekaan.',
-    content: 'Malam tirakatan merupakan tradisi refleksi dan doa bersama warga Padukuhan Ngemplak Kalangan dalam rangka mensyukuri kemerdekaan bangsa. Acara ini dihadiri oleh tokoh masyarakat, sesepuh, dan seluruh warga dari dua dusun secara khidmat dan penuh persaudaraan.'
-  },
-  {
-    id: 4,
-    title: 'Pelatihan Anyaman Bambu Kontemporer untuk Pemberdayaan Ekonomi',
-    category: 'Pemberdayaan UMKM',
-    date: '10 Agustus 2026',
-    image: '/images/anyaman-bambu.png',
-    excerpt: 'Meningkatkan nilai jual produk lokal melalui teknik anyaman modern dan strategi pemasaran digital bagi pengrajin desa.',
-    content: 'Kelompok usaha mikro Padukuhan menyelenggarakan pelatihan anyaman bambu inovatif bagi ibu-ibu rumah tangga dan pemuda. Mengundang instruktur ahli dari Yogyakarta, pelatihan ini memfokuskan pada desain kemasan produk anyaman modern yang memiliki nilai jual ekspor serta optimalisasi promosi digital.'
-  }
-];
-
-const initialProducts = [
-  {
-    id: 1,
-    name: 'Anyaman Bambu Premium',
-    category: 'Kerajinan',
-    price: 75000,
-    unit: 'pcs',
-    rating: 4.9,
-    isBestSeller: true,
-    seller: 'Ibu Suminah (RT 02)',
-    image: '/images/anyaman-bambu.png',
-    description: 'Kerajinan tempat serbaguna dari bambu pilihan yang dianyam rapi secara tradisional oleh warga lokal.',
-    fullDescription: 'Kerajinan tangan tempat serbaguna dari bambu asli lereng Sleman. Dianyam secara cermat dengan daya tahan tinggi, cocok sebagai wadah bumbu, buah-buahan, wadah hantaran, maupun dekorasi interior bernuansa etnik.'
-  },
-  {
-    id: 2,
-    name: 'Kopi Organik Arabika',
-    category: 'Hasil Bumi',
-    price: 45000,
-    unit: '250g',
-    rating: 4.8,
-    isBestSeller: true,
-    seller: 'Kelompok Tani Kalangan',
-    image: '/images/kopi-arabika.jpg',
-    description: 'Biji kopi pilihan yang ditanam secara organik tanpa pestisida. Aroma khas dengan citarasa asam manis seimbang.',
-    fullDescription: 'Kopi Arabika organik yang dipetik dari kebun perbukitan warga Ngemplak Kalangan. Diproses secara natural (full wash) dan sangrai tingkat medium untuk memunculkan aroma nutty serta floral yang lembut.'
-  },
-  {
-    id: 3,
-    name: 'Kain Batik Tulis Motif',
-    category: 'Kerajinan',
-    price: 350000,
-    unit: 'lembar',
-    rating: 5.0,
-    isBestSeller: true,
-    seller: 'Sanggar Batik Warga',
-    image: '/images/batik-tulis.jpg',
-    description: 'Kain batik handmade motif khas Padukuhan Ngemplak Kalangan dengan bahan katun primisima halus.',
-    fullDescription: 'Kain Batik Tulis asli karya pengrajin batik padukuhan. Menggunakan bahan katun super halus dan pewarnaan rempah alami yang ramah lingkungan. Setiap potongan motif memiliki keunikan filosofi lokal.'
-  },
-  {
-    id: 4,
-    name: 'Madu Hutan Murni',
-    category: 'Hasil Bumi',
-    price: 120000,
-    unit: '500ml',
-    rating: 4.9,
-    isBestSeller: false,
-    seller: 'Pak Hadi (Peternak Lebah)',
-    image: '/images/hero-bg.png',
-    description: 'Madu murni 100% dipanen langsung dari sarang lebah hutan liar tanpa bahan pengawet atau gula tambahan.',
-    fullDescription: 'Madu murni alami berkualitas super dari lebah liar yang menghisap nektar bunga liar padukuhan. Kaya akan antioksidan, zat besi, dan vitamin alami untuk menjaga daya tahan tubuh keluarga.'
-  },
-  {
-    id: 5,
-    name: 'Teh Herbal Celup Alami',
-    category: 'Olahan Makanan',
-    price: 25000,
-    unit: 'kotak (20 bag)',
-    rating: 4.7,
-    isBestSeller: false,
-    seller: 'KWT Ngemplak Asri',
-    image: '/images/senam-sore.png',
-    description: 'Teh racikan rempah jahe, serai, dan mint organik dari pekarangan rumah warga untuk menyegarkan badan.',
-    fullDescription: 'Teh celup herbal kombinasi jahe merah, serai wangi, dan daun mint segar yang dikeringkan secara higienis oleh Kelompok Wanita Tani (KWT). Memberikan rasa hangat dan relaksasi pada tubuh.'
-  },
-  {
-    id: 6,
-    name: 'Keripik Tempe Renyah',
-    category: 'Olahan Makanan',
-    price: 15000,
-    unit: 'pack (250g)',
-    rating: 4.8,
-    isBestSeller: true,
-    seller: 'Ibu Sri Wahyuni',
-    image: '/images/lomba-kalangan.png',
-    description: 'Olahan tempe kedelai segar dibalut tepung gurih berbumbu rempah rahasia Padukuhan. Renyah & lezat.',
-    fullDescription: 'Camilan keripik tempe tipis renyah dengan racikan bumbu bawang dan daun jeruk alami. Tanpa bahan pengawet kimia, sangat cocok menemani santai sore atau oleh-oleh khas desa.'
-  }
-];
-
-const initialGallery = [
-  {
-    id: 1,
-    title: 'Lomba 17 Agustus Di Ngemplak Polowidi',
-    type: 'foto',
-    category: 'Kebudayaan',
-    image: '/images/lomba-polowidi.png',
-    date: '19 AGUSTUS 2026',
-    location: 'Dusun Ngemplak Polowidi',
-    description: 'Kemeriahan berbagai macam perlombaan anak-anak dan pemuda dalam memperingati HUT Kemerdekaan RI di dusun Ngemplak Polowidi.'
-  },
-  {
-    id: 2,
-    title: 'Lomba 17 Agustus Di Kalangan',
-    type: 'foto',
-    category: 'Kebudayaan',
-    image: '/images/lomba-kalangan.png',
-    date: '19 AGUSTUS 2026',
-    location: 'Dusun Kalangan',
-    description: 'Semangat gotong royong dan keceriaan warga Kalangan dalam menyukseskan rangkaian lomba 17-an.'
-  },
-  {
-    id: 3,
-    title: 'Kegiatan Tirakatan Warga',
-    type: 'foto',
-    category: 'Keagamaan',
-    image: '/images/tirakatan.png',
-    date: '16 AGUSTUS 2026',
-    location: 'Balai Padukuhan',
-    description: 'Malam refleksi dan doa bersama tokoh masyarakat serta warga menjelang hari ulang tahun kemerdekaan Indonesia.'
-  },
-  {
-    id: 4,
-    title: 'Kegiatan TPA Supit Urang',
-    type: 'foto',
-    category: 'Keagamaan',
-    image: '/images/tpa-supit-urang.png',
-    date: '12 AGUSTUS 2026',
-    location: 'Masjid Supit Urang',
-    description: 'Anak-anak antusias mengikuti pembelajaran baca tulis Al-Quran di Taman Pendidikan Al-Quran Supit Urang.'
-  },
-  {
-    id: 5,
-    title: 'Kegiatan TPA El-Mutaqi',
-    type: 'foto',
-    category: 'Keagamaan',
-    image: '/images/tpa-el-mutaqi.png',
-    date: '10 AGUSTUS 2026',
-    location: 'Masjid El-Mutaqi',
-    description: 'Pendidikan karakter spiritual sejak dini bagi generasi muda di lingkungan masjid El-Mutaqi.'
-  },
-  {
-    id: 6,
-    title: 'Seni Rodat Classic',
-    type: 'video',
-    category: 'Kebudayaan',
-    image: '/images/seni-rodat.png',
-    date: '05 AGUSTUS 2026',
-    location: 'Halaman Balai Desa',
-    description: 'Pertunjukan seni tradisional Rodat / Hadroh gabungan generasi muda dan sesepuh kesenian dusun.'
-  },
-  {
-    id: 7,
-    title: 'Kegiatan Senam Di Sore Hari',
-    type: 'foto',
-    category: 'Olahraga',
-    image: '/images/senam-sore.png',
-    date: '02 AGUSTUS 2026',
-    location: 'Lapangan Padukuhan',
-    description: 'Olahraga rutin senam kebugaran jasmani ibu-ibu PKK dan warga untuk menjaga kesehatan bersama.'
-  }
-];
-
-const initialLeaders = [
-  {
-    id: 1,
-    name: 'Bapak Supriyanto',
-    role: 'Kepala Dukuh',
-    level: 'Pimpinan',
-    image: '/images/kepala-desa.png',
-    focus: 'Penanggung Jawab Utama Tata Kelola & Warga',
-    description: 'Memimpin jalannya tata kelola padukuhan dan pelayanan kemasyarakatan dengan penuh integritas.'
-  },
-  {
-    id: 2,
-    name: 'Bapak Bambang Wijaya',
-    role: 'Sekretaris Dusun',
-    level: 'Perangkat',
-    initials: 'BW',
-    focus: 'Administrasi & Pembukuan Dokumen Warga',
-    description: 'Mengelola ketatausahaan dan dokumentasi kependudukan serta informasi publik dusun.'
-  },
-  {
-    id: 3,
-    name: 'Ibu Siti Rahmawati',
-    role: 'Bendahara & Ketua PKK/KWT',
-    level: 'Perangkat',
-    initials: 'SR',
-    focus: 'Keuangan, Kas Dusun & Pemberdayaan Wanita Tani',
-    description: 'Mengelola kas kebersamaan warga dan menggerakkan program pekarangan pangan lestari.'
-  },
-  {
-    id: 4,
-    name: 'Bapak Hendro S.',
-    role: 'Seksi Kesejahteraan',
-    level: 'Seksi',
-    initials: 'HS',
-    focus: 'Kegiatan Sosial & Keagamaan Warga',
-    description: 'Mengkoordinir kegiatan santunan sosial, keagamaan, dan gotong royong antarwarga.'
-  },
-  {
-    id: 5,
-    name: 'Ibu Ratna Dewi',
-    role: 'Seksi Pemberdayaan & UMKM',
-    level: 'Seksi',
-    initials: 'RD',
-    focus: 'Pendampingan UMKM & Posyandu Dusun',
-    description: 'Mendampingi kemajuan usaha mikro kerajinan bambu dan layanan gizi posyandu balita-lansia.'
-  },
-  {
-    id: 6,
-    name: 'Bapak Wardoyo',
-    role: 'Seksi Keamanan & Ketertiban',
-    level: 'Seksi',
-    initials: 'W',
-    focus: 'Linmas, Siskamling & Ketertiban Lingkungan',
-    description: 'Mengatur ronda malam dan keamanan swadaya di seluruh RT Padukuhan.'
-  }
-];
-
-const initialFaqs = [
-  {
-    id: 1,
-    question: 'Di mana letak Padukuhan Ngemplak Kalangan?',
-    answer: 'Padukuhan Ngemplak Kalangan berada di Kapanewon (Kecamatan) Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571. Lokasinya sangat strategis, asri, dan mudah dijangkau dari jalan utama Yogya-Solo.'
-  },
-  {
-    question: 'Bagaimana cara berkunjung atau studi potensi desa ke Ngemplak Kalangan?',
-    id: 2,
-    answer: 'Kunjungan warga luar, pelajar, instansi, maupun rombongan studi banding dapat dikonfirmasikan terlebih dahulu melalui kontak pengurus padukuhan atau berkunjung langsung ke Balai Pertemuan Warga pada hari kerja.'
-  },
-  {
-    id: 3,
-    question: 'Apakah produk kerajinan anyaman bambu & batik bisa dipesan custom / jumlah banyak?',
-    answer: 'Tentu bisa! Pengrajin kami melayani pesanan suvenir pernikahan, hantaran, dekorasi hotel/resto, serta cinderamata instansi dengan desain dan motif khusus.'
-  },
-  {
-    id: 4,
-    question: 'Kapan jadwal latihan kesenian Seni Rodat dan kegiatan pemuda?',
-    answer: 'Latihan Seni Rodat rutin diadakan setiap akhir pekan di Sanggar Seni Warga, sedangkan perkumpulan Karang Taruna dan senam bersama warga dilaksanakan secara berkala.'
-  }
-];
-
-const initialFacilities = [
-  {
-    id: 1,
-    name: 'Balai Pertemuan Warga',
-    location: 'Dusun Kalangan',
-    description: 'Tempat musyawarah dusun, rapat RT/RW, pelatihan UMKM, dan perayaan hari besar kemerdekaan warga.'
-  },
-  {
-    id: 2,
-    name: 'Masjid & TPA Warga',
-    location: 'Ngemplak & Kalangan',
-    description: 'TPA El Mutaqi dan TPA Supit Urang sebagai sarana pembinaan keagamaan, akhlak, dan hafalan Al-Qur\'an anak-anak.'
-  },
-  {
-    id: 3,
-    name: 'Pos Ronda & Kamling',
-    location: 'Tersebar di Tiap RT',
-    description: 'Pos keamanan lingkungan swadaya warga yang aktif bergiliran menjaga ketertiban serta keamanan lingkungan.'
-  }
-];
-
-const initialInbox = [
-  {
-    id: 1,
-    name: 'Budi Santoso',
-    phone: '081234567890',
-    email: 'budi.santoso@gmail.com',
-    message: 'Halo, saya tertarik memesan anyaman bambu sebanyak 50 pcs untuk suvenir pernikahan. Apakah bisa custom ukuran?',
-    date: '23 Agustus 2026, 14:30'
-  },
-  {
-    id: 2,
-    name: 'Dian Permata',
-    phone: '085712345678',
-    email: 'dian.p@yahoo.com',
-    message: 'Mohon info apakah kopi arabika organik bisa dikirim ke Jakarta? Terima kasih.',
-    date: '22 Agustus 2026, 09:15'
-  }
-];
-
-// Helper to load or set LocalStorage
-const loadStorage = (key, defaultData) => {
-  try {
-    const saved = localStorage.getItem(`ngemplak_${key}`);
-    return saved ? JSON.parse(saved) : defaultData;
-  } catch (e) {
-    return defaultData;
-  }
-};
+import { reactive } from 'vue';
+import { api } from './api';
 
 export const store = reactive({
   // Auth state
@@ -330,207 +7,485 @@ export const store = reactive({
   adminUser: {
     username: 'admin',
     name: 'Administrator Padukuhan',
+    profil: null,
     role: 'Super Admin'
   },
 
   // Main collections
-  news: loadStorage('news', initialNews),
-  products: loadStorage('products', initialProducts),
-  gallery: loadStorage('gallery', initialGallery),
-  leaders: loadStorage('leaders', initialLeaders),
-  faqs: loadStorage('faqs', initialFaqs),
-  facilities: loadStorage('facilities', initialFacilities),
-  inbox: loadStorage('inbox', initialInbox),
+  news: [],
+  products: [],
+  gallery: [],
+  leaders: [],
+  faqs: [],
+  inbox: [],
+  categories: [],
+  umkms: [],
+  agenda: [],
+  pengumuman: [],
+  potensiWisata: [],
+  demographics: [],
 
-  // Auth Methods
-  login(username, password) {
-    if (username === 'admin' && password === 'admin12345') {
-      this.isAuthenticated = true;
-      localStorage.setItem('ngemplak_admin_auth', 'true');
-      return { success: true };
+  // Alias untuk AdminDashboardView
+  get facilities() { return this.potensiWisata; },
+
+  // ==========================================
+  // INITIALIZATION (Fetch all data)
+  // ==========================================
+  async initData() {
+    try {
+      const [
+        beritaRes, produkRes, galeriRes,
+        strukturRes, faqRes, kategoriRes, umkmRes,
+        agendaRes, pengumumanRes, potensiRes, demografiRes
+      ] = await Promise.all([
+        api.get('/berita'),
+        api.get('/produk'),
+        api.get('/galeri'),
+        api.get('/struktur-organisasi'),
+        api.get('/faq'),
+        api.get('/kategori'),
+        api.get('/umkm'),
+        api.get('/agenda'),
+        api.get('/pengumuman'),
+        api.get('/potensi-wisata'),
+        api.get('/demografi')
+      ]);
+
+      this.categories = kategoriRes.data;
+      this.umkms = umkmRes.data;
+
+      // Map Berita
+      this.news = beritaRes.data.map(item => ({
+        id: item.id,
+        title: item.title,
+        category: this.categories.find(c => c.id === item.category_id)?.nama || 'Kegiatan',
+        date: new Date(item.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        image: '/images/hero-bg.png',
+        excerpt: item.content?.substring(0, 100) + '...' || '',
+        content: item.content || '',
+        author: item.author?.nama_lengkap || 'Admin'
+      }));
+
+      // Map Produk
+      this.products = produkRes.data.map(item => ({
+        id: item.id,
+        name: item.nama_produk,
+        category: this.categories.find(c => c.id === item.category_id)?.nama || 'Produk',
+        price: item.harga || 0,
+        unit: 'pcs',
+        rating: 5.0,
+        isBestSeller: item.is_unggulan || false,
+        seller: this.umkms.find(u => u.id === item.penjual_id)?.nama_usaha || 'Warga',
+        image: '/images/anyaman-bambu.png',
+        description: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.',
+        fullDescription: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.'
+      }));
+
+      // Map Galeri
+      this.gallery = galeriRes.data.map(item => ({
+        id: item.id,
+        title: item.judul,
+        type: item.tipe || 'foto',
+        category: this.categories.find(c => c.id === item.category_id)?.nama || 'Dokumentasi',
+        image: '/images/galeri-1.png',
+        date: new Date(item.created_at).toLocaleDateString('id-ID'),
+        location: 'Ngemplak Kalangan',
+        description: item.judul
+      }));
+
+      // Map Leaders
+      this.leaders = strukturRes.data.map(item => ({
+        id: item.id,
+        name: item.nama,
+        role: item.jabatan,
+        level: item.urutan === 1 ? 'Pimpinan' : 'Seksi',
+        initials: item.nama.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
+        focus: '-',
+        description: '-'
+      }));
+
+      // Map FAQ
+      this.faqs = faqRes.data.map(item => ({
+        id: item.id,
+        question: item.pertanyaan,
+        answer: item.jawaban
+      }));
+
+      // Map Agenda
+      this.agenda = agendaRes.data.map(item => ({
+        id: item.id,
+        month: new Date(item.tanggal_kegiatan).toLocaleString('id-ID', { month: 'short' }),
+        day: new Date(item.tanggal_kegiatan).getDate(),
+        title: item.nama_kegiatan,
+        time: item.waktu,
+        location: item.lokasi,
+        status: item.status || 'Mendatang',
+        details: item.deskripsi || ''
+      }));
+
+      // Map Pengumuman
+      this.pengumuman = pengumumanRes.data.map(item => ({
+        id: item.id,
+        title: item.judul,
+        date: new Date(item.tanggal_posting).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+        description: item.isi_ringkas,
+        isImportant: item.category_id === 16 // sesuaikan ID kategori 'Info Penting'
+      }));
+
+      // Map Potensi Wisata
+      this.potensiWisata = potensiRes.data.map(item => ({
+        id: item.id,
+        nama: item.nama,
+        kategori: item.kategori === 'wisata' ? 'Fasilitas / Wisata' : 'Potensi Desa',
+        deskripsi: item.deskripsi || '',
+        lokasi: item.link_gmaps || '-'
+      }));
+
+      // Map Demografi
+      this.demographics = demografiRes.data.map(item => ({
+        id: item.id,
+        kategori: item.kategori,
+        label: item.label,
+        jumlah_jiwa: item.jumlah_jiwa || 0,
+        persentase: item.persentase || 0
+      }));
+
+      if (this.isAuthenticated) {
+        this.fetchInbox();
+      }
+
+    } catch (error) {
+      console.error("Gagal memuat data dari API:", error);
     }
-    return { success: false, message: 'Username atau Password salah! Gunakan user: admin dan password: admin12345' };
   },
 
-  logout() {
+  async fetchInbox() {
+    try {
+      const res = await api.get('/pesan-bantuan');
+      this.inbox = res.data.map(item => ({
+        id: item.id,
+        name: item.nama_lengkap,
+        phone: '-',
+        email: item.email,
+        message: item.pesan,
+        date: new Date(item.created_at).toLocaleDateString('id-ID')
+      }));
+    } catch (error) {
+      console.error("Gagal mengambil pesan", error);
+    }
+  },
+
+  // ==========================================
+  // AUTH
+  // ==========================================
+  async login(email, password) {
+    try {
+      const res = await api.post('/login', { email, password });
+      if (res.success) {
+        this.isAuthenticated = true;
+        localStorage.setItem('ngemplak_admin_auth', 'true');
+        localStorage.setItem('ngemplak_admin_token', res.data.token);
+        this.fetchInbox();
+        return { success: true };
+      }
+    } catch (error) {
+      return { success: false, message: error.message || 'Email atau Password salah!' };
+    }
+  },
+
+  async logout() {
+    try {
+      await api.post('/logout');
+    } catch (e) { }
     this.isAuthenticated = false;
     localStorage.removeItem('ngemplak_admin_auth');
+    localStorage.removeItem('ngemplak_admin_token');
   },
 
-  // NEWS CRUD
-  addNews(item) {
-    const newItem = {
-      id: Date.now(),
-      title: item.title || 'Berita Baru',
-      category: item.category || 'Kegiatan Warga',
-      date: item.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-      image: item.image || '/images/hero-bg.png',
-      excerpt: item.excerpt || '',
-      content: item.content || ''
-    };
-    this.news.unshift(newItem);
-    this.save('news');
-  },
-  updateNews(id, updated) {
-    const idx = this.news.findIndex(n => n.id === id);
-    if (idx !== -1) {
-      this.news[idx] = { ...this.news[idx], ...updated };
-      this.save('news');
-    }
-  },
-  deleteNews(id) {
-    this.news = this.news.filter(n => n.id !== id);
-    this.save('news');
-  },
+  // ==========================================
+  // CRUD OPERATIONS (Admin)
+  // ==========================================
 
-  // PRODUCTS CRUD
-  addProduct(item) {
-    const newItem = {
-      id: Date.now(),
-      name: item.name || 'Produk Baru',
-      category: item.category || 'Kerajinan',
-      price: Number(item.price) || 0,
-      unit: item.unit || 'pcs',
-      rating: Number(item.rating) || 5.0,
-      isBestSeller: Boolean(item.isBestSeller),
-      seller: item.seller || 'Warga Padukuhan',
-      image: item.image || '/images/anyaman-bambu.png',
-      description: item.description || '',
-      fullDescription: item.fullDescription || item.description || ''
-    };
-    this.products.unshift(newItem);
-    this.save('products');
-  },
-  updateProduct(id, updated) {
-    const idx = this.products.findIndex(p => p.id === id);
-    if (idx !== -1) {
-      this.products[idx] = { ...this.products[idx], ...updated, price: Number(updated.price) || this.products[idx].price };
-      this.save('products');
-    }
-  },
-  deleteProduct(id) {
-    this.products = this.products.filter(p => p.id !== id);
-    this.save('products');
-  },
-
-  // GALLERY CRUD
-  addGallery(item) {
-    const newItem = {
-      id: Date.now(),
-      title: item.title || 'Foto Baru',
-      type: item.type || 'foto',
-      category: item.category || 'Kebudayaan',
-      image: item.image || '/images/galeri-1.png',
-      date: item.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-      location: item.location || 'Padukuhan Ngemplak Kalangan',
-      description: item.description || ''
-    };
-    this.gallery.unshift(newItem);
-    this.save('gallery');
-  },
-  updateGallery(id, updated) {
-    const idx = this.gallery.findIndex(g => g.id === id);
-    if (idx !== -1) {
-      this.gallery[idx] = { ...this.gallery[idx], ...updated };
-      this.save('gallery');
-    }
-  },
-  deleteGallery(id) {
-    this.gallery = this.gallery.filter(g => g.id !== id);
-    this.save('gallery');
-  },
-
-  // LEADERS CRUD
-  addLeader(item) {
-    const newItem = {
-      id: Date.now(),
-      name: item.name || '',
-      role: item.role || '',
-      level: item.level || 'Seksi',
-      image: item.image || '',
-      initials: item.initials || item.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase(),
-      focus: item.focus || '',
-      description: item.description || ''
-    };
-    this.leaders.push(newItem);
-    this.save('leaders');
-  },
-  updateLeader(id, updated) {
-    const idx = this.leaders.findIndex(l => l.id === id);
-    if (idx !== -1) {
-      this.leaders[idx] = { ...this.leaders[idx], ...updated };
-      this.save('leaders');
-    }
-  },
-  deleteLeader(id) {
-    this.leaders = this.leaders.filter(l => l.id !== id);
-    this.save('leaders');
-  },
-
-  // FAQS CRUD
-  addFaq(item) {
-    const newItem = {
-      id: Date.now(),
-      question: item.question || '',
-      answer: item.answer || ''
-    };
-    this.faqs.push(newItem);
-    this.save('faqs');
-  },
-  updateFaq(id, updated) {
-    const idx = this.faqs.findIndex(f => f.id === id);
-    if (idx !== -1) {
-      this.faqs[idx] = { ...this.faqs[idx], ...updated };
-      this.save('faqs');
-    }
-  },
-  deleteFaq(id) {
-    this.faqs = this.faqs.filter(f => f.id !== id);
-    this.save('faqs');
-  },
-
-  // INBOX
-  addInbox(item) {
-    const newItem = {
-      id: Date.now(),
-      name: item.name,
-      phone: item.phone,
-      email: item.email || '-',
-      message: item.message,
-      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-    };
-    this.inbox.unshift(newItem);
-    this.save('inbox');
-  },
-  deleteInbox(id) {
-    this.inbox = this.inbox.filter(i => i.id !== id);
-    this.save('inbox');
-  },
-
-  // Save to localStorage helper
-  save(key) {
+  // --- NEWS ---
+  async addNews(item) {
     try {
-      localStorage.setItem(`ngemplak_${key}`, JSON.stringify(this[key]));
-    } catch (e) {
-      console.error('Storage save error:', e);
-    }
+      await api.post('/berita', {
+        title: item.title,
+        slug: item.title.toLowerCase().replace(/ /g, '-') + '-' + Date.now(),
+        content: item.content || item.excerpt || 'Konten berita',
+        category_id: 1,
+        author_id: 1,
+        status: 'published'
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async updateNews(id, item) {
+    try {
+      await api.put(`/berita/${id}`, {
+        title: item.title,
+        slug: item.title.toLowerCase().replace(/ /g, '-') + '-' + Date.now(),
+        content: item.content || item.excerpt,
+        category_id: 1,
+        author_id: 1,
+        status: 'published'
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async deleteNews(id) {
+    try {
+      await api.delete(`/berita/${id}`);
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
   },
 
-  // Reset to default
-  resetToDefaults() {
-    this.news = [...initialNews];
-    this.products = [...initialProducts];
-    this.gallery = [...initialGallery];
-    this.leaders = [...initialLeaders];
-    this.faqs = [...initialFaqs];
-    this.facilities = [...initialFacilities];
-    this.inbox = [...initialInbox];
-    this.save('news');
-    this.save('products');
-    this.save('gallery');
-    this.save('leaders');
-    this.save('faqs');
-    this.save('facilities');
-    this.save('inbox');
+  // --- PRODUCTS ---
+  async addProduct(item) {
+    try {
+      await api.post('/produk', {
+        nama_produk: item.name,
+        harga: Number(item.price) || 0,
+        category_id: 2,
+        penjual_id: 1,
+        deskripsi: item.description || ''
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async updateProduct(id, item) {
+    try {
+      await api.put(`/produk/${id}`, {
+        nama_produk: item.name,
+        harga: Number(item.price) || 0,
+        category_id: 2,
+        penjual_id: 1,
+        deskripsi: item.description || ''
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async deleteProduct(id) {
+    try {
+      await api.delete(`/produk/${id}`);
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+
+  // --- GALLERY ---
+  async addGallery(item) {
+    try {
+      await api.post('/galeri', {
+        judul: item.title,
+        tipe: item.type || 'foto',
+        category_id: 3
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async updateGallery(id, item) {
+    try {
+      await api.put(`/galeri/${id}`, {
+        judul: item.title,
+        tipe: item.type || 'foto',
+        category_id: 3
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async deleteGallery(id) {
+    try {
+      await api.delete(`/galeri/${id}`);
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+
+  // --- LEADERS ---
+  async addLeader(item) {
+    try {
+      await api.post('/struktur-organisasi', {
+        nama: item.name,
+        jabatan: item.role,
+        urutan: item.level === 'Pimpinan' ? 1 : 2
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async updateLeader(id, item) {
+    try {
+      await api.put(`/struktur-organisasi/${id}`, {
+        nama: item.name,
+        jabatan: item.role,
+        urutan: item.level === 'Pimpinan' ? 1 : 2
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async deleteLeader(id) {
+    try {
+      await api.delete(`/struktur-organisasi/${id}`);
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+
+  // --- FAQS ---
+  async addFaq(item) {
+    try {
+      await api.post('/faq', { pertanyaan: item.question, jawaban: item.answer });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async updateFaq(id, item) {
+    try {
+      await api.put(`/faq/${id}`, { pertanyaan: item.question, jawaban: item.answer });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async deleteFaq(id) {
+    try {
+      await api.delete(`/faq/${id}`);
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+
+  // --- INBOX ---
+  async addInbox(item) {
+    try {
+      await api.post('/pesan-bantuan', {
+        nama_lengkap: item.name,
+        email: item.email || 'tanpa-email@gmail.com',
+        pesan: item.message
+      });
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+  async deleteInbox(id) {
+    try {
+      await api.delete(`/pesan-bantuan/${id}`);
+      this.fetchInbox();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+
+  // --- AGENDA ---
+  async addAgenda(item) {
+    try {
+      await api.post('/agenda', {
+        nama_kegiatan: item.title,
+        tanggal_kegiatan: new Date().toISOString().split('T')[0],
+        waktu: item.time || '08:00 - 17:00',
+        lokasi: item.location || 'Lapangan Desa',
+        deskripsi: item.details || '',
+        status: 'mendatang'
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async updateAgenda(id, item) {
+    try {
+      await api.put(`/agenda/${id}`, {
+        nama_kegiatan: item.title,
+        tanggal_kegiatan: new Date().toISOString().split('T')[0],
+        waktu: item.time,
+        lokasi: item.location,
+        deskripsi: item.details,
+        status: item.status
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async deleteAgenda(id) {
+    try {
+      await api.delete(`/agenda/${id}`);
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+
+  // --- PENGUMUMAN ---
+  async addPengumuman(item) {
+    try {
+      await api.post('/pengumuman', {
+        category_id: item.isImportant ? 16 : 17,
+        judul: item.title,
+        isi_ringkas: item.description,
+        tanggal_posting: new Date().toISOString().split('T')[0]
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async updatePengumuman(id, item) {
+    try {
+      await api.put(`/pengumuman/${id}`, {
+        category_id: item.isImportant ? 16 : 17,
+        judul: item.title,
+        isi_ringkas: item.description,
+        tanggal_posting: new Date().toISOString().split('T')[0]
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async deletePengumuman(id) {
+    try {
+      await api.delete(`/pengumuman/${id}`);
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+
+  // --- POTENSI WISATA ---
+  async addPotensi(item) {
+    try {
+      await api.post('/potensi-wisata', {
+        nama: item.nama,
+        kategori: item.kategori === 'Fasilitas / Wisata' ? 'wisata' : 'potensi_desa',
+        deskripsi: item.deskripsi || '',
+        link_gmaps: item.lokasi || ''
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async updatePotensi(id, item) {
+    try {
+      await api.put(`/potensi-wisata/${id}`, {
+        nama: item.nama,
+        kategori: item.kategori === 'Fasilitas / Wisata' ? 'wisata' : 'potensi_desa',
+        deskripsi: item.deskripsi,
+        link_gmaps: item.lokasi || ''
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async deletePotensi(id) {
+    try {
+      await api.delete(`/potensi-wisata/${id}`);
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+
+  // --- DEMOGRAFI ---
+  async addDemographic(item) {
+    try {
+      await api.post('/demografi', {
+        kategori: item.kategori,
+        label: item.label,
+        jumlah_jiwa: Number(item.jumlah_jiwa) || 0,
+        persentase: Number(item.persentase) || 0
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async updateDemographic(id, item) {
+    try {
+      await api.put(`/demografi/${id}`, {
+        kategori: item.kategori,
+        label: item.label,
+        jumlah_jiwa: Number(item.jumlah_jiwa) || 0,
+        persentase: Number(item.persentase) || 0
+      });
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
+  },
+  async deleteDemographic(id) {
+    try {
+      await api.delete(`/demografi/${id}`);
+      await this.initData();
+    } catch (e) { console.error(e); alert(e.message); }
   }
 });
