@@ -63,4 +63,16 @@ export const api = {
     });
     return handleResponse(response);
   },
+
+  uploadFile: async (file, folder = 'uploads') => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
+    const response = await fetch(`${API_URL}/upload`, {
+      method: 'POST',
+      headers: getHeaders(true), // no Content-Type header for multipart
+      body: formData,
+    });
+    return handleResponse(response);
+  },
 };

@@ -47,8 +47,8 @@
             <div class="w-full max-w-sm bg-white rounded-3xl p-4 shadow-xl shadow-gray-200/50 border border-gray-100/80 group hover:-translate-y-1 transition-all duration-300">
               <div class="relative overflow-hidden aspect-[4/5] rounded-2xl bg-gray-50 border border-gray-100">
                 <img 
-                  src="/images/kepala-desa.png" 
-                  alt="Bapak Supriyanto" 
+                  :src="store.padukuhanProfile?.foto_dukuh || '/images/kepala-desa.png'" 
+                  :alt="store.padukuhanProfile?.nama_dukuh || 'Bapak Supriyanto'" 
                   class="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500"
                   @error="handleImageError($event, 'kepala-desa')"
                 />
@@ -72,19 +72,17 @@
             </h2>
             
             <div class="space-y-4 text-sm text-gray-600 leading-relaxed font-medium">
-              <p>
+              <p v-if="store.padukuhanProfile?.sejarah" class="whitespace-pre-line">{{ store.padukuhanProfile.sejarah }}</p>
+              <p v-else>
                 Padukuhan Ngemplak Kalangan merupakan wilayah administratif yang kaya akan nilai historis, kebudayaan luhur, dan kebersamaan warga yang erat. Terletak di kawasan strategis Sleman, Yogyakarta, padukuhan kami terus berkembang dengan memadukan kearifan lokal pertanian dan kemajuan teknologi modern.
-              </p>
-              <p>
-                Kami menyadari pentingnya keterbukaan informasi di era modern. Oleh karena itu, melalui website padukuhan ini, kami berkomitmen menyajikan akses informasi yang cepat, profil potensi desa yang transparan, serta wadah interaksi kebersamaan warga yang guyub dan andal.
               </p>
             </div>
 
             <!-- Quote Box -->
             <div class="relative bg-emerald-50/70 border-l-4 border-[#0D6847] p-6 rounded-r-2xl">
               <span class="absolute top-2 left-2 text-6xl text-emerald-200/50 font-serif leading-none select-none pointer-events-none">“</span>
-              <p class="text-sm italic font-semibold text-gray-700 leading-relaxed pl-6 relative z-10">
-                Kita harus berjalan bersama, mengawinkan tradisi leluhur dengan pemanfaatan teknologi digital untuk kesejahteraan dan kemandirian warga Ngemplak Kalangan.
+              <p class="text-sm italic font-semibold text-gray-700 leading-relaxed pl-6 relative z-10 whitespace-pre-line">
+                {{ store.padukuhanProfile?.sambutan_dukuh || 'Kita harus berjalan bersama, mengawinkan tradisi leluhur dengan pemanfaatan teknologi digital untuk kesejahteraan dan kemandirian warga Ngemplak Kalangan.' }}
               </p>
             </div>
           </div>
@@ -100,7 +98,6 @@
           <AwardIcon class="w-6 h-6 animate-pulse" />
         </div>
         <h2 class="text-2xl md:text-3xl font-extrabold text-gray-950 mb-3">Cita-Cita Padukuhan</h2>
-        <p class="text-xs text-gray-500 uppercase tracking-widest font-bold mb-8">Visi Utama Kami</p>
 
         <!-- Vision Card Box -->
         <div class="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
@@ -111,8 +108,8 @@
             <span class="inline-block text-[10px] font-extrabold text-[#0D6847] bg-[#0D6847]/10 px-4 py-1.5 rounded-full uppercase tracking-wider mb-5">
               Cita-Cita Padukuhan
             </span>
-            <p class="text-lg md:text-2xl font-bold text-gray-800 leading-relaxed max-w-2xl">
-              "Mewujudkan Padukuhan yang mandiri, aman, dan berbudaya dengan pelayanan prima berbasis teknologi untuk kesejahteraan masyarakat."
+            <p class="text-lg md:text-2xl font-bold text-gray-800 leading-relaxed max-w-2xl whitespace-pre-line text-center">
+              "{{ store.padukuhanProfile?.cita_cita || 'Mewujudkan Padukuhan yang mandiri, aman, dan berbudaya dengan pelayanan prima berbasis teknologi untuk kesejahteraan masyarakat.' }}"
             </p>
           </div>
         </div>
@@ -190,23 +187,14 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-150 text-gray-700 font-medium">
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4.5 px-6 font-bold text-gray-900">RT 01</td>
-                  <td class="py-4.5 px-6 text-right">200 Jiwa</td>
-                  <td class="py-4.5 px-6 text-right">210 Jiwa</td>
-                  <td class="py-4.5 px-6 text-right font-bold text-emerald-600">410 Jiwa</td>
+                <tr v-for="item in store.kependudukanDusun" :key="item.id" class="hover:bg-gray-50/50 transition-colors">
+                  <td class="py-4.5 px-6 font-bold text-gray-900">{{ item.nama_rt }} <span v-if="item.nama_dusun" class="text-xs font-normal text-gray-500 block sm:inline">({{ item.nama_dusun }})</span></td>
+                  <td class="py-4.5 px-6 text-right">{{ item.laki_laki }} Jiwa</td>
+                  <td class="py-4.5 px-6 text-right">{{ item.perempuan }} Jiwa</td>
+                  <td class="py-4.5 px-6 text-right font-bold text-emerald-600">{{ item.total }} Jiwa</td>
                 </tr>
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4.5 px-6 font-bold text-gray-900">RT 02</td>
-                  <td class="py-4.5 px-6 text-right">195 Jiwa</td>
-                  <td class="py-4.5 px-6 text-right">205 Jiwa</td>
-                  <td class="py-4.5 px-6 text-right font-bold text-emerald-600">400 Jiwa</td>
-                </tr>
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4.5 px-6 font-bold text-gray-900">RT 03</td>
-                  <td class="py-4.5 px-6 text-right">180 Jiwa</td>
-                  <td class="py-4.5 px-6 text-right">190 Jiwa</td>
-                  <td class="py-4.5 px-6 text-right font-bold text-emerald-600">370 Jiwa</td>
+                <tr v-if="store.kependudukanDusun.length === 0">
+                  <td colspan="4" class="py-6 text-center text-gray-400 text-xs">Belum ada data kependudukan.</td>
                 </tr>
               </tbody>
             </table>
@@ -220,8 +208,8 @@
 
           <div class="relative bg-emerald-50/70 border-l-4 border-[#0D6847] p-6 rounded-r-2xl w-full md:w-auto">
             <span class="absolute top-2 left-2 text-6xl text-emerald-200/50 font-serif leading-none select-none pointer-events-none">“</span>
-            <p class="text-sm italic font-semibold text-gray-700 leading-relaxed pl-6 relative z-10 max-w-sm">
-              Kita harus berjalan bersama, mengawinkan tradisi leluhur dengan pemanfaatan teknologi digital untuk kesejahteraan dan kemandirian warga Ngemplak Kalangan.
+            <p class="text-sm italic font-semibold text-gray-700 leading-relaxed pl-6 relative z-10 max-w-sm whitespace-pre-line">
+              {{ store.padukuhanProfile?.sambutan_dukuh || 'Kita harus berjalan bersama, mengawinkan tradisi leluhur dengan pemanfaatan teknologi digital untuk kesejahteraan dan kemandirian warga Ngemplak Kalangan.' }}
             </p>
           </div>
         </div>
@@ -284,22 +272,51 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch mb-12">
           
-          <div v-for="potensi in store.facilities" :key="potensi.id" class="bg-[#F0FAF5] border border-[#E0F2E9] rounded-2xl p-8 flex flex-col justify-between group hover:shadow-md transition-shadow">
-            <div>
-              <div class="w-12 h-12 rounded-xl bg-emerald-500 text-white flex items-center justify-center mb-6 shadow-md shadow-emerald-500/10 group-hover:scale-105 transition-transform">
-                <LeafIcon v-if="potensi.kategori === 'potensi_desa'" class="w-6 h-6" />
-                <MapPinIcon v-else class="w-6 h-6" />
+          <div v-for="potensi in store.facilities" :key="potensi.id" class="bg-white border border-gray-150 rounded-2xl overflow-hidden flex flex-col group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <!-- Image Section -->
+            <div class="relative h-48 overflow-hidden bg-gray-100">
+              <img 
+                :src="potensi.foto_url || '/images/hero-bg.png'" 
+                :alt="potensi.nama" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                @error="handleImageError($event, 'hero-bg')"
+              />
+              <div class="absolute top-3 left-3 flex items-center gap-2">
+                <span class="px-2.5 py-1 bg-white/90 backdrop-blur-sm text-[#0D6847] text-[10px] font-extrabold uppercase tracking-wider rounded-lg shadow-sm">
+                  {{ potensi.kategori === 'wisata' ? 'Fasilitas / Wisata' : 'Potensi Desa' }}
+                </span>
               </div>
-              <h3 class="text-xl font-extrabold text-gray-900 leading-snug">{{ potensi.nama }}</h3>
-              <p class="text-xs text-gray-500 leading-relaxed mt-3">
+            </div>
+            
+            <!-- Content Section -->
+            <div class="p-6 flex flex-col flex-1">
+              <h3 class="text-xl font-extrabold text-gray-950 leading-snug mb-2">{{ potensi.nama }}</h3>
+              <p class="text-sm text-gray-600 leading-relaxed flex-1 mb-4 line-clamp-3">
                 {{ potensi.deskripsi }}
               </p>
-            </div>
-            <div class="mt-8 pt-4 border-t border-[#E0F2E9] flex items-center justify-between text-xs font-bold text-[#0D6847]">
-              <span>{{ potensi.kategori === 'wisata' ? 'Fasilitas Umum / Wisata' : 'Potensi Desa' }}</span>
-              <span v-if="potensi.lokasi">{{ potensi.lokasi }}</span>
+              
+              <!-- Action Button / Link -->
+              <div class="mt-auto pt-4 border-t border-gray-100">
+                <a 
+                  v-if="potensi.lokasi && potensi.lokasi !== '-'" 
+                  :href="potensi.lokasi" 
+                  target="_blank" 
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-[#0D6847] text-[#0D6847] hover:text-white text-xs font-bold rounded-xl transition-colors w-fit"
+                >
+                  <MapPinIcon class="w-4 h-4" />
+                  <span>Lihat di Google Maps</span>
+                </a>
+                <!-- Preview Embed -->
+                <div class="rounded-xl overflow-hidden border border-gray-200 h-40">
+                  <iframe
+                    :src="getMapsEmbedUrl(potensi.lokasi)"
+                    width="100%" height="160" style="border:0" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade" allowfullscreen>
+                  </iframe>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -373,6 +390,24 @@ const scrollToSection = (id) => {
   if (element) {
     element.scrollIntoView({ behavior: 'smooth' });
   }
+};
+
+// Konversi berbagai format link Maps menjadi URL embed
+const getMapsEmbedUrl = (url) => {
+  if (!url) return '';
+  // Jika sudah iframe embed, pakai langsung
+  if (url.includes('google.com/maps/embed')) return url;
+  // Format share Google Maps: extract koordinat jika ada
+  const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (coordMatch) {
+    return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&output=embed`;
+  }
+  // Fallback: cari pola place
+  if (url.includes('goo.gl') || url.includes('maps.app')) {
+    return `https://maps.google.com/maps?q=${encodeURIComponent(url)}&output=embed`;
+  }
+  // Default: pakai url apa adanya sebagai q
+  return `https://maps.google.com/maps?q=${encodeURIComponent(url)}&output=embed`;
 };
 </script>
 

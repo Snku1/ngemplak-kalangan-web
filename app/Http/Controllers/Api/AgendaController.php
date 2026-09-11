@@ -19,7 +19,12 @@ class AgendaController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'nama_kegiatan' => 'required|max:150', 'tanggal_kegiatan' => 'required|date', 'waktu' => 'required|max:50', 'lokasi' => 'required|max:150', 'status' => 'nullable|in:mendatang,selesai'
+            'nama_kegiatan' => 'required|max:150',
+            'tanggal_kegiatan' => 'required|date',
+            'waktu' => 'required|max:50',
+            'lokasi' => 'required|max:150',
+            'deskripsi' => 'nullable|string',
+            'status' => 'nullable|in:mendatang,selesai'
         ]);
    
         if($validator->fails()){

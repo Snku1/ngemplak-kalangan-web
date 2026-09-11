@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\PotensiDanWisataController;
 use App\Http\Controllers\Api\PesanBantuanController;
 use App\Http\Controllers\Api\DokumenPublikController;
 use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\KependudukanDusunController;
+use App\Http\Controllers\Api\FileUploadController;
 
 // Auth Routes
 Route::post('login', [AuthController::class, 'login']);
@@ -79,6 +81,10 @@ Route::get('faq/{id}', [FaqController::class, 'show']);
 
 // Pesan Bantuan (Publik HANYA bisa mengirim POST)
 Route::post('pesan-bantuan', [PesanBantuanController::class, 'store']);
+
+// Kependudukan Dusun (Publik GET)
+Route::get('kependudukan-dusun', [KependudukanDusunController::class, 'index']);
+Route::get('kependudukan-dusun/{id}', [KependudukanDusunController::class, 'show']);
 
 
 // ==========================================
@@ -154,4 +160,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('pesan-bantuan', [PesanBantuanController::class, 'index']);
     Route::get('pesan-bantuan/{id}', [PesanBantuanController::class, 'show']);
     Route::delete('pesan-bantuan/{id}', [PesanBantuanController::class, 'destroy']);
+
+    // Kependudukan Dusun
+    Route::post('kependudukan-dusun', [KependudukanDusunController::class, 'store']);
+    Route::put('kependudukan-dusun/{id}', [KependudukanDusunController::class, 'update']);
+    Route::delete('kependudukan-dusun/{id}', [KependudukanDusunController::class, 'destroy']);
+
+    // File Upload
+    Route::post('upload', [FileUploadController::class, 'upload']);
 });

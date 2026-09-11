@@ -504,30 +504,6 @@
             </div>
           </div>
 
-          <!-- BUTUH SURAT KETERANGAN? WIDGET -->
-          <div class="bg-gradient-to-br from-[#F0FAF5] to-white rounded-2xl p-6.5 border border-[#E0F2E9] shadow-sm relative overflow-hidden group">
-            <div class="absolute right-0 bottom-0 w-24 h-24 bg-[#0D6847]/5 rounded-tl-full shrink-0"></div>
-            <div class="space-y-4 relative z-10">
-              <div class="w-10 h-10 rounded-xl bg-white border border-[#E0F2E9] text-[#0D6847] flex items-center justify-center shadow-xs">
-                <FileTextIcon class="w-5.5 h-5.5" />
-              </div>
-              <div class="space-y-1.5">
-                <h3 class="font-extrabold text-gray-900 text-base">Butuh Surat Keterangan?</h3>
-                <p class="text-xs text-gray-500 leading-relaxed font-semibold">
-                  Ajukan berbagai jenis surat administrasi secara online tanpa harus antre di kantor desa.
-                </p>
-              </div>
-              
-              <button 
-                @click="showLetterServiceInfo"
-                class="w-full flex items-center justify-center gap-2 py-3 bg-white hover:bg-gray-50 text-xs font-bold text-[#0D6847] border border-[#E0F2E9] rounded-xl transition-all shadow-xs active:scale-97 cursor-pointer"
-              >
-                <span>Ajukan Sekarang</span>
-                <ArrowRightIcon class="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
         </div>
 
       </div>
@@ -581,25 +557,7 @@
             </h3>
             
             <div class="text-sm text-gray-600 leading-relaxed space-y-4 font-semibold">
-              <p>{{ selectedNews.content }}</p>
-              <p v-if="selectedNews.id === 1">
-                Musyawarah ini dihadiri oleh jajaran perangkat desa, BPD, tokoh adat, serta perwakilan karang taruna dan ibu-ibu PKK. Fokus pembahasan meliputi pembenahan infrastruktur jalan irigasi, peningkatan fasilitas posyandu, serta pemberian dana stimulan bagi pelaku UMKM lokal guna mempercepat kemandirian ekonomi pascapandemi. Keputusan ini akan diajukan ke APBDes tahun anggaran mendatang.
-              </p>
-              <p v-if="selectedNews.id === 2">
-                Pengerjaan aspal jalan sepanjang 1.2 kilometer ini didanai melalui program dana desa tahun 2026. Pemerintah desa mengapresiasi gotong royong warga dalam membantu kelancaran proyek ini. Kini, kendaraan roda empat pembawa hasil bumi dapat melintas dengan lancar, menghemat biaya transportasi tani hingga 30%.
-              </p>
-              <p v-if="selectedNews.id === 3">
-                Para pengrajin anyaman bambu dibekali pelatihan teknik anyaman kontemporer agar menghasilkan produk bernilai seni tinggi seperti tas jinjing, hiasan dinding, dan wadah saji modern. Selain itu, pendampingan pemasaran digital di marketplace nasional juga diberikan untuk mendongkrak omzet penjualan produk khas Ngemplak Kalangan.
-              </p>
-              <p v-if="selectedNews.id === 4">
-                Program ini dilaksanakan untuk menjangkau keluarga muda dan lansia agar mendapatkan nutrisi berimbang dan deteksi penyakit degeneratif lebih cepat. Pembagian Paket PMT diprioritaskan untuk pemenuhan gizi telur, susu, dan kacang-kacangan.
-              </p>
-              <p v-if="selectedNews.id === 5">
-                Penerapan pupuk kandang hasil fermentasi mandiri peternak padukuhan berhasil meningkatkan kesuburan tanah sawah tanpa merusak ekosistem air tanah. Pada musim berikutnya, kelompok tani merencanakan perluasan area tanam padi organik sebesar 5 hektar lagi.
-              </p>
-              <p v-if="selectedNews.id === 6">
-                Macapatan diselenggarakan secara berskala untuk memancing kepedulian remaja terhadap pelestarian tradisi leluhur. Selain Macapat, disajikan pula pelatihan gamelan karawitan dasar bagi anak-anak usia SD.
-              </p>
+              <p class="whitespace-pre-line">{{ selectedNews.content }}</p>
             </div>
             
             <div class="pt-6 border-t border-gray-150 flex justify-end">
@@ -713,25 +671,14 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import { 
-  Search as SearchIcon, 
-  Sliders as SlidersIcon,
-  FileText as FileTextIcon,
-  Calendar as CalendarIcon,
-  Bell as BellIcon,
-  Clock as ClockIcon,
-  MapPin as MapPinIcon,
-  Heart as HeartIcon,
-  ArrowRight as ArrowRightIcon,
-  ArrowLeft as ArrowLeftIcon,
-  X as XIcon,
-  User as UserIcon,
-  CheckCircle as CheckCircleIcon,
-  AlertCircle as AlertCircleIcon
+  Search as SearchIcon, Sliders as SlidersIcon, FileText as FileTextIcon,
+  Calendar as CalendarIcon, Bell as BellIcon, Clock as ClockIcon,
+  MapPin as MapPinIcon, Heart as HeartIcon, ArrowRight as ArrowRightIcon,
+  ArrowLeft as ArrowLeftIcon, X as XIcon, User as UserIcon,
+  CheckCircle as CheckCircleIcon, AlertCircle as AlertCircleIcon
 } from 'lucide-vue-next';
+import { store } from '../store';
 
-// ----------------------------------------------------
-// STATE DEFINITIONS
-// ----------------------------------------------------
 const searchQuery = ref('');
 const activeTab = ref('semua');
 const selectedCategory = ref('');
@@ -740,16 +687,11 @@ const isSubscribed = ref(false);
 const subscribeError = ref(false);
 const toastMessage = ref('');
 const showCategoryDropdown = ref(false);
-
-// Details Modals State
 const selectedNews = ref(null);
 const activeModalDetail = ref(null);
-
-// Pagination State
 const currentPageNum = ref(1);
 const itemsPerPage = 3;
 
-// Static Data lists
 const filterTabs = [
   { label: 'Semua', value: 'semua' },
   { label: 'Berita', value: 'berita' },
@@ -757,342 +699,102 @@ const filterTabs = [
   { label: 'Pengumuman', value: 'pengumuman' }
 ];
 
-const popularCategories = [
-  'Infrastruktur',
-  'Kesehatan',
-  'Bantuan Sosial',
-  'Event Desa',
-  'UMKM',
-  'Pendidikan',
-  'Pertanian',
-  'Wisata'
-];
+// --- DATA DARI STORE ---
+const newsData = computed(() => store.news);
+const announcements = computed(() => store.pengumuman);
+const events = computed(() => store.agenda);
 
-const newsData = [
-  {
-    id: 1,
-    category: 'Pembangunan',
-    image: '/images/musyawarah-desa.png',
-    date: '24 MEI 2024',
-    author: 'ADMIN DESA',
-    title: 'Musyawarah Perencanaan Pembangunan Desa',
-    excerpt: 'Warga berkumpul untuk merumuskan prioritas pembangunan infrastruktur dan pemberdayaan ekonomi untuk tahun...',
-    content: 'Pemerintah Padukuhan Ngemplak Kalangan menyelenggarakan Musyawarah Perencanaan Pembangunan Desa (Musrenbangdes) di balai desa. Musyawarah ini bertujuan untuk menghimpun masukan dan usulan dari warga tingkat RT/RW terkait rencana pembangunan fisik maupun non-fisik untuk periode tahun anggaran 2026/2027.'
-  },
-  {
-    id: 2,
-    category: 'Pembangunan',
-    image: '/images/jalan-dusun.png',
-    date: '20 MEI 2024',
-    author: 'SEKRETARIS DESA',
-    title: 'Perbaikan Jalan Lingkungan Dusun II Selesai Tepat Waktu',
-    excerpt: 'Akses jalan menuju area persawahan kini sudah lebih baik guna mendukung kelancaran distribusi hasil tani warga.',
-    content: 'Proyek rehabilitasi dan pengaspalan jalan lingkungan di wilayah Dusun II Padukuhan Ngemplak Kalangan telah rampung 100% tepat waktu. Perbaikan akses transportasi ini diharapkan mempermudah mobilitas harian warga serta memperlancar jalur distribusi hasil pertanian setempat.'
-  },
-  {
-    id: 3,
-    category: 'UMKM',
-    image: '/images/anyaman-bambu.png',
-    date: '15 MEI 2024',
-    author: 'KAUR EKONOMI',
-    title: 'Program Pemberdayaan UMKM: Pelatihan Anyaman Bambu',
-    excerpt: 'Meningkatkan nilai jual produk lokal melalui teknik anyaman modern dan strategi pemasaran digital bagi pengrajin desa.',
-    content: 'Kelompok usaha mikro Padukuhan menyelenggarakan pelatihan anyaman bambu inovatif bagi ibu-ibu rumah tangga dan pemuda. Mengundang instruktur ahli dari Yogyakarta, pelatihan ini memfokuskan pada desain kemasan produk anyaman modern yang memiliki nilai jual ekspor serta optimalisasi promosi digital.'
-  },
-  {
-    id: 4,
-    category: 'Kesehatan',
-    image: '/images/lomba-polowidi.png',
-    date: '10 MEI 2024',
-    author: 'BIDAN DESA',
-    title: 'Posyandu Serentak dan Pembagian PMT Balita',
-    excerpt: 'Pemeriksaan kesehatan rutin balita untuk memantau tumbuh kembang anak serta pembagian paket Makanan Pendamping ASI.',
-    content: 'Kegiatan rutin Pos Pelayanan Terpadu (Posyandu) dilaksanakan serentak di dua dusun, Ngemplak dan Kalangan. Selain timbang berat badan dan imunisasi rutin, kader posyandu juga membagikan Paket Makanan Tambahan (PMT) kaya protein hewani untuk mencegah stunting sejak dini.'
-  },
-  {
-    id: 5,
-    category: 'Pertanian',
-    image: '/images/tirakatan.png',
-    date: '05 MEI 2024',
-    author: 'KETUA KELOMPOK TANI',
-    title: 'Sukses Panen Raya Padi Organik Kelompok Tani',
-    excerpt: 'Petani Ngemplak Kalangan berhasil meningkatkan hasil panen sebesar 20% dengan beralih ke pupuk organik ramah lingkungan.',
-    content: 'Kelompok Tani Makmur Padukuhan Ngemplak Kalangan merayakan panen raya padi varietas unggulan yang dibudidayakan secara organik penuh. Hasil panen kali ini mengalami kenaikan signifikan berkat pendampingan dinas pertanian Sleman dalam pemanfaatan pupuk kompos lokal buatan warga.'
-  },
-  {
-    id: 6,
-    category: 'Wisata',
-    image: '/images/lomba-kalangan.png',
-    date: '01 MEI 2024',
-    author: 'PENGELOLA DESA WISATA',
-    title: 'Gelar Macapat & Pentas Seni Tradisional Dusun Kalangan',
-    excerpt: 'Melestarikan sastra Jawa kuno melalui seni melantunkan tembang macapat yang diikuti pemuda dan sesepuh dusun.',
-    content: 'Warga dusun Kalangan menyelenggarakan malam kebudayaan Macapatan bertajuk "Rumeksa Budaya". Acara ini bertujuan mengenalkan sastra dan tembang klasik Jawa kepada generasi muda agar nilai-nilai budi pekerti luhur warisan leluhur tidak punah tergerus arus modernisasi.'
-  }
-];
+const popularCategories = computed(() => {
+  const cats = store.categoriesByTipe('berita').map(c => c.nama);
+  return cats.length ? cats : ['Infrastruktur', 'Kesehatan', 'Pendidikan', 'UMKM'];
+});
 
-const announcements = [
-  {
-    id: 1,
-    title: 'Pembaruan Data Kartu Keluarga (KK)',
-    date: '25 MEI 2024',
-    description: 'Diharapkan seluruh Ketua RT untuk mengumpulkan fotokopi KK terbaru guna sinkronisasi data bantuan sosial pemerintah.',
-    isImportant: true
-  },
-  {
-    id: 2,
-    title: 'Himbauan Waspada Perubahan Cuaca Ekstrem',
-    date: '22 MEI 2024',
-    description: 'Warga diminta waspada terhadap potensi hujan deras disertai angin kencang. Pastikan saluran air di sekitar rumah bersih.',
-    isImportant: false
-  }
-];
-
-const events = [
-  {
-    id: 1,
-    month: 'Jun',
-    day: '15',
-    title: 'Festival Budaya dan Panen Raya',
-    time: '08:00 - 17:00 WIB',
-    location: 'Lapangan Utama Desa',
-    status: 'Mendatang',
-    details: 'Festival kebudayaan tahunan yang menyajikan kirab gunungan hasil bumi, pertunjukan seni tari tradisional, pasar kuliner lokal, serta upacara adat sebagai ungkapan syukur atas panen raya padi di Padukuhan.'
-  },
-  {
-    id: 2,
-    month: 'Jun',
-    day: '10',
-    title: 'Posyandu Balita dan Lansia Serentak',
-    time: '08:00 - 12:00 WIB',
-    location: 'Aula Kantor Desa',
-    status: 'Mendatang',
-    details: 'Pemeriksaan kesehatan rutin untuk balita meliputi timbang berat badan, imunisasi, pemberian PMT, serta cek tekanan darah dan konsultasi gizi gratis untuk warga usia lanjut.'
-  },
-  {
-    id: 3,
-    month: 'Jun',
-    day: '02',
-    title: 'Kerja Bakti Massal (Gotong Royong)',
-    time: '07:30 - Selesai',
-    location: 'Seluruh Lingkungan Dusun',
-    status: 'Mendatang',
-    details: 'Gerakan kebersihan lingkungan secara serempak guna membersihkan saluran air, memotong dahan pohon yang membahayakan jalan raya, serta merapikan taman-taman di sudut padukuhan.'
-  }
-];
-
-import { store } from '../store';
-
-// ----------------------------------------------------
-// COMPUTED FILTER LOGIC
-// ----------------------------------------------------
 const filteredNews = computed(() => {
-  let result = store.news.map(item => ({
-    ...item,
-    author: item.author || 'ADMIN DESA'
-  }));
-
-  // Search query filter
-  if (searchQuery.value.trim() !== '') {
+  let result = [...newsData.value];
+  if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(item => 
-      item.title.toLowerCase().includes(q) || 
-      (item.excerpt || '').toLowerCase().includes(q) || 
+    result = result.filter(item =>
+      item.title.toLowerCase().includes(q) ||
+      (item.excerpt || '').toLowerCase().includes(q) ||
       (item.content || '').toLowerCase().includes(q)
     );
   }
-
-  // Category filter
-  if (selectedCategory.value !== '') {
-    const activeCat = selectedCategory.value.toLowerCase();
-    result = result.filter(item => item.category.toLowerCase().includes(activeCat) || activeCat.includes(item.category.toLowerCase()));
+  if (selectedCategory.value) {
+    result = result.filter(item => item.category === selectedCategory.value);
   }
-
   return result;
 });
 
 const filteredAnnouncements = computed(() => {
-  let result = [...announcements];
-
-  if (searchQuery.value.trim() !== '') {
+  let result = [...announcements.value];
+  if (searchQuery.value.trim()) {
     const q = searchQuery.value.toLowerCase();
-    result = result.filter(item => 
-      item.title.toLowerCase().includes(q) || 
+    result = result.filter(item =>
+      item.title.toLowerCase().includes(q) ||
       item.description.toLowerCase().includes(q)
     );
   }
-
   return result;
 });
 
-// Dynamic pagination logic
 const totalFilteredCount = computed(() => {
   if (activeTab.value === 'berita') return filteredNews.value.length;
   if (activeTab.value === 'pengumuman') return filteredAnnouncements.value.length;
-  if (activeTab.value === 'agenda') return events.length;
-  // 'semua' counts news items primarily for main list pagination
+  if (activeTab.value === 'agenda') return events.value.length;
   return filteredNews.value.length;
 });
 
-const totalPages = computed(() => {
-  return Math.ceil(totalFilteredCount.value / itemsPerPage);
-});
+const totalPages = computed(() => Math.ceil(totalFilteredCount.value / itemsPerPage));
 
 const paginatedNews = computed(() => {
   const start = (currentPageNum.value - 1) * itemsPerPage;
-  const end = start + itemsPerPage;
-  return filteredNews.value.slice(start, end);
+  return filteredNews.value.slice(start, start + itemsPerPage);
 });
 
-// Item range display logic
-const pageStartItem = computed(() => {
-  if (totalFilteredCount.value === 0) return 0;
-  return (currentPageNum.value - 1) * itemsPerPage + 1;
-});
+const pageStartItem = computed(() => totalFilteredCount.value === 0 ? 0 : (currentPageNum.value - 1) * itemsPerPage + 1);
+const pageEndItem = computed(() => Math.min(currentPageNum.value * itemsPerPage, totalFilteredCount.value));
 
-const pageEndItem = computed(() => {
-  return Math.min(currentPageNum.value * itemsPerPage, totalFilteredCount.value);
-});
+watch([activeTab, selectedCategory, searchQuery], () => { currentPageNum.value = 1; });
 
-// Tab changes resets pagination page
-watch([activeTab, selectedCategory, searchQuery], () => {
-  currentPageNum.value = 1;
-});
-
-// ----------------------------------------------------
-// METHODS & HANDLERS
-// ----------------------------------------------------
-const handleSearch = () => {
-  showToast(`Pencarian untuk "${searchQuery.value}" diterapkan.`);
-};
-
-const clearSearch = () => {
-  searchQuery.value = '';
-  showToast('Pencarian dibersihkan.');
-};
-
-const toggleCategoryDropdown = () => {
-  showCategoryDropdown.value = !showCategoryDropdown.value;
-};
+// Methods
+const handleSearch = () => showToast(`Pencarian "${searchQuery.value}" diterapkan.`);
+const clearSearch = () => { searchQuery.value = ''; };
+const toggleCategoryDropdown = () => { showCategoryDropdown.value = !showCategoryDropdown.value; };
 
 const filterByCategory = (category) => {
-  if (selectedCategory.value === category) {
-    selectedCategory.value = ''; // Toggle off
-    showToast(`Filter kategori dibatalkan.`);
-  } else {
-    selectedCategory.value = category;
-    if (activeTab.value !== 'berita' && activeTab.value !== 'semua') {
-      activeTab.value = 'berita'; // switch to news tab to see filtered cards
-    }
-    showToast(`Menampilkan kategori: ${category}`);
-  }
+  selectedCategory.value = selectedCategory.value === category ? '' : category;
+  if (activeTab.value !== 'berita' && activeTab.value !== 'semua') activeTab.value = 'berita';
 };
-
-const clearCategoryFilter = () => {
-  selectedCategory.value = '';
-  showToast('Filter kategori dihapus.');
-};
-
-const setTab = (tabValue) => {
-  activeTab.value = tabValue;
-  selectedCategory.value = '';
-};
-
-const resetFilters = () => {
-  searchQuery.value = '';
-  selectedCategory.value = '';
-  activeTab.value = 'semua';
-  showCategoryDropdown.value = false;
-  showToast('Menampilkan semua informasi.');
-};
+const clearCategoryFilter = () => { selectedCategory.value = ''; };
+const setTab = (tabValue) => { activeTab.value = tabValue; selectedCategory.value = ''; };
+const resetFilters = () => { searchQuery.value = ''; selectedCategory.value = ''; activeTab.value = 'semua'; };
 
 const handleSubscribe = () => {
   const input = subscribeInput.value.trim();
-  if (input === '') {
-    alert('Masukkan email atau nomor WA terlebih dahulu!');
-    return;
-  }
-  
-  // Validation regex
+  if (!input) return;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const waRegex = /^[0-9+]{8,15}$/;
-  
-  if (!emailRegex.test(input) && !waRegex.test(input)) {
-    subscribeError.value = true;
-    return;
-  }
-  
+  if (!emailRegex.test(input) && !waRegex.test(input)) { subscribeError.value = true; return; }
   subscribeError.value = false;
   isSubscribed.value = true;
-  showToast('Terima kasih! Langganan info berhasil didaftarkan.');
+  showToast('Berlangganan berhasil!');
 };
+const resetSubscribe = () => { isSubscribed.value = false; subscribeInput.value = ''; };
 
-const resetSubscribe = () => {
-  isSubscribed.value = false;
-  subscribeInput.value = '';
-  subscribeError.value = false;
-};
+const showToast = (msg) => { toastMessage.value = msg; setTimeout(() => toastMessage.value = '', 3000); };
+const openNewsDetail = (news) => { selectedNews.value = news; };
+const closeNewsDetail = () => { selectedNews.value = null; };
+const openAnnDetail = (ann) => { activeModalDetail.value = { ...ann, type: 'pengumuman' }; };
+const openEventDetail = (event) => { activeModalDetail.value = { ...event, type: 'agenda' }; };
+const closeActiveModal = () => { activeModalDetail.value = null; };
+const setPage = (n) => { currentPageNum.value = n; window.scrollTo({ top: 380, behavior: 'smooth' }); };
+const prevPage = () => { if (currentPageNum.value > 1) setPage(currentPageNum.value - 1); };
+const nextPage = () => { if (currentPageNum.value < totalPages.value) setPage(currentPageNum.value + 1); };
 
-const showToast = (msg) => {
-  toastMessage.value = msg;
-  setTimeout(() => {
-    toastMessage.value = '';
-  }, 3000);
-};
-
-// Modal helpers
-const openNewsDetail = (news) => {
-  selectedNews.value = news;
-};
-
-const closeNewsDetail = () => {
-  selectedNews.value = null;
-};
-
-const openAnnDetail = (ann) => {
-  activeModalDetail.value = {
-    ...ann,
-    type: 'pengumuman'
-  };
-};
-
-const openEventDetail = (event) => {
-  activeModalDetail.value = {
-    ...event,
-    type: 'agenda'
-  };
-};
-
-const closeActiveModal = () => {
-  activeModalDetail.value = null;
-};
-
-// Pagination controls
-const setPage = (pageNum) => {
-  currentPageNum.value = pageNum;
-  window.scrollTo({ top: 380, behavior: 'smooth' });
-  showToast(`Halaman ${pageNum} dimuat.`);
-};
-
-const prevPage = () => {
-  if (currentPageNum.value > 1) {
-    setPage(currentPageNum.value - 1);
-  }
-};
-
-const nextPage = () => {
-  if (currentPageNum.value < totalPages.value) {
-    setPage(currentPageNum.value + 1);
-  }
-};
-
-// Fallback images
 const handleImageError = (event, type) => {
-  if (type === 'hero-bg') {
-    event.target.src = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80';
-  } else {
-    event.target.src = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';
-  }
+  event.target.src = type === 'hero-bg'
+    ? 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80'
+    : 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';
 };
 </script>
 

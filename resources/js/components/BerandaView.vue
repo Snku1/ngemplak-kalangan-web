@@ -71,7 +71,7 @@
           <div class="flex items-start justify-between mb-4">
             <div>
               <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Potensi UMKM</p>
-              <h3 class="text-3xl font-extrabold text-gray-900 mt-1">50+ Unit</h3>
+              <h3 class="text-3xl font-extrabold text-gray-900 mt-1">{{ store.products.length }}+ Produk</h3>
             </div>
             <div class="p-3.5 rounded-xl bg-emerald-50 text-[#0D6847] group-hover:scale-110 transition-transform duration-300">
               <ShoppingBagIcon class="w-6 h-6" />
@@ -278,18 +278,18 @@
             <div class="flex flex-col items-center text-center">
               <div class="w-full max-w-[200px] aspect-[4/5] rounded-2xl overflow-hidden mb-4 bg-gray-100 border border-gray-200 shadow-xs group">
                 <img 
-                  src="/images/kepala-desa.png" 
-                  alt="Bapak Supriyanto" 
+                  :src="store.padukuhanProfile?.foto_dukuh || '/images/kepala-desa.png'" 
+                  :alt="store.padukuhanProfile?.nama_dukuh || 'Bapak Supriyanto'" 
                   class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   @error="handleImageError($event, 'kepala-desa')"
                 />
               </div>
-              <h4 class="font-extrabold text-gray-950 text-base leading-tight">Bapak Supriyanto</h4>
-              <p class="text-[10px] font-bold text-[#0D6847] uppercase tracking-widest mt-1">Kepala Dukuh Ngemplak Kalangan</p>
+              <h4 class="font-extrabold text-gray-950 text-base leading-tight">{{ store.padukuhanProfile?.nama_dukuh || 'Bapak Supriyanto' }}</h4>
+              <p class="text-[10px] font-bold text-[#0D6847] uppercase tracking-widest mt-1">Kepala Dukuh {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }}</p>
               
               <div class="bg-gray-50 rounded-2xl p-4 mt-4 border border-gray-100 text-left w-full">
-                <p class="text-xs italic text-gray-600 leading-relaxed">
-                  “Kesejahteraan dan kemajuan padukuhan terwujud saat seluruh warga bergandengan tangan, rukun, dan saling menjaga.”
+                <p class="text-xs italic text-gray-600 leading-relaxed whitespace-pre-line">
+                  “{{ store.padukuhanProfile?.sambutan_dukuh || 'Kesejahteraan dan kemajuan padukuhan terwujud saat seluruh warga bergandengan tangan, rukun, dan saling menjaga.' }}”
                 </p>
               </div>
             </div>
@@ -311,28 +311,24 @@
             </div>
             
             <div class="grid grid-cols-2 gap-3">
-              <div class="aspect-square rounded-2xl overflow-hidden bg-gray-100 relative group cursor-pointer border border-gray-100" @click="$emit('navigate', 'galeri')">
+              <div 
+                v-for="img in store.gallery.slice(0, 2)" 
+                :key="img.id"
+                class="aspect-square rounded-2xl overflow-hidden bg-gray-100 relative group cursor-pointer border border-gray-100" 
+                @click="$emit('navigate', 'galeri')"
+              >
                 <img 
-                  src="/images/galeri-1.png" 
-                  alt="Kegiatan Warga" 
+                  :src="img.image" 
+                  :alt="img.title" 
                   class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   @error="handleImageError($event, 'galeri-1')"
                 />
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <SearchIcon class="w-5 h-5 text-white" />
+                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
+                  <SearchIcon class="w-5 h-5 text-white mb-1" />
+                  <span class="text-[8px] text-white font-bold uppercase tracking-wider px-2 text-center">{{ img.title }}</span>
                 </div>
               </div>
-              <div class="aspect-square rounded-2xl overflow-hidden bg-gray-100 relative group cursor-pointer border border-gray-100" @click="$emit('navigate', 'galeri')">
-                <img 
-                  src="/images/galeri-2.png" 
-                  alt="Keindahan Desa" 
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  @error="handleImageError($event, 'galeri-2')"
-                />
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <SearchIcon class="w-5 h-5 text-white" />
-                </div>
-              </div>
+              <div v-if="store.gallery.length === 0" class="col-span-2 text-center text-xs text-gray-400 py-4">Belum ada galeri.</div>
             </div>
           </div>
 
@@ -362,27 +358,27 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           <!-- Left: Product Card (Takes 5 cols on lg) -->
-          <div class="lg:col-span-5 bg-white rounded-2xl border border-gray-150 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden group">
+          <div v-if="store.products.length > 0" class="lg:col-span-5 bg-white rounded-2xl border border-gray-150 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden group">
             <div class="relative overflow-hidden aspect-[4/3] bg-gray-50 border-b border-gray-100">
               <img 
-                src="/images/anyaman-bambu.png" 
-                alt="Anyaman Bambu" 
+                :src="store.products[0].image" 
+                :alt="store.products[0].name" 
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 @error="handleImageError($event, 'anyaman-bambu')"
               />
             </div>
             <div class="p-6.5 flex-1 flex flex-col justify-between">
               <div>
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kategori Kerajinan Tangan</span>
-                <h3 class="text-lg font-bold text-gray-950 mt-1 leading-snug">Anyaman Bambu Premium</h3>
-                <p class="text-xs text-gray-500 leading-relaxed mt-2.5">
-                  Keranjang anyaman dari bambu pilihan yang dibuat dengan sentuhan modern, tahan lama, dan ramah lingkungan. Dikerjakan langsung oleh pengrajin ahli di Dusun Kalangan.
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ store.products[0].category }}</span>
+                <h3 class="text-lg font-bold text-gray-950 mt-1 leading-snug">{{ store.products[0].name }}</h3>
+                <p class="text-xs text-gray-500 leading-relaxed mt-2.5 line-clamp-3">
+                  {{ store.products[0].description || 'Produk unggulan dari UMKM Padukuhan Ngemplak Kalangan. Kualitas terjamin langsung dari warga kami.' }}
                 </p>
               </div>
               <div class="flex items-center justify-between mt-6.5 pt-4 border-t border-gray-100">
                 <div>
                   <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Harga</span>
-                  <span class="text-base font-extrabold text-[#0D6847]">Rp 75.000 <span class="text-xs font-normal text-gray-400">/ unit</span></span>
+                  <span class="text-base font-extrabold text-[#0D6847]">Rp {{ store.products[0].price.toLocaleString('id-ID') }} <span class="text-xs font-normal text-gray-400">/ unit</span></span>
                 </div>
                 <button 
                   @click="$emit('navigate', 'produk')"
@@ -393,6 +389,9 @@
                 </button>
               </div>
             </div>
+          </div>
+          <div v-else class="lg:col-span-5 bg-white rounded-2xl border border-gray-150 shadow-sm flex items-center justify-center p-8 text-center text-gray-400 text-sm">
+            Belum ada produk yang ditambahkan.
           </div>
 
           <!-- Right: Banner Promo UMKM (Takes 7 cols on lg) -->
@@ -421,9 +420,9 @@
                 Lihat Katalog UMKM
               </button>
               <div class="flex items-center gap-3">
-                <div class="text-3xl font-extrabold text-white">50+</div>
+                <div class="text-3xl font-extrabold text-white">{{ store.products.length }}+</div>
                 <div class="text-[10px] font-bold text-emerald-200 uppercase tracking-widest leading-tight">
-                  UMKM <br/> Terdaftar
+                  Produk <br/> Tersedia
                 </div>
               </div>
             </div>
