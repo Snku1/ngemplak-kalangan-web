@@ -10,27 +10,32 @@ class KependudukanDusunController extends BaseController
 {
     public function index()
     {
-        $data = KependudukanDusun::orderBy('nama_rt')->get()->map(function ($item) {
-            return [
-                'id'         => $item->id,
-                'nama_rt'    => $item->nama_rt,
-                'nama_dusun' => $item->nama_dusun,
-                'laki_laki'  => $item->laki_laki,
-                'perempuan'  => $item->perempuan,
-                'total'      => $item->laki_laki + $item->perempuan,
-                'jumlah_kk'  => $item->jumlah_kk,
-                'keterangan' => $item->keterangan,
-            ];
-        });
+        $data = KependudukanDusun::orderBy('urutan')
+            ->orderBy('nama_dusun')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id'          => $item->id,
+                    'nama_dusun'  => $item->nama_dusun,
+                    'urutan'      => $item->urutan,
+                    'laki_laki'   => $item->laki_laki,
+                    'perempuan'   => $item->perempuan,
+                    'total'       => $item->laki_laki + $item->perempuan,
+                    'jumlah_kk'   => $item->jumlah_kk,
+                    'keterangan'  => $item->keterangan,
+                ];
+            });
         return $this->sendResponse($data, 'Data retrieved successfully.');
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_rt'    => 'required|string|max:50',
+            'nama_dusun' => 'required|string|max:100',
+            'urutan'     => 'nullable|integer|min:0',
             'laki_laki'  => 'required|integer|min:0',
             'perempuan'  => 'required|integer|min:0',
+            'jumlah_kk'  => 'nullable|integer|min:0',
         ]);
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
@@ -48,6 +53,16 @@ class KependudukanDusunController extends BaseController
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nama_dusun' => 'required|string|max:100',
+            'urutan'     => 'nullable|integer|min:0',
+            'laki_laki'  => 'required|integer|min:0',
+            'perempuan'  => 'required|integer|min:0',
+            'jumlah_kk'  => 'nullable|integer|min:0',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
         $data = KependudukanDusun::find($id);
         if (!$data) return $this->sendError('Not found.');
         $data->update($request->all());

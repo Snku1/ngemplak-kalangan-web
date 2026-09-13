@@ -15,12 +15,9 @@
 
       <!-- Hero Content -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 text-center py-20">
-        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wider uppercase mb-6 text-emerald-200">
-          Profil Padukuhan
-        </span>
         <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-6">
-          Membangun Padukuhan, <br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Mensejahterakan Warga</span>
+          Profil Padukuhan <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Ngemplak Kalangan</span>
         </h2>
         <p class="text-sm md:text-base text-gray-200 max-w-2xl mx-auto leading-relaxed mb-8">
           Selamat datang di halaman resmi Padukuhan Ngemplak Kalangan. Kami berkomitmen memberikan transparansi informasi dan pelayanan prima bagi seluruh masyarakat.
@@ -68,7 +65,7 @@
             </div>
             
             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-950 leading-tight">
-              Warisan Budaya & Masa Depan Digital
+              Sejarah & Profil Padukuhan
             </h2>
             
             <div class="space-y-4 text-sm text-gray-600 leading-relaxed font-medium">
@@ -91,6 +88,78 @@
       </div>
     </section>
 
+    <!-- ============================================================ -->
+    <!-- INFORMASI GEOGRAFIS & ADMINISTRATIF                          -->
+    <!-- ============================================================ -->
+    <section class="py-16 md:py-20 bg-white border-t border-gray-100">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Kondisi Geografis (Alamat & Email masuk di sini) -->
+        <div class="mb-12">
+          <h2 class="text-3xl md:text-4xl font-extrabold text-[#0D6847] mb-6">Kondisi Geografis</h2>
+          <div class="space-y-4 text-sm md:text-base text-gray-600 leading-relaxed">
+            <p>{{ kondisiGeografis }}</p>
+            <p>
+              Padukuhan {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }}
+              memiliki luas wilayah
+              <strong class="font-bold text-gray-900">{{ store.padukuhanProfile?.luas_wilayah || '-' }}</strong>
+              dengan iklim kemarau dan penghujan. Wilayahnya terbagi dalam
+              <strong class="font-bold text-gray-900">{{ store.padukuhanProfile?.jumlah_dusun || '-' }}</strong> dusun.
+            </p>
+            <!-- Alamat & Email jadi bagian dari Kondisi Geografis -->
+            <p>
+              <strong class="font-bold text-gray-900">Alamat:</strong>
+              {{ store.padukuhanProfile?.alamat_kantor || '-' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Grid: Kecamatan, Kabupaten, Provinsi, Kode Pos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0 mb-14">
+          <div class="flex items-center justify-between py-4 border-b border-gray-200">
+            <span class="text-sm font-bold text-gray-900">Kecamatan</span>
+            <span class="text-sm text-gray-500">{{ store.padukuhanProfile?.kecamatan || '-' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-4 border-b border-gray-200">
+            <span class="text-sm font-bold text-gray-900">Kabupaten</span>
+            <span class="text-sm text-gray-500">{{ store.padukuhanProfile?.kabupaten || '-' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-4 border-b border-gray-200">
+            <span class="text-sm font-bold text-gray-900">Provinsi</span>
+            <span class="text-sm text-gray-500">{{ store.padukuhanProfile?.provinsi || '-' }}</span>
+          </div>
+          <div class="flex items-center justify-between py-4 border-b border-gray-200">
+            <span class="text-sm font-bold text-gray-900">Kode Pos</span>
+            <span class="text-sm text-gray-500">{{ store.padukuhanProfile?.kode_pos || '-' }}</span>
+          </div>
+        </div>
+
+        <!-- Batas Wilayah -->
+        <div>
+          <h3 class="text-2xl md:text-3xl font-extrabold text-[#0D6847] mb-6">Batas Wilayah</h3>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
+              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
+              <span><strong class="font-bold text-gray-900">Utara:</strong> {{ store.padukuhanProfile?.batas_utara || '-' }}</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
+              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
+              <span><strong class="font-bold text-gray-900">Selatan:</strong> {{ store.padukuhanProfile?.batas_selatan || '-' }}</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
+              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
+              <span><strong class="font-bold text-gray-900">Timur:</strong> {{ store.padukuhanProfile?.batas_timur || '-' }}</span>
+            </li>
+            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
+              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
+              <span><strong class="font-bold text-gray-900">Barat:</strong> {{ store.padukuhanProfile?.batas_barat || '-' }}</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
     <!-- CITA-CITA PADUKUHAN (VISION & MISSION) -->
     <section class="py-16 bg-[#F8FAFC] border-t border-b border-gray-100">
       <div class="max-w-4xl mx-auto px-4 text-center">
@@ -106,7 +175,7 @@
           
           <div class="relative z-10 flex flex-col items-center">
             <span class="inline-block text-[10px] font-extrabold text-[#0D6847] bg-[#0D6847]/10 px-4 py-1.5 rounded-full uppercase tracking-wider mb-5">
-              Cita-Cita Padukuhan
+              Padukuhan Ngemplak Kalangan
             </span>
             <p class="text-lg md:text-2xl font-bold text-gray-800 leading-relaxed max-w-2xl whitespace-pre-line text-center">
               "{{ store.padukuhanProfile?.cita_cita || 'Mewujudkan Padukuhan yang mandiri, aman, dan berbudaya dengan pelayanan prima berbasis teknologi untuk kesejahteraan masyarakat.' }}"
@@ -117,7 +186,7 @@
     </section>
 
     <!-- STATISTIK KEPENDUDUKAN SECTION -->
-    <section class="py-16 md:py-24 bg-white">
+    <section class="pt-16 md:pt-24 pb-4 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="text-center max-w-2xl mx-auto mb-16">
@@ -127,135 +196,256 @@
           </p>
         </div>
 
-        <!-- Dynamic Demographics Cards Grid -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
-          <div v-for="item in store.demographics" :key="item.id" class="bg-[#F8FAFC] rounded-2xl p-5 border border-gray-100 flex flex-col justify-center hover:shadow-md transition-shadow relative overflow-hidden">
-            <div class="absolute -right-4 -bottom-4 opacity-5">
-               <UsersIcon class="w-24 h-24" />
-            </div>
-            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1 relative z-10">{{ item.kategori.replace('_', ' ') }} - {{ item.label }}</span>
-            <span class="text-lg md:text-xl font-extrabold text-gray-900 relative z-10">{{ item.jumlah_jiwa }} Jiwa</span>
-            <span class="text-xs text-emerald-600 font-bold relative z-10 mt-1" v-if="item.persentase > 0">{{ item.persentase }}% dari total</span>
-          </div>
-        </div>
+        <!-- Population Table -->
+        <!-- PENDUDUK PER DUSUN -->
+        <section class="pt-4 pb-16 md:pb-24 bg-white">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <!-- Dynamic Bar Charts Grid -->
-        <div class="grid grid-cols-1 gap-8 items-stretch mb-16">
-          <div class="bg-white rounded-3xl p-6.5 border border-gray-100 shadow-sm">
-            <div>
-              <h3 class="font-extrabold text-gray-950 text-base mb-1">Rincian Demografi</h3>
-              <p class="text-xs text-gray-400 font-medium mb-6">Persentase data demografi yang tercatat di sistem.</p>
+            <div class="mb-10">
+              <h2 class="text-2xl md:text-3xl font-extrabold text-gray-950">Penduduk per Dusun</h2>
+              <p class="text-sm text-gray-500 mt-2">
+                Data kependudukan terbaru per dusun di Padukuhan Ngemplak Kalangan.
+              </p>
             </div>
-            
-            <div class="space-y-6">
-              <div v-for="item in store.demographics" :key="'bar-'+item.id" class="space-y-2">
-                <div class="flex items-center justify-between text-xs font-bold text-gray-700">
-                  <span class="flex items-center gap-1.5 uppercase">
-                    <span class="w-3 h-3 rounded-full bg-emerald-600"></span>
-                    {{ item.label }} ({{ item.kategori.replace('_', ' ') }})
-                  </span>
-                  <span>{{ item.persentase }}% ({{ item.jumlah_jiwa }} Jiwa)</span>
+
+            <!-- Legend -->
+            <div class="flex items-center gap-6 mb-8">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-cyan-700"></span>
+                <span class="text-xs font-bold text-gray-700">Laki-laki</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-green-700"></span>
+                <span class="text-xs font-bold text-gray-700">Perempuan</span>
+              </div>
+            </div>
+
+            <!-- List per Dusun -->
+            <div class="space-y-10">
+              <div v-for="dusun in store.kependudukanDusun" :key="dusun.id" class="space-y-4">
+
+                <!-- Header dusun -->
+                <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                  <h3 class="text-base sm:text-lg font-extrabold text-gray-900">
+                    {{ dusun.nama_dusun }}
+                  </h3>
+                  <p class="text-xs sm:text-sm font-bold text-gray-500">
+                    {{ formatAngka(dusun.total) }} jiwa • {{ formatAngka(dusun.jumlah_kk) }} KK
+                  </p>
                 </div>
-                <div class="w-full h-4 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full bg-emerald-600 rounded-full" :style="{ width: item.persentase + '%' }"></div>
+
+                <!-- Bar Laki-laki -->
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-7 bg-gray-100 rounded-md overflow-hidden">
+                    <div
+                      class="h-full bg-cyan-700 rounded-md flex items-center justify-end pr-3 transition-all duration-700"
+                      :style="{ width: getBarWidth(dusun.laki_laki) }"
+                    >
+                      <span class="text-xs font-extrabold text-white whitespace-nowrap">
+                        {{ formatAngka(dusun.laki_laki) }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
+
+                <!-- Bar Perempuan -->
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-7 bg-gray-100 rounded-md overflow-hidden">
+                    <div
+                      class="h-full bg-green-700 rounded-md flex items-center justify-end pr-3 transition-all duration-700"
+                      :style="{ width: getBarWidth(dusun.perempuan) }"
+                    >
+                      <span class="text-xs font-extrabold text-white whitespace-nowrap">
+                        {{ formatAngka(dusun.perempuan) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Empty state -->
+              <div v-if="store.kependudukanDusun.length === 0" class="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200">
+                <p class="text-sm text-gray-400">Belum ada data kependudukan per dusun.</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- GOLONGAN UMUR -->
+        <div v-if="golonganUmur.length > 0" class="mb-16 bg-[#F8FAFC] rounded-3xl p-6 sm:p-8 border border-gray-200">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-[#0F4C5C] mb-8">Golongan Umur</h3>
+
+          <div class="space-y-5">
+            <div v-for="item in golonganUmur" :key="item.id" class="grid grid-cols-12 gap-4 items-center">
+              <!-- Label -->
+              <div class="col-span-12 sm:col-span-3 md:col-span-2 text-sm font-semibold text-gray-700">
+                {{ item.label }}
+              </div>
+
+              <!-- Bar -->
+              <div class="col-span-9 sm:col-span-7 md:col-span-8">
+                <div class="w-full h-6 bg-gray-200/70 rounded-lg overflow-hidden">
+                  <div
+                    class="h-full bg-[#1B8A9C] rounded-lg transition-all duration-700"
+                    :style="{ width: getBarWidths(item.jumlah_jiwa) }"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Nilai -->
+              <div class="col-span-3 sm:col-span-2 md:col-span-2 text-right text-sm font-extrabold text-gray-900">
+                {{ formatAngka(item.jumlah_jiwa) }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Population Table -->
-        <div class="bg-white border border-gray-150 rounded-2xl overflow-hidden shadow-sm">
-          <div class="px-6 py-5 border-b border-gray-150 bg-gray-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h3 class="font-extrabold text-gray-900 text-base">Detail Kependudukan Per RT</h3>
-              <p class="text-xs text-gray-400 font-semibold mt-0.5">Distribusi rincian jumlah warga per rukun tetangga.</p>
+        <!-- JENIS KELAMIN -->
+        <div v-if="jenisKelamin.length > 0" class="mb-16 bg-[#F8FAFC] rounded-3xl p-6 sm:p-8 border border-gray-200">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-[#0F4C5C] mb-8">Jenis Kelamin</h3>
+          <div class="space-y-5">
+            <div v-for="item in jenisKelamin" :key="item.id" class="grid grid-cols-12 gap-4 items-center">
+              <div class="col-span-12 sm:col-span-3 md:col-span-2 text-sm font-semibold text-gray-700">{{ item.label }}</div>
+              <div class="col-span-9 sm:col-span-7 md:col-span-8">
+                <div class="w-full h-6 bg-gray-200/70 rounded-lg overflow-hidden">
+                  <div class="h-full bg-[#1B8A9C] rounded-lg transition-all duration-700" :style="{ width: getBarWidths(item.jumlah_jiwa) }"></div>
+                </div>
+              </div>
+              <div class="col-span-3 sm:col-span-2 md:col-span-2 text-right text-sm font-extrabold text-gray-900">
+                {{ formatAngka(item.jumlah_jiwa) }}
+              </div>
             </div>
-            <span class="self-start sm:self-auto px-3.5 py-1 bg-emerald-50 text-[#0D6847] border border-emerald-100 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
-              3 Wilayah RT Terintegrasi
-            </span>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr class="border-b border-gray-150 text-gray-400 font-bold uppercase tracking-wider bg-gray-50/20">
-                  <th class="py-4.5 px-6 font-bold">Rukun Tetangga (RT)</th>
-                  <th class="py-4.5 px-6 font-bold text-right">Laki-Laki</th>
-                  <th class="py-4.5 px-6 font-bold text-right">Perempuan</th>
-                  <th class="py-4.5 px-6 font-bold text-right">Total Warga</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-150 text-gray-700 font-medium">
-                <tr v-for="item in store.kependudukanDusun" :key="item.id" class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4.5 px-6 font-bold text-gray-900">{{ item.nama_rt }} <span v-if="item.nama_dusun" class="text-xs font-normal text-gray-500 block sm:inline">({{ item.nama_dusun }})</span></td>
-                  <td class="py-4.5 px-6 text-right">{{ item.laki_laki }} Jiwa</td>
-                  <td class="py-4.5 px-6 text-right">{{ item.perempuan }} Jiwa</td>
-                  <td class="py-4.5 px-6 text-right font-bold text-emerald-600">{{ item.total }} Jiwa</td>
-                </tr>
-                <tr v-if="store.kependudukanDusun.length === 0">
-                  <td colspan="4" class="py-6 text-center text-gray-400 text-xs">Belum ada data kependudukan.</td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
 
-        <div class="mt-12 bg-white p-6 rounded-2xl border border-gray-150 shadow-sm flex flex-col md:flex-row gap-8 items-center">
-          <p class="text-sm text-gray-600 leading-relaxed flex-1">
-            Kami menyadari pentingnya keterbukaan informasi di era modern. Oleh karena itu, melalui website padukuhan ini, kami berkomitmen menyajikan akses informasi yang cepat, profil potensi padukuhan yang transparan, serta wadah kebersamaan warga yang guyub dan berdaya.
-          </p>
-
-          <div class="relative bg-emerald-50/70 border-l-4 border-[#0D6847] p-6 rounded-r-2xl w-full md:w-auto">
-            <span class="absolute top-2 left-2 text-6xl text-emerald-200/50 font-serif leading-none select-none pointer-events-none">“</span>
-            <p class="text-sm italic font-semibold text-gray-700 leading-relaxed pl-6 relative z-10 max-w-sm whitespace-pre-line">
-              {{ store.padukuhanProfile?.sambutan_dukuh || 'Kita harus berjalan bersama, mengawinkan tradisi leluhur dengan pemanfaatan teknologi digital untuk kesejahteraan dan kemandirian warga Ngemplak Kalangan.' }}
-            </p>
+        <!-- PENDIDIKAN -->
+        <div v-if="pendidikan.length > 0" class="mb-16 bg-[#F8FAFC] rounded-3xl p-6 sm:p-8 border border-gray-200">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-[#0F4C5C] mb-8">Tingkat Pendidikan</h3>
+          <div class="space-y-5">
+            <div v-for="item in pendidikan" :key="item.id" class="grid grid-cols-12 gap-4 items-center">
+              <div class="col-span-12 sm:col-span-3 md:col-span-2 text-sm font-semibold text-gray-700">{{ item.label }}</div>
+              <div class="col-span-9 sm:col-span-7 md:col-span-8">
+                <div class="w-full h-6 bg-gray-200/70 rounded-lg overflow-hidden">
+                  <div class="h-full bg-[#1B8A9C] rounded-lg transition-all duration-700" :style="{ width: getBarWidths(item.jumlah_jiwa) }"></div>
+                </div>
+              </div>
+              <div class="col-span-3 sm:col-span-2 md:col-span-2 text-right text-sm font-extrabold text-gray-900">
+                {{ formatAngka(item.jumlah_jiwa) }}
+              </div>
+            </div>
           </div>
+        </div>
+
+        <!-- PEKERJAAN -->
+        <div v-if="pekerjaan.length > 0" class="mb-16 bg-[#F8FAFC] rounded-3xl p-6 sm:p-8 border border-gray-200">
+          <h3 class="text-xl sm:text-2xl font-extrabold text-[#0F4C5C] mb-8">Mata Pencaharian</h3>
+          <div class="space-y-5">
+            <div v-for="item in pekerjaan" :key="item.id" class="grid grid-cols-12 gap-4 items-center">
+              <div class="col-span-12 sm:col-span-3 md:col-span-2 text-sm font-semibold text-gray-700">{{ item.label }}</div>
+              <div class="col-span-9 sm:col-span-7 md:col-span-8">
+                <div class="w-full h-6 bg-gray-200/70 rounded-lg overflow-hidden">
+                  <div class="h-full bg-[#1B8A9C] rounded-lg transition-all duration-700" :style="{ width: getBarWidths(item.jumlah_jiwa) }"></div>
+                </div>
+              </div>
+              <div class="col-span-3 sm:col-span-2 md:col-span-2 text-right text-sm font-extrabold text-gray-900">
+                {{ formatAngka(item.jumlah_jiwa) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div v-if="store.demographics.length === 0" class="text-center py-12 bg-gray-50 rounded-2xl border border-gray-200">
+          <p class="text-sm text-gray-400">Belum ada data statistik kependudukan.</p>
         </div>
 
       </div>
     </section>
 
-    <!-- STRUKTUR ORGANISASI SECTION -->
-    <section class="py-16 md:py-24 bg-[#F8FAFC] border-t border-b border-gray-100">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="text-center max-w-2xl mx-auto mb-16">
-          <h2 class="text-2xl md:text-3xl font-extrabold text-gray-950">Struktur Organisasi</h2>
-          <p class="text-sm text-gray-500 mt-2 leading-relaxed">
-            Perangkat Padukuhan Ngemplak Kalangan yang berdedikasi tinggi untuk melayani masyarakat.
-          </p>
-        </div>
+<!-- STRUKTUR ORGANISASI PADUKUHAN -->
+<section v-if="store.leaders.length > 0" class="space-y-8 pt-12 border-t border-gray-100">
+  <div class="text-center max-w-2xl mx-auto space-y-2">
+    <h3 class="text-2xl md:text-3xl font-extrabold text-gray-950">Struktur Organisasi Padukuhan</h3>
+    <p class="text-sm text-gray-500 font-medium">
+      Perangkat Padukuhan Ngemplak Kalangan yang siap melayani masyarakat.
+    </p>
+    <div class="w-12 h-1 bg-[#0D6847] mx-auto rounded-full mt-3"></div>
+  </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="leader in store.leaders" :key="leader.id" class="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm text-center group hover:shadow-md transition-shadow relative">
-            <div class="absolute -top-1.5 left-1/2 -translate-x-1/2 h-1 bg-[#0D6847] w-12 rounded-full"></div>
-            <div class="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border border-gray-100 bg-gray-50 flex items-center justify-center font-bold text-emerald-700 text-xl">
-              {{ leader.name.charAt(0) }}
-            </div>
-            <h3 class="font-extrabold text-gray-950 text-base leading-tight">{{ leader.name }}</h3>
-            <p class="text-[10px] font-bold text-[#0D6847] uppercase tracking-wider mt-1.5">{{ leader.role }}</p>
-            <div class="text-[10px] text-gray-400 font-semibold mt-1">{{ leader.focus || leader.description }}</div>
-          </div>
-        </div>
+  <!-- Hierarki Struktur -->
+  <div class="flex flex-col items-center gap-0">
 
-        <!-- Call to Action for Admin services inside structure -->
-        <div class="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-[#0D6847] to-[#0A5238] rounded-2xl p-6.5 text-white flex flex-col sm:flex-row justify-between items-center gap-6 shadow-md shadow-emerald-900/10">
-          <div>
-            <h4 class="font-extrabold text-lg leading-tight">Ingin Mengenal Struktur Organisasi Lebih Lanjut?</h4>
-            <p class="text-xs text-emerald-100 mt-1">Lihat detail profil dan tanggung jawab masing-masing perangkat dusun kami.</p>
-          </div>
-          <button 
-            @click="$emit('navigate', 'tentang-kami')"
-            class="px-6 py-3 bg-white hover:bg-emerald-50 text-[#0D6847] font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap"
-          >
-            Kenali Lebih Dekat
-          </button>
-        </div>
-
+    <!-- LEVEL 1: Kepala Desa (Kartu Besar) -->
+    <div v-if="topLeader" class="relative bg-white rounded-3xl p-8 border border-gray-200 shadow-sm w-full max-w-sm text-center flex flex-col items-center hover:shadow-lg transition-shadow">
+      <!-- Avatar -->
+      <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-5">
+        <img v-if="topLeader.image" :src="topLeader.image" :alt="topLeader.name" class="w-full h-full object-cover" @error="handleImageError($event, 'leaders')" />
+        <span v-else class="text-3xl font-extrabold text-[#1B8A9C]">{{ topLeader.initials }}</span>
       </div>
-    </section>
+      <!-- Badge Jabatan -->
+      <span class="inline-block px-4 py-1 bg-[#1B4E5F] text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-3">
+        {{ topLeader.role }}
+      </span>
+      <!-- Nama -->
+      <h4 class="text-2xl font-extrabold text-gray-950 leading-tight">{{ topLeader.name }}</h4>
+      <p class="text-xs text-gray-500 font-semibold mt-1">Pemimpin penyelenggaraan pemerintahan desa</p>
+    </div>
+
+    <!-- Garis vertikal 1 -->
+    <div class="w-px h-10 bg-gray-300"></div>
+
+    <!-- LEVEL 2: Sekretaris Desa (Kartu Sedang) -->
+    <div v-if="middleLeader" class="relative bg-white rounded-3xl p-6 border border-gray-200 shadow-sm w-full max-w-xs text-center flex flex-col items-center hover:shadow-lg transition-shadow">
+      <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md bg-[#1B8A9C] flex items-center justify-center mb-4">
+        <img v-if="middleLeader.image" :src="middleLeader.image" :alt="middleLeader.name" class="w-full h-full object-cover" @error="handleImageError($event, 'leaders')" />
+        <span v-else class="text-3xl font-extrabold text-white">{{ middleLeader.initials.charAt(0) }}</span>
+      </div>
+      <span class="inline-block px-3.5 py-1 bg-[#1B8A9C] text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-2">
+        {{ middleLeader.role }}
+      </span>
+      <h4 class="text-lg font-extrabold text-gray-950 leading-tight">{{ middleLeader.name }}</h4>
+    </div>
+
+    <!-- Garis vertikal 2 + percabangan ke bawah -->
+    <div v-if="bottomLeaders.length > 0" class="relative w-full flex justify-center" style="height: 40px;">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gray-300"></div>
+    </div>
+
+    <!-- LEVEL 3: Kepala Seksi (Grid Kartu Kecil) -->
+    <div v-if="bottomLeaders.length > 0" class="relative w-full">
+      <!-- Garis horizontal -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-gray-300" 
+        :style="{ width: bottomLeaders.length > 1 ? `${(bottomLeaders.length - 1) * (100 / bottomLeaders.length)}%` : '0' }">
+      </div>
+
+      <div class="grid gap-4 sm:gap-6 pt-8" 
+        :class="{
+          'grid-cols-1 max-w-xs mx-auto': bottomLeaders.length === 1,
+          'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto': bottomLeaders.length === 2,
+          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto': bottomLeaders.length === 3,
+          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto': bottomLeaders.length >= 4
+        }">
+        <div v-for="kasi in bottomLeaders" :key="kasi.id"
+          class="relative bg-white rounded-2xl p-5 border border-gray-200 shadow-sm text-center flex flex-col items-center hover:shadow-lg transition-shadow">
+          <!-- Garis vertikal kecil ke atas -->
+          <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-px h-8 bg-gray-300 hidden sm:block"></div>
+
+          <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md bg-[#1B8A9C] flex items-center justify-center mb-3">
+            <img v-if="kasi.image" :src="kasi.image" :alt="kasi.name" class="w-full h-full object-cover" @error="handleImageError($event, 'leaders')" />
+            <span v-else class="text-xl font-extrabold text-white">{{ kasi.initials.charAt(0) }}</span>
+          </div>
+          <span class="inline-block px-2.5 py-0.5 bg-amber-50 text-amber-800 text-[9px] font-bold uppercase tracking-widest rounded-full mb-2 border border-amber-200">
+            {{ kasi.role }}
+          </span>
+          <h4 class="text-sm font-extrabold text-gray-950 leading-tight">{{ kasi.name }}</h4>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
 
     <!-- POTENSI DESA KAMI SECTION -->
     <section class="py-16 md:py-24 bg-white">
@@ -264,9 +454,9 @@
         <div class="max-w-2xl mb-12">
           <div class="inline-flex items-center gap-2 text-xs font-bold text-[#0D6847] uppercase tracking-wider bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100 mb-4">
             <TrendingUpIcon class="w-3.5 h-3.5 animate-bounce" />
-            <span>Potensi Desa</span>
+            <span>Potensi</span>
           </div>
-          <h2 class="text-3xl font-extrabold text-gray-950 leading-tight">Potensi Desa Kami</h2>
+          <h2 class="text-3xl font-extrabold text-gray-950 leading-tight">Potensi Padukuhan</h2>
           <p class="text-sm text-gray-500 mt-2 leading-relaxed">
             Mengenal potensi yang ada di wilayah Padukuhan Ngemplak Kalangan untuk mendorong ekonomi berkelanjutan.
           </p>
@@ -311,9 +501,8 @@
                 <!-- Preview Embed -->
                 <div class="rounded-xl overflow-hidden border border-gray-200 h-40">
                   <iframe
-                    :src="getMapsEmbedUrl(potensi.lokasi)"
-                    width="100%" height="160" style="border:0" loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade" allowfullscreen>
+                    :src="getOSMEmbedUrl(potensi.lokasi)"
+                    width="100%" height="160" style="border:0" loading="lazy">
                   </iframe>
                 </div>
               </div>
@@ -344,6 +533,8 @@ import {
   ShoppingBag as ShoppingBagIcon,
   TrendingUp as TrendingUpIcon
 } from 'lucide-vue-next';
+
+import { computed } from 'vue';
 
 // Define custom simple icon components inline using simple SVGs for genders and leaf to avoid missing lucide icon definitions
 import { defineComponent, h } from 'vue';
@@ -378,11 +569,14 @@ const LeafIcon = defineComponent({
 });
 
 const handleImageError = (event, type) => {
-  const fallbacks = {
-    'hero-bg': 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
-    'kepala-desa': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80'
-  };
-  event.target.src = fallbacks[type] || 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600';
+  if (type === 'hero-bg') {
+    event.target.src = 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80';
+  } else if (type === 'leaders') {
+    // Sembunyikan img, biarkan inisial muncul
+    event.target.style.display = 'none';
+  } else {
+    event.target.src = 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80';
+  }
 };
 
 const scrollToSection = (id) => {
@@ -392,22 +586,134 @@ const scrollToSection = (id) => {
   }
 };
 
+// Max penduduk untuk skala bar
+const maxPendudukDusun = computed(() => {
+  let max = 1;
+  store.kependudukanDusun.forEach(d => {
+    max = Math.max(max, d.laki_laki || 0, d.perempuan || 0);
+  });
+  return max;
+});
+
+// Hitung % lebar bar
+const getBarWidth = (val) => {
+  const pct = Math.min(100, ((val || 0) / maxPendudukDusun.value) * 100);
+  return pct + '%';
+};
+
+// Ambil demografi per kategori (sudah diurutkan)
+const golonganUmur = computed(() =>
+  store.demographics
+    .filter(d => d.kategori === 'usia')
+    .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
+);
+
+const jenisKelamin = computed(() =>
+  store.demographics
+    .filter(d => d.kategori === 'jenis_kelamin')
+    .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
+);
+
+const pendidikan = computed(() =>
+  store.demographics
+    .filter(d => d.kategori === 'pendidikan')
+    .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
+);
+
+const pekerjaan = computed(() =>
+  store.demographics
+    .filter(d => d.kategori === 'pekerjaan')
+    .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
+);
+
+// Max nilai untuk skala bar
+const maxDemografi = computed(() => {
+  let max = 1;
+  store.demographics.forEach(d => {
+    max = Math.max(max, d.jumlah_jiwa || 0);
+  });
+  return max;
+});
+
+// Hitung % lebar bar (minimum 5% agar bar kecil tetap kelihatan)
+const getBarWidths = (val) => {
+  const pct = ((val || 0) / maxDemografi.value) * 100;
+  return Math.max(pct, 3) + '%';
+};
+
+// Format angka dengan pemisah ribuan (Indonesia)
+const formatAngka = (val) => {
+  return (val || 0).toLocaleString('id-ID');
+};
+
+// Struktur organisasi — grouping berdasarkan urutan
+const topLeader = computed(() => store.leaders.find(l => l.urutan === 1));
+const middleLeader = computed(() => store.leaders.find(l => l.urutan === 2));
+const bottomLeaders = computed(() =>
+  store.leaders
+    .filter(l => l.urutan >= 3)
+    .sort((a, b) => a.urutan - b.urutan)
+);
+
 // Konversi berbagai format link Maps menjadi URL embed
-const getMapsEmbedUrl = (url) => {
-  if (!url) return '';
-  // Jika sudah iframe embed, pakai langsung
-  if (url.includes('google.com/maps/embed')) return url;
-  // Format share Google Maps: extract koordinat jika ada
-  const coordMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (coordMatch) {
-    return `https://maps.google.com/maps?q=${coordMatch[1]},${coordMatch[2]}&output=embed`;
+// ============================================
+// OPENSTREETMAP EMBED URL DENGAN MARKER/PIN
+// Mengekstrak koordinat dari berbagai format link Google Maps
+// lalu menampilkan pin di lokasi tersebut
+// ============================================
+const getOSMEmbedUrl = (url) => {
+  if (!url) return 'https://www.openstreetmap.org/export/embed.html?layer=mapnik';
+
+  let lat = null;
+  let lon = null;
+
+  // Format 1: https://www.google.com/maps/@-7.123456,110.123456,15z
+  const m1 = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m1) {
+    lat = parseFloat(m1[1]);
+    lon = parseFloat(m1[2]);
   }
-  // Fallback: cari pola place
-  if (url.includes('goo.gl') || url.includes('maps.app')) {
-    return `https://maps.google.com/maps?q=${encodeURIComponent(url)}&output=embed`;
+
+  // Format 2: https://maps.google.com/?q=-7.123456,110.123456
+  //           https://www.google.com/maps?q=loc:-7.123456,110.123456
+  if (!lat) {
+    const m2 = url.match(/[?&]q=(?:loc:)?(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (m2) {
+      lat = parseFloat(m2[1]);
+      lon = parseFloat(m2[2]);
+    }
   }
-  // Default: pakai url apa adanya sebagai q
-  return `https://maps.google.com/maps?q=${encodeURIComponent(url)}&output=embed`;
+
+  // Format 3: https://www.google.com/maps/place/.../data=...!3d-7.123!4d110.123
+  // Format ini punya !3d (latitude) dan !4d (longitude)
+  if (!lat) {
+    const m3d = url.match(/!3d(-?\d+\.\d+)/);
+    const m4d = url.match(/!4d(-?\d+\.\d+)/);
+    if (m3d && m4d) {
+      lat = parseFloat(m3d[1]);
+      lon = parseFloat(m4d[1]);
+    }
+  }
+
+  // Format 4: https://www.google.com/maps/place/.../...?  (fallback dari /dir/)
+  // Mencari pola umum "latitude,longitude" tanpa format khusus
+  if (!lat) {
+    const m4 = url.match(/(-?\d{1,3}\.\d{4,}),(-?\d{1,3}\.\d{4,})/);
+    if (m4) {
+      lat = parseFloat(m4[1]);
+      lon = parseFloat(m4[2]);
+    }
+  }
+
+  // Jika koordinat ditemukan → tampilkan dengan MARKER/PIN
+  if (lat !== null && lon !== null) {
+    const d = 0.003; // delta untuk bounding box (semakin kecil, semakin zoom in)
+    const bbox = `${lon - d},${lat - d},${lon + d},${lat + d}`;
+    return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lon}`;
+  }
+
+  // Fallback: tidak ada koordinat → peta default tanpa marker
+  return 'https://www.openstreetmap.org/export/embed.html?layer=mapnik';
 };
 </script>
 

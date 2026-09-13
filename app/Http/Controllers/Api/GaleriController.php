@@ -20,6 +20,7 @@ class GaleriController extends BaseController
         $validator = Validator::make($input, [
             'category_id' => 'required|exists:master_kategori,id',
             'judul' => 'required|max:150',
+            'deskripsi' => 'nullable|string',
             'tipe' => 'nullable|in:foto,video',
             'file_url' => 'nullable|string|max:255',
             'youtube_url' => 'nullable|string|max:255',
@@ -40,12 +41,13 @@ class GaleriController extends BaseController
         return $this->sendResponse($data, 'Galeri retrieved successfully.');
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)  // <-- PERBAIKAN: tambah $id
     {
         $input = $request->all();
         $validator = Validator::make($input, [
             'category_id' => 'required|exists:master_kategori,id',
             'judul' => 'required|max:150',
+            'deskripsi' => 'nullable|string',
             'tipe' => 'nullable|in:foto,video',
             'file_url' => 'nullable|string|max:255',
             'youtube_url' => 'nullable|string|max:255',
@@ -53,7 +55,14 @@ class GaleriController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());
         }
-        $data = Galeri::create($input);
+
+        // PERBAIKAN: cari data berdasarkan ID, lalu update
+        $data = Galeri::find($id);
+        if (is_null($data)) {
+            return $this->sendError('Galeri not found.');
+        }
+
+        $data->update($input);
         return $this->sendResponse($data, 'Galeri updated successfully.');
     }
 

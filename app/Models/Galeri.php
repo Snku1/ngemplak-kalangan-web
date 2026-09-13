@@ -8,7 +8,7 @@ class Galeri extends Model
 {
     protected $table = 'galeri';
 
-    protected $fillable = ['category_id', 'judul', 'tipe', 'file_url', 'youtube_url', 'is_highlight'];
+    protected $fillable = ['category_id', 'judul', 'deskripsi', 'tipe', 'file_url', 'youtube_url', 'is_highlight'];
 
     public function category()
     {

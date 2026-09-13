@@ -19,7 +19,7 @@ class PengumumanController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'category_id' => 'required|exists:master_kategori,id', 'judul' => 'required|max:200', 'isi_ringkas' => 'required', 'tanggal_posting' => 'required|date'
+            'judul' => 'required|max:200', 'isi_ringkas' => 'required', 'tanggal_posting' => 'required|date'
         ]);
    
         if($validator->fails()){
@@ -44,7 +44,7 @@ class PengumumanController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'category_id' => 'required|exists:master_kategori,id', 'judul' => 'required|max:200', 'isi_ringkas' => 'required', 'tanggal_posting' => 'required|date'
+            'judul' => 'required|max:200', 'isi_ringkas' => 'required', 'tanggal_posting' => 'required|date', 'is_important' => 'nullable|boolean'
         ]);
    
         if($validator->fails()){

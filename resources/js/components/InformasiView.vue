@@ -2,46 +2,40 @@
   <div>
     <!-- HERO SECTION -->
     <section class="relative min-h-[360px] md:min-h-[400px] flex items-center justify-center overflow-hidden bg-gray-900 text-white">
-      <!-- Background Image with Overlay -->
       <div class="absolute inset-0 z-0">
-        <img 
-          src="/images/hero-bg.png" 
-          alt="Latar Belakang Informasi" 
+        <img
+          src="/images/hero-bg.png"
+          alt="Latar Belakang Informasi"
           class="w-full h-full object-cover object-center opacity-60 scale-105"
           @error="handleImageError($event, 'hero-bg')"
         />
-        <!-- Greenish Gradient Overlay matching Visly mockup -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#0D6847]/85 via-[#0D6847]/75 to-gray-950/80"></div>
       </div>
 
-      <!-- Hero Content -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 text-center py-16">
         <h2 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4 text-white">
           Informasi Padukuhan Ngemplak Kalangan
         </h2>
         <p class="text-sm md:text-base text-emerald-100 max-w-2xl mx-auto leading-relaxed font-medium">
-          Pusat informasi terpadu padukuhan Digital Indonesia. Dapatkan update terbaru mengenai berita, agenda kegiatan, dan pengumuman resmi pemerintah padukuhan.
+          Pusat informasi terpadu Padukuhan Ngemplak Kalangan. Dapatkan update terbaru mengenai berita, agenda kegiatan, dan pengumuman resmi Padukuhan.
         </p>
       </div>
     </section>
 
-    <!-- SEARCH & FILTER BAR SECTION -->
+    <!-- SEARCH & FILTER BAR -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-      <div class="bg-white rounded-2xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100">
-        
-        <!-- Search Input and Buttons -->
+      <div class="bg-white rounded-2xl p-6 shadow-xl shadow-gray-200/50">
         <div class="flex flex-col md:flex-row items-stretch gap-4 mb-4">
           <div class="flex-1 relative">
             <SearchIcon class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <input 
+            <input
               v-model="searchQuery"
-              type="text" 
-              placeholder="Cari berita atau kegiatan..." 
+              type="text"
+              placeholder="Cari berita atau kegiatan..."
               class="w-full pl-12 pr-10 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#0D6847] focus:ring-1 focus:ring-[#0D6847] transition-all font-semibold"
               @keyup.enter="handleSearch"
             />
-            <!-- Clear Search Button -->
-            <button 
+            <button
               v-if="searchQuery"
               @click="clearSearch"
               class="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200/60 transition-all cursor-pointer"
@@ -51,11 +45,11 @@
             </button>
           </div>
           <div class="flex gap-3">
-            <button 
+            <button
               @click="toggleCategoryDropdown"
               :class="[
-                showCategoryDropdown 
-                  ? 'border-[#0D6847] text-[#0D6847] bg-emerald-50/40 shadow-inner' 
+                showCategoryDropdown
+                  ? 'border-[#0D6847] text-[#0D6847] bg-emerald-50/40 shadow-inner'
                   : 'border-gray-200 text-gray-600 hover:text-gray-900 bg-white'
               ]"
               class="flex items-center justify-center gap-2 px-5 py-3.5 border rounded-xl text-sm font-bold transition-all cursor-pointer"
@@ -63,7 +57,7 @@
               <SlidersIcon class="w-4.5 h-4.5" />
               <span>Filter Kategori</span>
             </button>
-            <button 
+            <button
               @click="handleSearch"
               class="px-7 py-3.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-sm font-bold rounded-xl transition-all hover:shadow-md cursor-pointer active:scale-95"
             >
@@ -72,13 +66,13 @@
           </div>
         </div>
 
-        <!-- Inline Category Dropdown -->
+        <!-- Category Dropdown -->
         <transition name="slide-down">
-          <div v-if="showCategoryDropdown" class="mb-4 p-4.5 bg-gray-50 border border-gray-150 rounded-xl space-y-3">
+          <div v-if="showCategoryDropdown" class="mb-4 p-4.5 bg-gray-50 rounded-xl space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Saring Kategori Berita:</span>
-              <button 
-                v-if="selectedCategory" 
+              <button
+                v-if="selectedCategory"
                 @click="clearCategoryFilter"
                 class="text-[10px] font-bold text-red-500 hover:text-red-700 underline cursor-pointer"
               >
@@ -86,14 +80,14 @@
               </button>
             </div>
             <div class="flex flex-wrap gap-2">
-              <button 
-                v-for="cat in popularCategories" 
+              <button
+                v-for="cat in popularCategories"
                 :key="cat"
                 @click="filterByCategory(cat)"
                 :class="[
-                  selectedCategory === cat 
-                    ? 'bg-[#0D6847] border-[#0D6847] text-white shadow-xs font-bold' 
-                    : 'bg-white border-gray-250 text-gray-500 hover:bg-gray-100 hover:text-gray-700 font-semibold'
+                  selectedCategory === cat
+                    ? 'bg-[#0D6847] border-[#0D6847] text-white shadow-xs font-bold'
+                    : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 font-semibold'
                 ]"
                 class="px-3.5 py-2 text-[11px] border rounded-lg transition-all cursor-pointer"
               >
@@ -103,61 +97,60 @@
           </div>
         </transition>
 
-        <!-- Filter Tabs Pills (Semua, Berita, Agenda, Pengumuman) -->
+        <!-- Filter Tabs -->
         <div class="flex flex-wrap items-center justify-center gap-2 pt-4 border-t border-gray-100">
-          <button 
-            v-for="tab in filterTabs" 
+          <button
+            v-for="tab in filterTabs"
             :key="tab.value"
             @click="setTab(tab.value)"
             :class="[
-              activeTab === tab.value 
-                ? 'bg-emerald-50 text-[#0D6847] font-extrabold border-[#0D6847]/40 shadow-xs scale-[1.02]' 
-                : 'bg-white hover:bg-gray-50 text-gray-500 font-bold border-gray-200/80'
+              activeTab === tab.value
+                ? 'bg-emerald-50 text-[#0D6847] font-extrabold border-[#0D6847]/40 shadow-xs scale-[1.02]'
+                : 'bg-white hover:bg-gray-50 text-gray-500 font-bold border-gray-200'
             ]"
             class="px-6 py-2.5 text-xs border rounded-xl transition-all cursor-pointer active:scale-95"
           >
             {{ tab.label }}
           </button>
         </div>
-
       </div>
     </section>
 
-    <!-- MAIN GRID SECTION -->
+    <!-- MAIN GRID -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- LEFT COLUMN: CONTENT (Takes 2 cols on lg) -->
-        <div class="lg:col-span-2 space-y-12">
-          
-          <!-- BERITA TERBARU SECTION -->
+
+        <!-- LEFT COLUMN — full width saat tab berita/agenda/pengumuman -->
+        <div :class="activeTab === 'semua' ? 'lg:col-span-2' : 'lg:col-span-3'" class="space-y-12">
+
+          <!-- BERITA TERBARU -->
           <div v-if="activeTab === 'semua' || activeTab === 'berita'" class="space-y-6">
             <div class="flex items-center justify-between border-b border-gray-100 pb-4">
               <div class="flex items-center gap-2">
                 <FileTextIcon class="w-5.5 h-5.5 text-[#0D6847]" />
                 <h3 class="text-xl font-extrabold text-gray-950">Berita Terbaru</h3>
               </div>
-              <button 
-                @click="resetFilters" 
-                class="text-xs font-bold text-[#0D6847] hover:underline"
-              >
+              <button @click="resetFilters" class="text-xs font-bold text-[#0D6847] hover:underline">
                 Lihat Semua
               </button>
             </div>
 
-            <!-- News Grid with smooth card-transitions -->
-            <div v-if="paginatedNews.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div
+                v-if="paginatedNews.length > 0"
+                :class="activeTab === 'berita' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'"
+                class="grid gap-6"
+              >
               <transition-group name="list">
-                <article 
-                  v-for="news in paginatedNews" 
-                  :key="news.id" 
-                  class="bg-white rounded-2xl overflow-hidden border border-gray-150 shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col h-full hover:-translate-y-1"
+                <article
+                  v-for="news in paginatedNews"
+                  :key="news.id"
+                  @click="openNewsDetail(news)"
+                  class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:bg-emerald-50/30 border border-transparent hover:border-emerald-200 transition-all duration-300 group flex flex-col h-full hover:-translate-y-1 cursor-pointer"
                 >
-                  <!-- Thumbnail -->
                   <div class="relative overflow-hidden aspect-video bg-gray-100">
-                    <img 
-                      :src="news.image" 
-                      :alt="news.title" 
+                    <img
+                      :src="news.image"
+                      :alt="news.title"
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       @error="handleImageError($event, 'placeholder')"
                     />
@@ -165,7 +158,6 @@
                       {{ news.category }}
                     </span>
                   </div>
-                  <!-- Content -->
                   <div class="p-6 flex-1 flex flex-col justify-between">
                     <div class="space-y-3">
                       <div class="flex items-center gap-4 text-[10px] text-gray-400 font-extrabold uppercase tracking-wider">
@@ -183,8 +175,7 @@
                         {{ news.excerpt }}
                       </p>
                     </div>
-                    <!-- Link -->
-                    <button 
+                    <button
                       @click="openNewsDetail(news)"
                       class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0D6847] hover:underline mt-6 cursor-pointer"
                     >
@@ -195,53 +186,50 @@
                 </article>
               </transition-group>
             </div>
-            
-            <!-- News Empty State -->
-            <div v-else class="text-center py-12 bg-white rounded-2xl border border-gray-100">
+
+            <div v-else class="text-center py-12 bg-white rounded-2xl shadow-sm">
               <p class="text-sm text-gray-400 font-bold">Tidak ada berita yang cocok dengan kriteria pencarian.</p>
             </div>
           </div>
 
-          <!-- PENGUMUMAN PENTING SECTION -->
+          <!-- PENGUMUMAN -->
           <div v-if="activeTab === 'semua' || activeTab === 'pengumuman'" class="space-y-6">
             <div class="flex items-center gap-2 border-b border-gray-100 pb-4">
               <BellIcon class="w-5.5 h-5.5 text-[#0D6847]" />
               <h3 class="text-xl font-extrabold text-gray-950">Pengumuman Penting</h3>
             </div>
 
-            <!-- Announcement List -->
             <div v-if="filteredAnnouncements.length > 0" class="space-y-4">
-              <div 
-                v-for="ann in filteredAnnouncements" 
+              <div
+                v-for="ann in filteredAnnouncements"
                 :key="ann.id"
+                @click="openAnnDetail(ann)"
                 :class="[
-                  ann.isImportant 
-                    ? 'border-red-200 bg-red-50/20 hover:border-red-300 shadow-xs shadow-red-50' 
-                    : 'border-blue-150 bg-blue-50/10 hover:border-blue-200 shadow-xs shadow-blue-50'
+                  ann.isImportant
+                    ? 'bg-red-50/40 hover:bg-red-50 hover:border-red-200'
+                    : 'bg-blue-50/30 hover:bg-blue-50 hover:border-blue-200'
                 ]"
-                class="p-5.5 rounded-2xl border transition-all duration-300 flex gap-4 hover:-translate-y-0.5"
+                class="p-5.5 rounded-2xl border border-transparent transition-all duration-300 flex gap-4 hover:-translate-y-0.5 hover:shadow-lg cursor-pointer group"
               >
-                <!-- Icon container -->
-                <div 
+                <div
                   :class="[
-                    ann.isImportant 
-                      ? 'bg-red-50 text-red-500 border-red-100' 
-                      : 'bg-blue-50 text-blue-500 border-blue-100'
+                    ann.isImportant
+                      ? 'bg-red-100 text-red-500'
+                      : 'bg-blue-100 text-blue-500'
                   ]"
-                  class="w-11 h-11 rounded-full border flex items-center justify-center shrink-0 shadow-xs"
+                  class="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
                 >
                   <AlertCircleIcon class="w-5 h-5" />
                 </div>
-                <!-- Content -->
                 <div class="flex-1 space-y-2">
                   <div class="flex flex-wrap items-center justify-between gap-2">
                     <h4 class="text-sm font-extrabold text-gray-900">{{ ann.title }}</h4>
                     <span class="text-[10px] font-bold text-gray-400">{{ ann.date }}</span>
                   </div>
                   <p class="text-xs text-gray-500 leading-relaxed font-semibold">{{ ann.description }}</p>
-                  
+
                   <div class="flex items-center justify-between pt-2">
-                    <span 
+                    <span
                       v-if="ann.isImportant"
                       class="inline-block px-2.5 py-0.5 rounded text-[8px] font-bold tracking-widest bg-red-500 text-white uppercase"
                     >
@@ -250,8 +238,8 @@
                     <span v-else class="inline-block px-2.5 py-0.5 rounded text-[8px] font-bold tracking-widest bg-blue-500 text-white uppercase">
                       Info
                     </span>
-                    
-                    <button 
+
+                    <button
                       @click="openAnnDetail(ann)"
                       class="text-[10px] font-extrabold text-[#0D6847] hover:underline cursor-pointer"
                     >
@@ -261,36 +249,39 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Announcement Empty State -->
-            <div v-else class="text-center py-12 bg-white rounded-2xl border border-gray-100">
+
+            <div v-else class="text-center py-12 bg-white rounded-2xl shadow-sm">
               <p class="text-sm text-gray-400 font-bold">Tidak ada pengumuman yang ditemukan.</p>
             </div>
           </div>
 
-          <!-- AGENDA DESA (WHEN TAB FILTER IS AGENDA) -->
+          <!-- AGENDA DESA -->
           <div v-if="activeTab === 'agenda'" class="space-y-6">
             <div class="flex items-center gap-2 border-b border-gray-100 pb-4">
               <CalendarIcon class="w-5.5 h-5.5 text-[#0D6847]" />
               <h3 class="text-xl font-extrabold text-gray-950">Agenda Kegiatan Desa</h3>
             </div>
 
-            <!-- List of events -->
             <div class="space-y-4">
-              <div 
-                v-for="event in events" 
+              <div
+                v-for="event in events"
                 :key="event.id"
-                class="bg-white rounded-2xl p-6 border border-gray-150 hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center gap-6 hover:-translate-y-0.5"
+                class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row items-start md:items-center gap-6 hover:-translate-y-0.5"
               >
-                <!-- Date Box -->
-                <div class="flex md:flex-col items-center justify-center shrink-0 w-16 h-16 bg-[#F0FAF5] text-[#0D6847] rounded-2xl border border-[#E0F2E9] text-center shadow-xs">
+                <div class="flex md:flex-col items-center justify-center shrink-0 w-16 h-16 bg-[#F0FAF5] text-[#0D6847] rounded-2xl text-center">
                   <span class="text-xs font-bold uppercase">{{ event.month }}</span>
                   <span class="text-2xl font-extrabold leading-none">{{ event.day }}</span>
                 </div>
-                <!-- Details -->
                 <div class="flex-1 space-y-2">
                   <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-bold border border-emerald-100 uppercase">
+                    <span
+                      :class="[
+                        event.status === 'selesai'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-amber-100 text-amber-700'
+                      ]"
+                      class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase"
+                    >
                       {{ event.status }}
                     </span>
                   </div>
@@ -306,8 +297,7 @@
                     </span>
                   </div>
                 </div>
-                <!-- Action -->
-                <button 
+                <button
                   @click="openEventDetail(event)"
                   class="mt-2 md:mt-0 px-4 py-2 border border-gray-200 hover:border-[#0D6847] text-xs font-bold text-gray-600 hover:text-[#0D6847] rounded-xl transition-all active:scale-95 cursor-pointer bg-white"
                 >
@@ -318,13 +308,12 @@
           </div>
 
           <!-- PAGINATION -->
-          <div v-if="totalPages > 1 || activeTab === 'agenda' || activeTab === 'pengumuman'" class="pt-6 border-t border-gray-150 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div v-if="totalPages > 1 || activeTab === 'agenda' || activeTab === 'pengumuman'" class="pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p class="text-xs text-gray-400 font-bold">
               Menampilkan {{ pageStartItem }} - {{ pageEndItem }} dari {{ totalFilteredCount }} informasi desa
             </p>
             <div class="flex items-center gap-1.5">
-              <!-- Previous Button -->
-              <button 
+              <button
                 @click="prevPage"
                 :disabled="currentPageNum === 1"
                 class="p-2.5 rounded-lg border border-gray-200 hover:border-[#0D6847] hover:text-[#0D6847] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer bg-white"
@@ -332,15 +321,14 @@
               >
                 <ArrowLeftIcon class="w-4 h-4" />
               </button>
-              
-              <!-- Numbered Buttons -->
-              <button 
-                v-for="page in totalPages" 
+
+              <button
+                v-for="page in totalPages"
                 :key="page"
                 @click="setPage(page)"
                 :class="[
-                  currentPageNum === page 
-                    ? 'bg-[#0D6847] border-[#0D6847] text-white font-extrabold shadow-sm scale-102' 
+                  currentPageNum === page
+                    ? 'bg-[#0D6847] border-[#0D6847] text-white font-extrabold shadow-sm'
                     : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 font-semibold'
                 ]"
                 class="w-9 h-9 text-xs border rounded-lg transition-all cursor-pointer active:scale-95"
@@ -348,8 +336,7 @@
                 {{ page }}
               </button>
 
-              <!-- Next Button -->
-              <button 
+              <button
                 @click="nextPage"
                 :disabled="currentPageNum === totalPages || totalPages === 0"
                 class="p-2.5 rounded-lg border border-gray-200 hover:border-[#0D6847] hover:text-[#0D6847] transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer bg-white"
@@ -362,32 +349,29 @@
 
         </div>
 
-        <!-- RIGHT COLUMN: SIDEBAR -->
-        <div class="space-y-8">
-          
-          <!-- AGENDA DESA WIDGET (ONLY ON NON-AGENDA TAB) -->
-          <div v-if="activeTab !== 'agenda'" class="bg-white rounded-2xl p-6 border border-gray-150 shadow-sm space-y-6">
+        <!-- RIGHT COLUMN: SIDEBAR — hanya tampil di tab "Semua" -->
+        <div v-if="activeTab === 'semua'" class="space-y-8">
+
+          <!-- AGENDA WIDGET -->
+          <div class="bg-white rounded-2xl p-6 shadow-sm space-y-6">
             <div class="flex items-center gap-2 pb-4 border-b border-gray-100">
               <div class="w-8 h-8 rounded-lg bg-[#0D6847]/10 flex items-center justify-center text-[#0D6847]">
                 <CalendarIcon class="w-4.5 h-4.5" />
               </div>
               <h3 class="font-extrabold text-gray-900 text-base">Agenda Desa</h3>
             </div>
-            
+
             <div class="space-y-4">
-              <!-- Event Items -->
-              <div 
-                v-for="event in events.slice(0, 3)" 
+              <div
+                v-for="event in events.slice(0, 3)"
                 :key="event.id"
                 @click="openEventDetail(event)"
-                class="flex items-center gap-4 bg-gray-50/50 hover:bg-gray-50 p-3 rounded-xl border border-gray-100 hover:shadow-xs transition-all cursor-pointer group"
+                class="flex items-center gap-4 bg-gray-100 hover:bg-gray-200/80 p-3 rounded-xl border border-gray-200/60 transition-all cursor-pointer group"
               >
-                <!-- Date Box -->
-                <div class="flex flex-col items-center justify-center shrink-0 w-11 h-11 bg-white text-[#0D6847] rounded-lg border border-gray-150 text-center shadow-xs">
+                <div class="flex flex-col items-center justify-center shrink-0 w-11 h-11 bg-white text-[#0D6847] rounded-lg text-center shadow-xs">
                   <span class="text-[8px] font-extrabold uppercase tracking-wider leading-none mb-0.5">{{ event.month }}</span>
                   <span class="text-base font-extrabold leading-none">{{ event.day }}</span>
                 </div>
-                <!-- Details -->
                 <div class="flex-1 min-w-0">
                   <h4 class="text-xs font-bold text-gray-900 group-hover:text-[#0D6847] transition-colors truncate">
                     {{ event.title }}
@@ -403,105 +387,26 @@
                     </span>
                   </div>
                 </div>
-                <!-- Badge -->
-                <span class="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100 uppercase shrink-0">
+                <span
+                  :class="[
+                    event.status === 'selesai'
+                      ? 'text-emerald-700 bg-emerald-50'
+                      : 'text-amber-700 bg-amber-50'
+                  ]"
+                  class="text-[8px] font-bold px-1.5 py-0.5 rounded uppercase shrink-0"
+                >
                   {{ event.status }}
                 </span>
               </div>
             </div>
 
-            <!-- Action -->
-            <button 
+            <button
               @click="setTab('agenda')"
               class="w-full flex items-center justify-center gap-2 py-3 border border-gray-200 hover:border-[#0D6847] text-xs font-bold text-gray-600 hover:text-[#0D6847] rounded-xl transition-all cursor-pointer bg-white"
             >
               <CalendarIcon class="w-4 h-4" />
               <span>Semua Jadwal</span>
             </button>
-          </div>
-
-          <!-- BERLANGGANAN INFO WIDGET -->
-          <div class="bg-[#0D6847] rounded-2xl p-6.5 text-white shadow-lg relative overflow-hidden group">
-            <!-- Background glow -->
-            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
-            
-            <div class="relative z-10 space-y-4">
-              <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
-                <BellIcon class="w-5 h-5 text-emerald-300" />
-              </div>
-              <div class="space-y-1">
-                <h3 class="font-extrabold text-lg">Berlangganan Info</h3>
-                <p class="text-xs text-emerald-100 leading-relaxed font-semibold">
-                  Dapatkan berita terbaru langsung ke WhatsApp atau Email Anda.
-                </p>
-              </div>
-
-              <!-- Input & Action -->
-              <div v-if="!isSubscribed" class="space-y-3 pt-2">
-                <div>
-                  <input 
-                    v-model="subscribeInput"
-                    type="text" 
-                    placeholder="Nomor WA (contoh: 0812345678) / Email" 
-                    :class="[subscribeError ? 'border-red-400 bg-red-500/10 placeholder:text-red-200' : 'border-white/20 bg-white/10 placeholder:text-emerald-250 focus:border-white focus:bg-white/15']"
-                    class="w-full px-4 py-3 border rounded-xl text-xs text-white focus:outline-none transition-all font-semibold"
-                    @keyup.enter="handleSubscribe"
-                    @input="subscribeError = false"
-                  />
-                  <p v-if="subscribeError" class="text-[9px] font-extrabold text-red-200 mt-1.5 flex items-center gap-1">
-                    <AlertCircleIcon class="w-3.5 h-3.5" />
-                    <span>Format Email/WA tidak valid!</span>
-                  </p>
-                </div>
-                <button 
-                  @click="handleSubscribe"
-                  class="w-full py-3 bg-white text-[#0D6847] hover:bg-emerald-50 text-xs font-bold rounded-xl transition-all active:scale-97 cursor-pointer"
-                >
-                  Daftar Sekarang
-                </button>
-              </div>
-
-              <!-- Subscribed Success State -->
-              <div v-else class="pt-4 flex flex-col items-center text-center space-y-3 bg-white/5 border border-white/10 p-4 rounded-xl">
-                <CheckCircleIcon class="w-8 h-8 text-emerald-300 animate-bounce" />
-                <div>
-                  <p class="text-xs font-bold text-white">Pendaftaran Berhasil</p>
-                  <p class="text-[10px] text-emerald-200 mt-1">Kami akan mengirimkan pembaruan ke {{ subscribeInput }}.</p>
-                </div>
-                <button 
-                  @click="resetSubscribe" 
-                  class="text-[10px] font-bold text-emerald-300 hover:text-white underline mt-2 cursor-pointer"
-                >
-                  Ubah Email/WA
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- KATEGORI TERPOPULER WIDGET -->
-          <div class="bg-white rounded-2xl p-6 border border-gray-150 shadow-sm space-y-5">
-            <div class="flex items-center gap-2 pb-4 border-b border-gray-100">
-              <div class="w-8 h-8 rounded-lg bg-[#0D6847]/10 flex items-center justify-center text-[#0D6847]">
-                <HeartIcon class="w-4.5 h-4.5" />
-              </div>
-              <h3 class="font-extrabold text-gray-900 text-base">Kategori Terpopuler</h3>
-            </div>
-            
-            <div class="flex flex-wrap gap-2">
-              <button 
-                v-for="cat in popularCategories" 
-                :key="cat"
-                @click="filterByCategory(cat)"
-                :class="[
-                  selectedCategory === cat 
-                    ? 'bg-[#0D6847] border-[#0D6847] text-white shadow-xs font-bold' 
-                    : 'bg-gray-50 border-gray-150 text-gray-500 hover:bg-gray-100 hover:text-gray-700 font-semibold'
-                ]"
-                class="px-3.5 py-2 text-[10px] border rounded-lg transition-all cursor-pointer uppercase tracking-wider"
-              >
-                {{ cat }}
-              </button>
-            </div>
           </div>
 
         </div>
@@ -511,22 +416,16 @@
 
     <!-- ARTICLE DETAIL MODAL -->
     <transition name="fade">
-      <div 
-        v-if="selectedNews" 
+      <div
+        v-if="selectedNews"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
         @click.self="closeNewsDetail"
       >
-        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-gray-100 flex flex-col">
-          
-          <!-- Image -->
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col">
           <div class="relative h-64 md:h-80 bg-gray-100 shrink-0">
-            <img 
-              :src="selectedNews.image" 
-              :alt="selectedNews.title" 
-              class="w-full h-full object-cover"
-            />
+            <img :src="selectedNews.image" :alt="selectedNews.title" class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-75"></div>
-            <button 
+            <button
               @click="closeNewsDetail"
               class="absolute top-4 right-4 p-2 bg-black/55 hover:bg-black/75 text-white rounded-full transition-colors cursor-pointer"
               aria-label="Tutup"
@@ -538,7 +437,6 @@
             </span>
           </div>
 
-          <!-- Content -->
           <div class="p-6 md:p-8 space-y-6">
             <div class="flex items-center gap-4 text-xs text-gray-400 font-bold uppercase tracking-wider">
               <span class="flex items-center gap-1">
@@ -551,17 +449,17 @@
                 {{ selectedNews.author }}
               </span>
             </div>
-            
+
             <h3 class="text-xl md:text-2xl font-extrabold text-gray-900 leading-snug">
               {{ selectedNews.title }}
             </h3>
-            
+
             <div class="text-sm text-gray-600 leading-relaxed space-y-4 font-semibold">
               <p class="whitespace-pre-line">{{ selectedNews.content }}</p>
             </div>
-            
-            <div class="pt-6 border-t border-gray-150 flex justify-end">
-              <button 
+
+            <div class="pt-6 border-t border-gray-100 flex justify-end">
+              <button
                 @click="closeNewsDetail"
                 class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all cursor-pointer"
               >
@@ -569,30 +467,29 @@
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </transition>
 
-    <!-- GENERAL MODAL DETAIL (AGENDA / ANNOUNCEMENT / SYSTEM INFO) -->
+    <!-- GENERAL MODAL -->
     <transition name="fade">
-      <div 
-        v-if="activeModalDetail" 
+      <div
+        v-if="activeModalDetail"
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
         @click.self="closeActiveModal"
       >
-        <div class="bg-white rounded-3xl max-w-md w-full p-6.5 shadow-2xl border border-gray-100 space-y-5">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6.5 shadow-2xl space-y-5">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <div 
+              <div
                 :class="[
-                  activeModalDetail.type === 'agenda' 
-                    ? 'bg-[#F0FAF5] text-[#0D6847]' 
-                    : activeModalDetail.isImportant 
-                      ? 'bg-red-50 text-red-500' 
+                  activeModalDetail.type === 'agenda'
+                    ? 'bg-[#F0FAF5] text-[#0D6847]'
+                    : activeModalDetail.isImportant
+                      ? 'bg-red-50 text-red-500'
                       : 'bg-blue-50 text-blue-500'
                 ]"
-                class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-current/10"
+                class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
               >
                 <CalendarIcon v-if="activeModalDetail.type === 'agenda'" class="w-5 h-5" />
                 <AlertCircleIcon v-else class="w-5 h-5" />
@@ -601,7 +498,7 @@
                 {{ activeModalDetail.type === 'agenda' ? 'Agenda Padukuhan' : 'Pengumuman Resmi' }}
               </span>
             </div>
-            <button 
+            <button
               @click="closeActiveModal"
               class="p-1.5 hover:bg-gray-100 rounded-full transition-colors cursor-pointer text-gray-400 hover:text-gray-600"
             >
@@ -613,11 +510,24 @@
             <h3 class="text-lg font-extrabold text-gray-950 leading-snug">
               {{ activeModalDetail.title }}
             </h3>
-            
-            <div v-if="activeModalDetail.type === 'agenda'" class="bg-gray-50 rounded-2xl p-4 space-y-2 border border-gray-100">
+
+            <div v-if="activeModalDetail.type === 'agenda'" class="flex justify-start">
+              <span
+                :class="[
+                  activeModalDetail.status === 'selesai'
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-amber-100 text-amber-700'
+                ]"
+                class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase"
+              >
+                {{ activeModalDetail.status }}
+              </span>
+            </div>
+
+            <div v-if="activeModalDetail.type === 'agenda'" class="bg-gray-50 rounded-2xl p-4 space-y-2">
               <div class="flex items-center gap-2.5 text-xs text-gray-600 font-semibold">
                 <CalendarIcon class="w-4 h-4 text-gray-400" />
-                <span>Hari/Tanggal: <strong>{{ activeModalDetail.day }} {{ activeModalDetail.month }} 2026</strong></span>
+                <span>Hari/Tanggal: <strong>{{ activeModalDetail.date || (activeModalDetail.day + ' ' + activeModalDetail.month) }}</strong></span>
               </div>
               <div class="flex items-center gap-2.5 text-xs text-gray-600 font-semibold">
                 <ClockIcon class="w-4 h-4 text-gray-400" />
@@ -632,18 +542,18 @@
             <p class="text-xs text-gray-600 leading-relaxed font-semibold">
               {{ activeModalDetail.description || activeModalDetail.details }}
             </p>
-            
+
             <p v-if="activeModalDetail.type === 'agenda'" class="text-xs text-gray-500 leading-relaxed pt-2 font-medium">
               Diharapkan kehadirannya tepat waktu bagi seluruh perwakilan atau warga yang bersangkutan. Kegiatan ini merupakan bagian penting dalam mempererat kebersamaan dan memajukan padukuhan kita.
             </p>
-            <p v-else-if="activeModalDetail.isImportant" class="text-[10px] text-red-500 font-bold leading-relaxed pt-2 flex items-center gap-1 bg-red-50/50 p-2 rounded-lg border border-red-100/50">
+            <p v-else-if="activeModalDetail.isImportant" class="text-[10px] text-red-500 font-bold leading-relaxed pt-2 flex items-center gap-1 bg-red-50/50 p-2 rounded-lg">
               <AlertCircleIcon class="w-4 h-4 shrink-0" />
-              <span>* Harap perhatikan batas pengumpulan berkas di RT masing-masing.</span>
+              <span>* Harap perhatikan himbauan/informasi penting ini.</span>
             </p>
           </div>
 
           <div class="flex justify-end pt-2">
-            <button 
+            <button
               @click="closeActiveModal"
               class="px-5 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl transition-all cursor-pointer active:scale-95"
             >
@@ -654,11 +564,11 @@
       </div>
     </transition>
 
-    <!-- TOAST NOTIFICATION -->
+    <!-- TOAST -->
     <transition name="fade">
-      <div 
-        v-if="toastMessage" 
-        class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 bg-gray-900 text-white rounded-2xl shadow-xl border border-gray-800"
+      <div
+        v-if="toastMessage"
+        class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 bg-gray-900 text-white rounded-2xl shadow-xl"
       >
         <CheckCircleIcon class="w-5 h-5 text-emerald-400 shrink-0" />
         <span class="text-xs font-bold">{{ toastMessage }}</span>
@@ -670,10 +580,10 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { 
+import {
   Search as SearchIcon, Sliders as SlidersIcon, FileText as FileTextIcon,
   Calendar as CalendarIcon, Bell as BellIcon, Clock as ClockIcon,
-  MapPin as MapPinIcon, Heart as HeartIcon, ArrowRight as ArrowRightIcon,
+  MapPin as MapPinIcon, ArrowRight as ArrowRightIcon,
   ArrowLeft as ArrowLeftIcon, X as XIcon, User as UserIcon,
   CheckCircle as CheckCircleIcon, AlertCircle as AlertCircleIcon
 } from 'lucide-vue-next';
@@ -682,9 +592,6 @@ import { store } from '../store';
 const searchQuery = ref('');
 const activeTab = ref('semua');
 const selectedCategory = ref('');
-const subscribeInput = ref('');
-const isSubscribed = ref(false);
-const subscribeError = ref(false);
 const toastMessage = ref('');
 const showCategoryDropdown = ref(false);
 const selectedNews = ref(null);
@@ -699,7 +606,7 @@ const filterTabs = [
   { label: 'Pengumuman', value: 'pengumuman' }
 ];
 
-// --- DATA DARI STORE ---
+// DATA DARI STORE
 const newsData = computed(() => store.news);
 const announcements = computed(() => store.pengumuman);
 const events = computed(() => store.agenda);
@@ -769,18 +676,6 @@ const clearCategoryFilter = () => { selectedCategory.value = ''; };
 const setTab = (tabValue) => { activeTab.value = tabValue; selectedCategory.value = ''; };
 const resetFilters = () => { searchQuery.value = ''; selectedCategory.value = ''; activeTab.value = 'semua'; };
 
-const handleSubscribe = () => {
-  const input = subscribeInput.value.trim();
-  if (!input) return;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const waRegex = /^[0-9+]{8,15}$/;
-  if (!emailRegex.test(input) && !waRegex.test(input)) { subscribeError.value = true; return; }
-  subscribeError.value = false;
-  isSubscribed.value = true;
-  showToast('Berlangganan berhasil!');
-};
-const resetSubscribe = () => { isSubscribed.value = false; subscribeInput.value = ''; };
-
 const showToast = (msg) => { toastMessage.value = msg; setTimeout(() => toastMessage.value = '', 3000); };
 const openNewsDetail = (news) => { selectedNews.value = news; };
 const closeNewsDetail = () => { selectedNews.value = null; };
@@ -799,7 +694,6 @@ const handleImageError = (event, type) => {
 </script>
 
 <style scoped>
-/* Page & Modal Transitions */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.25s ease;
@@ -809,7 +703,6 @@ const handleImageError = (event, type) => {
   opacity: 0;
 }
 
-/* Category Dropdown Slide Down transition */
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: all 0.25s ease-out;
@@ -827,7 +720,6 @@ const handleImageError = (event, type) => {
   margin-bottom: 0;
 }
 
-/* News List Transition */
 .list-enter-active,
 .list-leave-active {
   transition: all 0.3s ease;

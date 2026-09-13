@@ -1,77 +1,100 @@
 <template>
   <div class="min-h-screen bg-[#F8FAFC] text-[#1E293B] font-sans selection:bg-[#0D6847] selection:text-white antialiased">
-    
+
     <!-- HEADER / NAVIGATION (Hidden when on Admin Page) -->
-    <header v-if="!isAdminPage" class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm transition-all duration-300">
+    <header
+      v-if="!isAdminPage"
+      :class="[
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm'
+          : 'bg-transparent border-b border-transparent'
+      ]"
+      class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+    >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
+
           <!-- Logo & Brand -->
           <div @click="navigateTo('beranda')" class="flex items-center gap-3 cursor-pointer group">
-            <div class="w-10 h-10 rounded-full bg-[#0D6847]/10 flex items-center justify-center border border-[#0D6847]/20 group-hover:scale-105 transition-transform duration-300">
-              <!-- Simple custom SVG icon representing leaf/hill -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-[#0D6847]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <div
+              :class="isScrolled
+                ? 'bg-[#0D6847]/10 border-[#0D6847]/20'
+                : 'bg-white/15 border-white/25'"
+              class="w-10 h-10 rounded-full flex items-center justify-center border group-hover:scale-105 transition-transform duration-300"
+            >
+              <svg
+                :class="isScrolled ? 'text-[#0D6847]' : 'text-white'"
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-6 h-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
               </svg>
             </div>
             <div>
-              <h1 class="text-base font-bold text-gray-900 leading-tight tracking-tight">Ngemplak Kalangan</h1>
-              <p class="text-[10px] font-medium text-gray-500 uppercase tracking-widest tracking-widest">INDONESIA</p>
+              <h1
+                :class="isScrolled ? 'text-gray-900' : 'text-white'"
+                class="text-base font-bold leading-tight tracking-tight transition-colors"
+              >
+                Ngemplak Kalangan
+              </h1>
+              <p
+                :class="isScrolled ? 'text-gray-500' : 'text-white/70'"
+                class="text-[10px] font-medium uppercase tracking-widest transition-colors"
+              >
+                INDONESIA
+              </p>
             </div>
           </div>
 
           <!-- Navigation Links -->
-          <nav class="hidden md:flex items-center gap-8">
-            <a 
-              href="#" 
-              @click.prevent="navigateTo('beranda')" 
-              :class="currentPage === 'beranda' ? 'text-[#0D6847]' : 'text-gray-600 hover:text-[#0D6847]'"
-              class="text-sm font-semibold transition-colors"
-            >Beranda</a>
-            <a 
-              href="#" 
-              @click.prevent="navigateTo('profil')" 
-              :class="currentPage === 'profil' ? 'text-[#0D6847]' : 'text-gray-600 hover:text-[#0D6847]'"
-              class="text-sm font-semibold transition-colors"
-            >Profil</a>
-            <a 
-              href="#" 
-              @click.prevent="navigateTo('informasi')" 
-              :class="currentPage === 'informasi' ? 'text-[#0D6847]' : 'text-gray-600 hover:text-[#0D6847]'"
-              class="text-sm font-semibold transition-colors"
-            >Informasi</a>
-            <a 
-              href="#" 
-              @click.prevent="navigateTo('galeri')" 
-              :class="currentPage === 'galeri' ? 'text-[#0D6847]' : 'text-gray-600 hover:text-[#0D6847]'"
-              class="text-sm font-semibold transition-colors"
-            >Galeri</a>
-            <a 
-              href="#" 
-              @click.prevent="navigateTo('produk')" 
-              :class="currentPage === 'produk' ? 'text-[#0D6847]' : 'text-gray-600 hover:text-[#0D6847]'"
-              class="text-sm font-semibold transition-colors"
-            >Produk Padukuhan</a>
-            <a 
-              href="#" 
-              @click.prevent="navigateTo('tentang-kami')" 
-              :class="currentPage === 'tentang-kami' ? 'text-[#0D6847]' : 'text-gray-600 hover:text-[#0D6847]'"
-              class="text-sm font-semibold transition-colors"
-            >Tentang Kami</a>
+          <nav class="hidden md:flex items-center gap-1">
+            <a
+              v-for="link in navLinks"
+              :key="link.page"
+              href="#"
+              @click.prevent="navigateTo(link.page)"
+              :class="[
+                currentPage === link.page
+                  ? (isScrolled
+                      ? 'bg-gray-100 text-gray-900'
+                      : 'bg-white/15 text-white')
+                  : (isScrolled
+                      ? 'text-gray-600 hover:text-[#0D6847] hover:bg-gray-50'
+                      : 'text-white/85 hover:text-white hover:bg-white/10')
+              ]"
+              class="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
+            >
+              {{ link.label }}
+            </a>
           </nav>
 
-          <!-- Search & Action Buttons -->
+          <!-- Action Buttons -->
           <div class="flex items-center gap-3">
-            <button class="p-2.5 text-gray-500 hover:text-[#0D6847] rounded-full hover:bg-gray-50 transition-colors" aria-label="Cari">
+            <!-- Search -->
+            <button
+              :class="isScrolled
+                ? 'text-gray-500 hover:text-[#0D6847] hover:bg-gray-50'
+                : 'text-white/80 hover:text-white hover:bg-white/10'"
+              class="p-2.5 rounded-full transition-colors"
+              aria-label="Cari"
+            >
               <SearchIcon class="w-5 h-5" />
             </button>
 
-            <!-- Separate Admin Login Button -->
-            <button 
-              @click="navigateTo('admin')" 
-              class="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-[#0D6847] border border-emerald-200 text-xs font-bold rounded-full transition-all duration-200 active:scale-95 cursor-pointer shadow-2xs"
+            <!-- Panel Admin Button -->
+            <button
+              @click="navigateTo('admin')"
+              :class="isScrolled
+                ? 'bg-emerald-50 hover:bg-emerald-100 text-[#0D6847] border-emerald-200'
+                : 'bg-white/15 hover:bg-white/25 text-white border-white/25'"
+              class="flex items-center gap-1.5 px-3.5 py-2 border text-xs font-bold rounded-full transition-all duration-200 active:scale-95 cursor-pointer"
               title="Panel Pengelolaan Website Desa"
             >
-              <ShieldLockIcon class="w-4 h-4 text-[#0D6847]" />
+              <ShieldLockIcon class="w-4 h-4" />
               <span>Panel Admin</span>
             </button>
           </div>
@@ -85,99 +108,103 @@
     </transition>
 
     <!-- FOOTER (Hidden when on Admin Page) -->
-    <footer v-if="!isAdminPage" class="bg-white border-t border-gray-150 pt-16 pb-8">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 mb-12">
-          <!-- Logo & Address (4 cols) -->
-          <div class="lg:col-span-4 space-y-5">
+    <footer v-if="!isAdminPage" class="bg-[#1D4533] text-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
+
+        <!-- Top: 3 Kolom -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 mb-12">
+
+          <!-- Kolom 1: Logo & Deskripsi -->
+          <div class="md:col-span-5 space-y-5">
             <div @click="navigateTo('beranda')" class="flex items-center gap-3 cursor-pointer group">
-              <div class="w-9 h-9 rounded-full bg-[#0D6847]/10 flex items-center justify-center border border-[#0D6847]/20 group-hover:scale-105 transition-transform duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#0D6847]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m12.728 12.728l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
-                </svg>
+              <div class="w-11 h-11 rounded-full bg-white/15 border border-white/25 flex items-center justify-center font-extrabold text-white text-sm group-hover:scale-105 transition-transform">
+                NK
               </div>
-              <h2 class="text-base font-bold text-gray-900 leading-tight">Ngemplak Kalangan</h2>
+              <h2 class="text-lg font-extrabold text-white leading-tight tracking-tight">
+                {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }}
+              </h2>
             </div>
-            
-            <div class="space-y-3.5 text-xs text-gray-500 font-medium">
-              <p class="flex items-start gap-2.5 leading-relaxed">
-                <MapPinIcon class="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                <span>Jl. Utama Desa No. 123, Kec. Kalasan, Kab. Sleman, D.I. Yogyakarta 55571, Indonesia</span>
-              </p>
-              <p class="flex items-center gap-2.5">
-                <PhoneIcon class="w-4 h-4 text-gray-400 shrink-0" />
-                <span>(0274) 555-8123</span>
-              </p>
-              <p class="flex items-center gap-2.5">
-                <MailIcon class="w-4 h-4 text-gray-400 shrink-0" />
-                <span>admin@ngemplakkalangan.id</span>
-              </p>
-            </div>
+
+            <p class="text-sm text-emerald-50/90 leading-relaxed max-w-sm">
+              Situs resmi Padukuhan {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }},
+              Kecamatan {{ store.padukuhanProfile?.kecamatan || 'Kalasan' }},
+              Kabupaten {{ store.padukuhanProfile?.kabupaten || 'Sleman' }},
+              {{ store.padukuhanProfile?.provinsi || 'D.I. Yogyakarta' }}.
+            </p>
           </div>
 
-          <!-- Tautan Cepat (2 cols) -->
-          <div class="lg:col-span-2 space-y-4">
-            <h3 class="text-xs font-bold text-gray-950 uppercase tracking-widest">Tautan Cepat</h3>
-            <ul class="space-y-2 text-xs text-gray-500 font-semibold">
-              <li><a href="#" @click.prevent="navigateTo('beranda')" class="hover:text-[#0D6847] transition-colors">Beranda</a></li>
-              <li><a href="#" @click.prevent="navigateTo('profil')" class="hover:text-[#0D6847] transition-colors">Profil Dusun</a></li>
-              <li><a href="#" @click.prevent="navigateTo('informasi')" class="hover:text-[#0D6847] transition-colors">Berita & Informasi</a></li>
-              <li><a href="#" @click.prevent="navigateTo('produk')" class="hover:text-[#0D6847] transition-colors">Produk Unggulan</a></li>
-              <li><a href="#" @click.prevent="navigateTo('galeri')" class="hover:text-[#0D6847] transition-colors">Galeri Dokumentasi</a></li>
-              <li><a href="#" @click.prevent="navigateTo('tentang-kami')" class="hover:text-[#0D6847] transition-colors">Tentang Kami</a></li>
+          <!-- Kolom 2: Jelajahi -->
+          <div class="md:col-span-3 space-y-4">
+            <h3 class="text-base font-extrabold text-white">Jelajahi</h3>
+            <ul class="space-y-2.5">
+              <li>
+                <a href="#" @click.prevent="navigateTo('profil')" class="text-sm text-emerald-50/90 hover:text-white transition-colors">
+                  Profil Dusun
+                </a>
+              </li>
+              <li>
+                <a href="#" @click.prevent="navigateTo('profil')" class="text-sm text-emerald-50/90 hover:text-white transition-colors">
+                  Potensi & Wisata
+                </a>
+              </li>
+              <li>
+                <a href="#" @click.prevent="navigateTo('produk')" class="text-sm text-emerald-50/90 hover:text-white transition-colors">
+                  Direktori UMKM
+                </a>
+              </li>
+              <li>
+                <a href="#" @click.prevent="navigateTo('galeri')" class="text-sm text-emerald-50/90 hover:text-white transition-colors">
+                  Galeri
+                </a>
+              </li>
+              <li>
+                <a href="#" @click.prevent="navigateTo('informasi')" class="text-sm text-emerald-50/90 hover:text-white transition-colors">
+                  Berita
+                </a>
+              </li>
             </ul>
           </div>
 
-          <!-- Potensi Dusun (2 cols) -->
-          <div class="lg:col-span-2 space-y-4">
-            <h3 class="text-xs font-bold text-gray-950 uppercase tracking-widest">Potensi Dusun</h3>
-            <ul class="space-y-2 text-xs text-gray-500 font-semibold">
-              <li><a href="#" @click.prevent="navigateTo('produk')" class="hover:text-[#0D6847] transition-colors">Kerajinan Anyaman</a></li>
-              <li><a href="#" @click.prevent="navigateTo('produk')" class="hover:text-[#0D6847] transition-colors">Batik Tulis Warga</a></li>
-              <li><a href="#" @click.prevent="navigateTo('produk')" class="hover:text-[#0D6847] transition-colors">Hasil Pertanian Organik</a></li>
-              <li><a href="#" @click.prevent="navigateTo('galeri')" class="hover:text-[#0D6847] transition-colors">Seni Rodat Tradisional</a></li>
-              <li><a href="#" @click.prevent="navigateTo('admin')" class="text-[#0D6847] hover:underline font-bold">Panel Admin Desa</a></li>
+          <!-- Kolom 3: Kontak -->
+          <div class="md:col-span-4 space-y-4">
+            <h3 class="text-base font-extrabold text-white">Kontak</h3>
+            <ul class="space-y-3.5">
+              <!-- Alamat -->
+              <li class="flex items-start gap-3 text-sm text-emerald-50/90">
+                <MapPinIcon class="w-4 h-4 text-emerald-200 shrink-0 mt-1" />
+                <span class="leading-relaxed">
+                  {{ store.padukuhanProfile?.alamat_kantor || 'Kantor Padukuhan Ngemplak Kalangan, Kecamatan Kalasan, Kabupaten Sleman, D.I. Yogyakarta' }}
+                </span>
+              </li>
+              <!-- Telepon -->
+              <li class="flex items-center gap-3 text-sm text-emerald-50/90">
+                <PhoneIcon class="w-4 h-4 text-emerald-200 shrink-0" />
+                <a :href="`tel:${(store.padukuhanProfile?.telepon || '').replace(/[^0-9]/g, '')}`" class="hover:text-white transition-colors">
+                  {{ store.padukuhanProfile?.telepon || '(0274) 555-8123' }}
+                </a>
+              </li>
+              <!-- Email -->
+              <li class="flex items-center gap-3 text-sm text-emerald-50/90">
+                <MailIcon class="w-4 h-4 text-emerald-200 shrink-0" />
+                <a :href="`mailto:${store.padukuhanProfile?.email || 'admin@ngempakkan.id'}`" class="hover:text-white transition-colors">
+                  {{ store.padukuhanProfile?.email || 'admin@ngempakkan.id' }}
+                </a>
+              </li>
             </ul>
-          </div>
-
-          <!-- Ikuti Kami & Socials (4 cols) -->
-          <div class="lg:col-span-4 space-y-4">
-            <h3 class="text-xs font-bold text-gray-950 uppercase tracking-widest">Ikuti Kami</h3>
-            <div class="flex items-center gap-3">
-              <a href="#" class="p-2.5 rounded-lg bg-gray-50 hover:bg-[#0D6847]/10 text-gray-400 hover:text-[#0D6847] border border-gray-150 transition-all active:scale-95" aria-label="Website">
-                <GlobeIcon class="w-4 h-4" />
-              </a>
-              <a href="#" class="p-2.5 rounded-lg bg-gray-50 hover:bg-[#0D6847]/10 text-gray-400 hover:text-[#0D6847] border border-gray-150 transition-all active:scale-95" aria-label="Facebook">
-                <FacebookIcon class="w-4 h-4" />
-              </a>
-              <a href="#" class="p-2.5 rounded-lg bg-gray-50 hover:bg-[#0D6847]/10 text-gray-400 hover:text-[#0D6847] border border-gray-150 transition-all active:scale-95" aria-label="Instagram">
-                <InstagramIcon class="w-4 h-4" />
-              </a>
-              <a href="#" class="p-2.5 rounded-lg bg-gray-50 hover:bg-[#0D6847]/10 text-gray-400 hover:text-[#0D6847] border border-gray-150 transition-all active:scale-95" aria-label="Youtube">
-                <YoutubeIcon class="w-4 h-4" />
-              </a>
-            </div>
-            <div class="pt-2">
-              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Domain Resmi</p>
-              <a href="https://www.ngemplakkalangan.id" target="_blank" class="text-xs font-bold text-[#0D6847] hover:underline mt-1 inline-flex items-center gap-1.5">
-                <span>www.ngemplakkalangan.id</span>
-                <ExternalLinkIcon class="w-3.5 h-3.5" />
-              </a>
-            </div>
           </div>
         </div>
 
-        <!-- Divider & Copyright -->
-        <div class="pt-8 border-t border-gray-150 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest text-center md:text-left">
-            © 2026 Padukuhan Digital Indonesia. Seluruh hak cipta dilindungi undang-undang.
+        <!-- Divider -->
+        <div class="border-t border-white/15"></div>
+
+        <!-- Bottom Bar: Copyright & Credit -->
+        <div class="pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+          <p class="text-xs text-emerald-50/80 text-center md:text-left">
+            © {{ new Date().getFullYear() }} Pemerintah Padukuhan {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }}. Seluruh aset terdaftar atas nama padukuhan.
           </p>
-          <div class="flex items-center gap-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            <a href="#" @click.prevent="navigateTo('admin')" class="text-[#0D6847] hover:underline">Panel Admin</a>
-            <a href="#" class="hover:text-gray-600 transition-colors">Kebijakan Privasi</a>
-            <a href="#" class="hover:text-gray-600 transition-colors">Syarat & Ketentuan</a>
-          </div>
+          <p class="text-xs text-emerald-50/80 text-center md:text-right">
+            Dibuat oleh <span class="text-white font-semibold">Tim IT KKN-M KALANGAN KARSA UNY 2026</span>
+          </p>
         </div>
 
       </div>
@@ -187,10 +214,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { 
-  Search as SearchIcon, 
-  LogIn as LogInIcon, 
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import {
+  Search as SearchIcon,
+  LogIn as LogInIcon,
   MapPin as MapPinIcon,
   Globe as GlobeIcon,
   Facebook as FacebookIcon,
@@ -220,6 +247,33 @@ const isAdminPage = computed(() => {
   return currentPage.value === 'admin-login' || currentPage.value === 'admin-dashboard';
 });
 
+// Nav links (dengan active pill)
+const navLinks = [
+  { page: 'beranda', label: 'Beranda' },
+  { page: 'profil', label: 'Profil' },
+  { page: 'informasi', label: 'Informasi' },
+  { page: 'galeri', label: 'Galeri' },
+  { page: 'produk', label: 'UMKM Padukuhan' },
+  { page: 'tentang-kami', label: 'Tentang Kami' }
+];
+
+// Scroll detection — navbar jadi solid saat di-scroll
+const isScrolled = ref(false);
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 40;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+  store.initData();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
 // Active view mapping
 const activeComponent = computed(() => {
   if (currentPage.value === 'admin-login') return AdminLoginView;
@@ -245,40 +299,7 @@ const navigateTo = (page) => {
   }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
-
-onMounted(() => {
-  store.initData();
-});
 </script>
-
-<style>
-/* Page transition styles */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-@keyframes pulse-slow {
-  0%, 100% {
-    opacity: 0.7;
-    transform: scale(1.05);
-  }
-  50% {
-    opacity: 0.78;
-    transform: scale(1.07);
-  }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 8s ease-in-out infinite;
-}
-</style>
-
 
 <style>
 /* Page transition styles */

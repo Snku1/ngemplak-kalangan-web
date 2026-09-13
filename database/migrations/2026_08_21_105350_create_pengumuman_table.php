@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('pengumuman', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained('master_kategori')->cascadeOnDelete();
             $table->string('judul', 200);
             $table->text('isi_ringkas');
             $table->date('tanggal_posting');

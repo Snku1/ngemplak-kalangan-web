@@ -19,13 +19,17 @@ class UmkmController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'nama_penjual' => 'required|max:100', 'nama_usaha' => 'required|max:100', 'nomor_whatsapp' => 'required|max:20'
+            'nama_penjual' => 'required|max:100',
+            'nama_usaha' => 'required|max:100',
+            'nomor_whatsapp' => 'required|max:20',
+            'alamat_lokasi' => 'nullable|string',
+            'maps_lokasi' => 'nullable|string|max:255',  // <-- TAMBAH
         ]);
    
         if($validator->fails()){
             return $this->sendError('Validation Error.', $validator->errors());       
         }
-   
+
         $data = Umkm::create($input);
         return $this->sendResponse($data, 'Umkm created successfully.');
     } 
@@ -44,7 +48,11 @@ class UmkmController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'nama_penjual' => 'required|max:100', 'nama_usaha' => 'required|max:100', 'nomor_whatsapp' => 'required|max:20'
+            'nama_penjual' => 'required|max:100',
+            'nama_usaha' => 'required|max:100',
+            'nomor_whatsapp' => 'required|max:20',
+            'alamat_lokasi' => 'nullable|string',
+            'maps_lokasi' => 'nullable|string|max:255',  // <-- TAMBAH
         ]);
    
         if($validator->fails()){

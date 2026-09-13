@@ -8,7 +8,7 @@ class Pengumuman extends Model
 {
     protected $table = 'pengumuman';
 
-    protected $fillable = ['category_id', 'judul', 'isi_ringkas', 'tanggal_posting'];
+    protected $fillable = ['judul', 'isi_ringkas', 'tanggal_posting', 'is_important'];
 
     public function category()
     {

@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class News extends Model
 {
     protected $table = 'news';
+    protected $fillable = [
+        'category_id', 'author_id', 'title', 'slug', 'content',
+        'excerpt', 'thumbnail', 'status', 'view_count'
+    ];
 
-    protected $fillable = ['category_id', 'author_id', 'title', 'slug', 'content', 'thumbnail', 'tags', 'status', 'view_count'];
-
-    public function category()
+    public function kategori()
     {
         return $this->belongsTo(MasterKategori::class, 'category_id');
     }
@@ -19,5 +21,4 @@ class News extends Model
     {
         return $this->belongsTo(User::class, 'author_id');
     }
-
 }

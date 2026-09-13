@@ -107,20 +107,23 @@
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead><tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                  <th class="py-3 px-4">Gambar</th>
-                  <th class="py-3 px-4">Judul &amp; Kategori</th>
-                  <th class="py-3 px-4">Tanggal</th>
-                  <th class="py-3 px-4 text-right">Aksi</th>
-                </tr></thead>
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Gambar</th>
+                    <th class="py-3 px-4">Judul, Kategori &amp; Ringkasan</th>
+                    <th class="py-3 px-4">Tanggal</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
                 <tbody class="divide-y divide-gray-100">
                   <tr v-for="item in sortedNews" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
                     <td class="py-3 px-4 w-20">
                       <img :src="item.image || item.foto_url || '/images/hero-bg.png'" :alt="item.title" class="w-14 h-10 rounded-lg object-cover bg-gray-100" @error="handleFallbackImg" />
                     </td>
-                    <td class="py-3 px-4 max-w-xs">
+                    <td class="py-3 px-4 max-w-md">
                       <div class="font-bold text-gray-900 line-clamp-1">{{ item.title }}</div>
                       <span class="inline-block mt-1 px-2 py-0.5 bg-emerald-50 text-[#0D6847] text-[10px] font-bold rounded-md">{{ item.category }}</span>
+                      <p class="text-gray-500 text-[11px] mt-1 line-clamp-2 leading-relaxed">{{ item.excerpt }}</p>
                     </td>
                     <td class="py-3 px-4 text-gray-500 whitespace-nowrap">{{ item.date }}</td>
                     <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
@@ -244,8 +247,8 @@
                     <td class="py-3 px-4 text-gray-500">{{ item.location }}</td>
                     <td class="py-3 px-4">
                       <span :class="{
-                        'bg-blue-100 text-blue-700': item.status === 'mendatang',
-                        'bg-gray-100 text-gray-500': item.status === 'selesai'
+                        'bg-amber-100 text-amber-700': item.status === 'mendatang',
+                        'bg-emerald-100 text-emerald-700': item.status === 'selesai'
                       }" class="px-2 py-0.5 rounded text-[10px] font-bold capitalize">{{ item.status }}</span>
                     </td>
                     <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
@@ -274,7 +277,6 @@
               <table class="w-full text-left text-xs">
                 <thead><tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
                   <th class="py-3 px-4">Judul</th>
-                  <th class="py-3 px-4">Kategori</th>
                   <th class="py-3 px-4">Tanggal Posting</th>
                   <th class="py-3 px-4 text-right">Aksi</th>
                 </tr></thead>
@@ -306,7 +308,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
               <div>
                 <h2 class="text-xl font-black text-gray-900">Kelola Tokoh &amp; Perangkat Dusun</h2>
-                <p class="text-xs text-gray-500">Struktur kepengurusan di halaman Profil &amp; Tentang Kami</p>
+                <p class="text-xs text-gray-500">{{ store.leaders.length }} tokoh · tampil di halaman Informasi</p>
               </div>
               <button @click="openAddModal('leaders')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
                 <PlusIcon class="w-4 h-4" /><span>Tambah Tokoh</span>
@@ -314,24 +316,34 @@
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead><tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                  <th class="py-3 px-4">Foto</th>
-                  <th class="py-3 px-4">Nama Lengkap</th>
-                  <th class="py-3 px-4">Jabatan</th>
-                  <th class="py-3 px-4 text-right">Aksi</th>
-                </tr></thead>
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Foto</th>
+                    <th class="py-3 px-4">Nama Lengkap</th>
+                    <th class="py-3 px-4">Jabatan</th>
+                    <th class="py-3 px-4 text-center">Urutan</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
                 <tbody class="divide-y divide-gray-100">
                   <tr v-for="item in store.leaders" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
                     <td class="py-3 px-4 w-16">
-                      <img :src="item.image || '/images/hero-bg.png'" :alt="item.name" class="w-10 h-10 rounded-lg object-cover bg-gray-100" @error="handleFallbackImg" />
+                      <img v-if="item.image" :src="item.image" :alt="item.name" class="w-10 h-10 rounded-full object-cover bg-gray-100" @error="handleFallbackImg" />
+                      <div v-else class="w-10 h-10 rounded-full bg-[#1B8A9C] text-white flex items-center justify-center font-bold text-sm">
+                        {{ item.initials }}
+                      </div>
                     </td>
                     <td class="py-3 px-4 font-bold text-gray-900">{{ item.name }}</td>
                     <td class="py-3 px-4 font-semibold text-[#0D6847]">{{ item.role }}</td>
+                    <td class="py-3 px-4 text-center text-gray-500 font-mono">{{ item.urutan }}</td>
                     <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
                       <button @click="openDetailView('leaders', item)" class="p-2 bg-gray-100 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors cursor-pointer" title="Lihat Detail"><EyeIcon class="w-3.5 h-3.5" /></button>
                       <button @click="openEditModal('leaders', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
                       <button @click="confirmDelete('leaders', item.id, item.name)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
                     </td>
+                  </tr>
+                  <tr v-if="store.leaders.length === 0">
+                    <td colspan="5" class="py-6 text-center text-gray-400">Belum ada data tokoh &amp; perangkat.</td>
                   </tr>
                 </tbody>
               </table>
@@ -343,25 +355,41 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
               <div>
                 <h2 class="text-xl font-black text-gray-900">Kelola Statistik Kependudukan</h2>
-                <p class="text-xs text-gray-500">Statistik demografi di halaman Profil</p>
+                <p class="text-xs text-gray-500">Statistik demografi di halaman Profil ({{ store.demographics.length }} data)</p>
               </div>
               <button @click="openAddModal('demographics')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
                 <PlusIcon class="w-4 h-4" /><span>Tambah Statistik</span>
               </button>
             </div>
+
+            <!-- Filter Kategori -->
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Filter Kategori:</span>
+              <button v-for="t in ['semua', 'usia', 'jenis_kelamin', 'pendidikan', 'pekerjaan']" :key="t"
+                @click="demografiFilter = t"
+                :class="demografiFilter === t ? 'bg-[#0D6847] text-white shadow-xs' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
+                class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer capitalize">
+                {{ t === 'jenis_kelamin' ? 'jenis kelamin' : t }}
+              </button>
+            </div>
+
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead><tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                  <th class="py-3 px-4">Kategori</th>
-                  <th class="py-3 px-4">Label</th>
-                  <th class="py-3 px-4 text-right">Jumlah Jiwa</th>
-                  <th class="py-3 px-4 text-right">Persen (%)</th>
-                  <th class="py-3 px-4 text-right">Aksi</th>
-                </tr></thead>
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Kategori</th>
+                    <th class="py-3 px-4">Label</th>
+                    <th class="py-3 px-4 text-center">Urutan</th>
+                    <th class="py-3 px-4 text-right">Jumlah Jiwa</th>
+                    <th class="py-3 px-4 text-right">Persen (%)</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
                 <tbody class="divide-y divide-gray-100">
-                  <tr v-for="item in store.demographics" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
+                  <tr v-for="item in filteredDemografi" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
                     <td class="py-3 px-4 font-bold text-gray-900 uppercase">{{ item.kategori?.replace('_', ' ') }}</td>
                     <td class="py-3 px-4 font-semibold text-[#0D6847]">{{ item.label }}</td>
+                    <td class="py-3 px-4 text-center text-gray-500 font-mono">{{ item.urutan }}</td>
                     <td class="py-3 px-4 text-right">{{ item.jumlah_jiwa }} Jiwa</td>
                     <td class="py-3 px-4 text-right">{{ item.persentase }}%</td>
                     <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
@@ -369,6 +397,9 @@
                       <button @click="openEditModal('demographics', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
                       <button @click="confirmDelete('demographics', item.id, item.label)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
                     </td>
+                  </tr>
+                  <tr v-if="filteredDemografi.length === 0">
+                    <td colspan="6" class="py-6 text-center text-gray-400">Belum ada data untuk kategori ini.</td>
                   </tr>
                 </tbody>
               </table>
@@ -379,40 +410,42 @@
           <div v-else-if="activeTab === 'kependudukan'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5 animate-fade-in">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
               <div>
-                <h2 class="text-xl font-black text-gray-900">Kelola Kependudukan per RT/Dusun</h2>
-                <p class="text-xs text-gray-500">{{ store.kependudukanDusun.length }} RT terdaftar · tampil di halaman Profil</p>
+                <h2 class="text-xl font-black text-gray-900">Kelola Kependudukan per Dusun</h2>
+                <p class="text-xs text-gray-500">{{ store.kependudukanDusun.length }} dusun terdaftar · tampil di halaman Profil</p>
               </div>
               <button @click="openAddModal('kependudukan')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
-                <PlusIcon class="w-4 h-4" /><span>Tambah Data RT</span>
+                <PlusIcon class="w-4 h-4" /><span>Tambah Dusun</span>
               </button>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead><tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                  <th class="py-3 px-4">RT</th>
-                  <th class="py-3 px-4">Dusun</th>
-                  <th class="py-3 px-4 text-right">Laki-laki</th>
-                  <th class="py-3 px-4 text-right">Perempuan</th>
-                  <th class="py-3 px-4 text-right">Total</th>
-                  <th class="py-3 px-4 text-right">KK</th>
-                  <th class="py-3 px-4 text-right">Aksi</th>
-                </tr></thead>
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Urutan</th>
+                    <th class="py-3 px-4">Nama Dusun</th>
+                    <th class="py-3 px-4 text-right">Laki-laki</th>
+                    <th class="py-3 px-4 text-right">Perempuan</th>
+                    <th class="py-3 px-4 text-right">Total</th>
+                    <th class="py-3 px-4 text-right">KK</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
                 <tbody class="divide-y divide-gray-100">
                   <tr v-for="item in store.kependudukanDusun" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ item.nama_rt }}</td>
-                    <td class="py-3 px-4 text-gray-600">{{ item.nama_dusun || '-' }}</td>
-                    <td class="py-3 px-4 text-right">{{ item.laki_laki }}</td>
-                    <td class="py-3 px-4 text-right">{{ item.perempuan }}</td>
-                    <td class="py-3 px-4 text-right font-bold text-emerald-600">{{ item.total }}</td>
+                    <td class="py-3 px-4 text-gray-400 font-mono text-[11px]">{{ item.urutan }}</td>
+                    <td class="py-3 px-4 font-bold text-gray-900">{{ item.nama_dusun }}</td>
+                    <td class="py-3 px-4 text-right text-cyan-700 font-bold">{{ item.laki_laki }}</td>
+                    <td class="py-3 px-4 text-right text-green-700 font-bold">{{ item.perempuan }}</td>
+                    <td class="py-3 px-4 text-right font-extrabold text-emerald-700">{{ item.total }}</td>
                     <td class="py-3 px-4 text-right text-gray-500">{{ item.jumlah_kk }}</td>
                     <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
                       <button @click="openDetailView('kependudukan', item)" class="p-2 bg-gray-100 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors cursor-pointer" title="Lihat Detail"><EyeIcon class="w-3.5 h-3.5" /></button>
                       <button @click="openEditModal('kependudukan', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
-                      <button @click="confirmDelete('kependudukan', item.id, item.nama_rt)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
+                      <button @click="confirmDelete('kependudukan', item.id, item.nama_dusun)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
                     </td>
                   </tr>
                   <tr v-if="store.kependudukanDusun.length === 0">
-                    <td colspan="7" class="py-6 text-center text-gray-400">Belum ada data kependudukan per RT.</td>
+                    <td colspan="7" class="py-6 text-center text-gray-400">Belum ada data kependudukan per dusun.</td>
                   </tr>
                 </tbody>
               </table>
@@ -502,7 +535,7 @@
             <!-- Filter Tipe -->
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Filter Tipe:</span>
-              <button v-for="t in ['semua', 'berita', 'produk', 'galeri', 'pengumuman']" :key="t"
+              <button v-for="t in ['semua', 'berita', 'produk', 'galeri']" :key="t"
                 @click="kategoriFilter = t"
                 :class="kategoriFilter === t ? 'bg-[#0D6847] text-white shadow-xs' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
                 class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer capitalize">
@@ -553,6 +586,7 @@
               <p class="text-xs text-gray-500">Data profil ditampilkan di halaman Beranda &amp; Profil</p>
             </div>
             <form @submit.prevent="savePadukuhanProfile" class="space-y-4">
+              <!-- Identitas -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-bold text-gray-700 mb-1">Nama Padukuhan <span class="text-red-500">*</span></label>
@@ -571,20 +605,36 @@
                   <input v-model="profileForm.kabupaten" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Penduduk (Jiwa)</label>
-                  <input v-model="profileForm.jumlah_penduduk" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Provinsi</label>
+                  <input v-model="profileForm.provinsi" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah KK</label>
-                  <input v-model="profileForm.jumlah_kk" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Kode Pos</label>
+                  <input v-model="profileForm.kode_pos" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Luas Wilayah</label>
+                  <input v-model="profileForm.luas_wilayah" type="text" placeholder="cth: 1.2 km²" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Dusun</label>
+                  <input v-model="profileForm.jumlah_dusun" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah RT</label>
                   <input v-model="profileForm.jumlah_rt" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">Luas Wilayah</label>
-                  <input v-model="profileForm.luas_wilayah" type="text" placeholder="cth: 1.2 km²" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah RW</label>
+                  <input v-model="profileForm.jumlah_rw" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Penduduk (Jiwa)</label>
+                  <input v-model="profileForm.jumlah_penduduk" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah KK</label>
+                  <input v-model="profileForm.jumlah_kk" type="number" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-gray-700 mb-1">Telepon Kantor</label>
@@ -595,37 +645,71 @@
                   <input v-model="profileForm.email" type="email" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
               </div>
+
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Alamat Kantor</label>
                 <input v-model="profileForm.alamat_kantor" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
+
+              <!-- Batas Wilayah -->
+              <div class="border-t border-gray-100 pt-4">
+                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">Batas Wilayah</h4>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Batas Utara</label>
+                    <input v-model="profileForm.batas_utara" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Batas Selatan</label>
+                    <input v-model="profileForm.batas_selatan" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Batas Timur</label>
+                    <input v-model="profileForm.batas_timur" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Batas Barat</label>
+                    <input v-model="profileForm.batas_barat" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Maps Embed -->
+              <div class="border-t border-gray-100 pt-4">
+                <label class="block text-xs font-bold text-gray-700 mb-1">URL Google Maps (untuk Beranda)</label>
+                <input v-model="profileForm.maps_embed" type="text" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                <p class="text-[10px] text-gray-400 mt-1">Salin link dari Google Maps → Share → Copy Link.</p>
+              </div>
+
+              <!-- Foto -->
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Foto Kepala Dukuh</label>
                 <input type="file" accept="image/*" @change="e => profileFileUpload = e.target.files[0]"
                   class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 <p v-if="profileFileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ profileFileUpload.name }}</p>
                 <div v-if="profileForm.foto_dukuh && !profileFileUpload" class="mt-2">
-                  <img :src="profileForm.foto_dukuh" class="h-20 rounded-lg object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
+                  <img :src="profileForm.foto_dukuh" class="h-20 rounded-lg object-cover border" @error="e => e.target.style.display='none'" />
                 </div>
               </div>
+
+              <!-- Teks -->
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Sambutan Kepala Dukuh</label>
                 <textarea v-model="profileForm.sambutan_dukuh" rows="3" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
               </div>
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Cita-Cita Padukuhan</label>
-                <textarea v-model="profileForm.cita_cita" rows="3" placeholder="Visi utama padukuhan..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+                <textarea v-model="profileForm.cita_cita" rows="3" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
               </div>
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Sejarah Padukuhan</label>
                 <textarea v-model="profileForm.sejarah" rows="4" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
               </div>
-              <div class="pt-2">
-                <button type="submit" class="px-6 py-3 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer flex items-center gap-2">
-                  <CheckCircle2Icon class="w-4 h-4" />
-                  <span>Simpan Profil Padukuhan</span>
-                </button>
-              </div>
+
+              <button type="submit" class="px-6 py-3 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2">
+                <CheckCircle2Icon class="w-4 h-4" />
+                <span>Simpan Profil Padukuhan</span>
+              </button>
             </form>
           </div>
 
@@ -703,7 +787,8 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Ringkasan (Excerpt)</label>
-              <textarea v-model="formData.excerpt" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+              <textarea v-model="formData.excerpt" rows="2" placeholder="Ringkasan singkat berita yang tampil di kartu..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+              <p class="text-[10px] text-gray-400 mt-1">Ringkasan ini tampil di halaman Informasi sebagai preview berita.</p>
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Isi Lengkap</label>
@@ -741,6 +826,11 @@
               </div>
             </div>
             <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Link Google Maps Lokasi Penjual</label>
+              <input v-model="formData.sellerMaps" type="text" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <p class="text-[10px] text-gray-400 mt-1">Buka Google Maps → Share → Copy Link.</p>
+            </div>
+            <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto Produk (JPG/PNG)</label>
               <input type="file" accept="image/*" @change="e => fileUpload = e.target.files[0]"
                 class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
@@ -754,7 +844,7 @@
               <label for="bestSeller" class="text-xs font-bold text-gray-700 cursor-pointer">Tandai sebagai Produk Terlaris</label>
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Singkat</label>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Produk</label>
               <textarea v-model="formData.description" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
             </div>
           </template>
@@ -800,7 +890,7 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi</label>
-              <textarea v-model="formData.description" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+              <textarea v-model="formData.deskripsi" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
             </div>
           </template>
 
@@ -848,13 +938,6 @@
               <input v-model="formData.title" type="text" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Kategori <span class="text-red-500">*</span></label>
-              <select v-model="formData.category_id" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
-                <option value="">-- Pilih Kategori --</option>
-                <option v-for="cat in store.categoriesByTipe('pengumuman')" :key="cat.id" :value="cat.id">{{ cat.nama }}</option>
-              </select>
-            </div>
-            <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Posting <span class="text-red-500">*</span></label>
               <input v-model="formData.tanggal_posting" type="date" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
             </div>
@@ -862,34 +945,44 @@
               <label class="block text-xs font-bold text-gray-700 mb-1">Isi Ringkas <span class="text-red-500">*</span></label>
               <textarea v-model="formData.description" rows="4" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
             </div>
+            <div class="flex items-center gap-2">
+              <input v-model="formData.isImportant" type="checkbox" id="isImportant" class="w-4 h-4 text-[#0D6847] rounded cursor-pointer" />
+              <label for="isImportant" class="text-xs font-bold text-gray-700 cursor-pointer">Tandai sebagai Pengumuman Penting</label>
+            </div>
           </template>
 
-          <!-- FORM: LEADERS -->
+          <!-- FORM: TOKOH & PERANGKAT -->
           <template v-else-if="currentModalType === 'leaders'">
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
-              <input v-model="formData.name" type="text" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <input v-model="formData.name" type="text" required
+                placeholder="cth: Papang Suherlan"
+                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Jabatan <span class="text-red-500">*</span></label>
-              <input v-model="formData.role" type="text" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <input v-model="formData.role" type="text" required
+                placeholder="cth: Kepala Desa / Sekretaris Desa / Kepala Seksi Pemerintahan"
+                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Fokus Tugas</label>
-              <input v-model="formData.focus" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <label class="block text-xs font-bold text-gray-700 mb-1">Urutan <span class="text-red-500">*</span></label>
+              <input v-model.number="formData.urutan" type="number" required min="1"
+                placeholder="cth: 1"
+                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <p class="text-[10px] text-gray-400 mt-1">
+                <strong>1</strong> = Kepala Desa · <strong>2</strong> = Sekretaris · <strong>3+</strong> = Kepala Seksi
+              </p>
             </div>
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto</label>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto (opsional)</label>
               <input type="file" accept="image/*" @change="e => fileUpload = e.target.files[0]"
                 class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               <p v-if="fileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ fileUpload.name }}</p>
               <div v-if="formData.foto_url && !fileUpload" class="mt-2">
-                <img :src="formData.foto_url" class="h-16 w-16 rounded-lg object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
+                <img :src="formData.foto_url" class="h-16 w-16 rounded-full object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
               </div>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi / Peran</label>
-              <textarea v-model="formData.description" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+              <p class="text-[10px] text-gray-400 mt-1">Jika tidak upload foto, akan tampil inisial nama secara otomatis.</p>
             </div>
           </template>
 
@@ -898,7 +991,7 @@
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Kategori Statistik <span class="text-red-500">*</span></label>
               <select v-model="formData.kategori" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
-                <option value="usia">Kelompok Usia</option>
+                <option value="usia">Golongan Umur</option>
                 <option value="jenis_kelamin">Jenis Kelamin</option>
                 <option value="pendidikan">Tingkat Pendidikan</option>
                 <option value="pekerjaan">Profesi / Pekerjaan</option>
@@ -906,31 +999,43 @@
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Label <span class="text-red-500">*</span></label>
-              <input v-model="formData.label" type="text" required placeholder="cth: Laki-laki / Anak-anak" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <input v-model="formData.label" type="text" required
+                placeholder="cth: 0-1 tahun / Laki-laki / SD"
+                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Urutan Tampil</label>
+              <input v-model="formData.urutan" type="number" min="0"
+                placeholder="1, 2, 3, ..."
+                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <p class="text-[10px] text-gray-400 mt-1">Angka lebih kecil tampil lebih dulu di chart.</p>
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Jiwa <span class="text-red-500">*</span></label>
-                <input v-model="formData.jumlah_jiwa" type="number" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                <input v-model="formData.jumlah_jiwa" type="number" required
+                  class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Persentase (%)</label>
-                <input v-model="formData.persentase" type="number" step="0.1" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                <input v-model="formData.persentase" type="number" step="0.01"
+                  class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
             </div>
           </template>
 
-          <!-- FORM: KEPENDUDUKAN -->
+          <!-- FORM: KEPENDUDUKAN PER DUSUN -->
           <template v-else-if="currentModalType === 'kependudukan'">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Nama Dusun <span class="text-red-500">*</span></label>
+              <input v-model="formData.nama_dusun" type="text" required placeholder="cth: Dusun Bojongkopo (I)" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Urutan Tampil</label>
+              <input v-model="formData.urutan" type="number" min="0" placeholder="1, 2, 3, ..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              <p class="text-[10px] text-gray-400 mt-1">Angka kecil tampil lebih dulu.</p>
+            </div>
             <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Nama RT <span class="text-red-500">*</span></label>
-                <input v-model="formData.nama_rt" type="text" required placeholder="RT 01" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Nama Dusun</label>
-                <input v-model="formData.nama_dusun" type="text" placeholder="Ngemplak / Kalangan" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              </div>
               <div>
                 <label class="block text-xs font-bold text-gray-700 mb-1">Laki-laki <span class="text-red-500">*</span></label>
                 <input v-model="formData.laki_laki" type="number" required min="0" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
@@ -939,10 +1044,10 @@
                 <label class="block text-xs font-bold text-gray-700 mb-1">Perempuan <span class="text-red-500">*</span></label>
                 <input v-model="formData.perempuan" type="number" required min="0" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah KK</label>
-                <input v-model="formData.jumlah_kk" type="number" min="0" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah KK</label>
+              <input v-model="formData.jumlah_kk" type="number" min="0" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Keterangan</label>
@@ -1066,8 +1171,8 @@
 
         <!-- Info tambahan kependudukan -->
         <div v-if="detailItem._type === 'kependudukan'" class="mt-3 grid grid-cols-2 gap-2 text-xs bg-gray-50 p-3 rounded-xl">
-          <p><strong>RT:</strong> {{ detailItem.nama_rt }}</p>
-          <p><strong>Dusun:</strong> {{ detailItem.nama_dusun || '-' }}</p>
+          <p><strong>Dusun:</strong> {{ detailItem.nama_dusun }}</p>
+          <p><strong>Urutan:</strong> {{ detailItem.urutan }}</p>
           <p><strong>Laki-laki:</strong> {{ detailItem.laki_laki }}</p>
           <p><strong>Perempuan:</strong> {{ detailItem.perempuan }}</p>
           <p><strong>Total:</strong> {{ detailItem.total }}</p>
@@ -1166,6 +1271,16 @@ const filteredKategori = computed(() => {
   return store.categories.filter(c => c.tipe === kategoriFilter.value);
 });
 
+const demografiFilter = ref('semua');
+
+const filteredDemografi = computed(() => {
+  let list = [...store.demographics];
+  if (demografiFilter.value !== 'semua') {
+    list = list.filter(d => d.kategori === demografiFilter.value);
+  }
+  return list.sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
+});
+
 const overviewCards = computed(() => [
   { tab: 'news', label: 'Berita', icon: NewspaperIcon, color: 'text-emerald-600', count: store.news.length, sub: 'Artikel Terbit' },
   { tab: 'products', label: 'Produk', icon: ShoppingBagIcon, color: 'text-blue-600', count: store.products.length, sub: 'UMKM Terdaftar' },
@@ -1180,7 +1295,7 @@ const quickActions = [
   { type: 'agenda', label: 'Tambah Agenda', sub: 'Jadwalkan kegiatan', icon: CalendarIcon, bg: 'bg-amber-50/70 hover:bg-amber-100/70 border-amber-100', iconColor: 'text-amber-600' },
   { type: 'pengumuman', label: 'Tambah Pengumuman', sub: 'Info penting desa', icon: BellIcon, bg: 'bg-red-50/70 hover:bg-red-100/70 border-red-100', iconColor: 'text-red-600' },
   { type: 'gallery', label: 'Tambah Galeri', sub: 'Upload foto dokumentasi', icon: ImageIcon, bg: 'bg-purple-50/70 hover:bg-purple-100/70 border-purple-100', iconColor: 'text-purple-600' },
-  { type: 'kependudukan', label: 'Tambah Data RT', sub: 'Kependudukan per RT', icon: UsersIcon, bg: 'bg-teal-50/70 hover:bg-teal-100/70 border-teal-100', iconColor: 'text-teal-600' },
+  { type: 'kependudukan', label: 'Tambah Data RT', sub: 'Kependudukan per Dusun', icon: UsersIcon, bg: 'bg-teal-50/70 hover:bg-teal-100/70 border-teal-100', iconColor: 'text-teal-600' },
 ];
 
 const sortedNews = computed(() =>
@@ -1194,6 +1309,7 @@ const currentModalType = ref('news');
 const formData = ref({});
 const fileUpload = ref(null);
 const profileFileUpload = ref(null);
+const editingId = ref(null);  // <-- TAMBAH INI
 const toastMessage = ref('');
 const deleteTarget = ref(null);
 const detailItem = ref(null);
@@ -1202,7 +1318,7 @@ const modalTypeLabel = computed(() => {
   const labels = {
     news: 'Berita & Informasi', products: 'Produk UMKM', gallery: 'Galeri Foto',
     agenda: 'Agenda Kegiatan', pengumuman: 'Pengumuman', leaders: 'Tokoh & Perangkat',
-    demographics: 'Statistik Demografi', kependudukan: 'Kependudukan per RT',
+    demographics: 'Statistik Demografi', kependudukan: 'Kependudukan per Dusun',
     facilities: 'Potensi & Fasilitas', faqs: 'FAQ', kategori: 'Master Kategori'
   };
   return labels[currentModalType.value] || currentModalType.value;
@@ -1224,10 +1340,11 @@ const handleLogout = () => {
 
 // Profile Form
 const profileForm = ref({
-  nama_padukuhan: '', kecamatan: '', kabupaten: '',
-  jumlah_penduduk: '', jumlah_kk: '', jumlah_rt: '',
-  luas_wilayah: '', nama_dukuh: '', sambutan_dukuh: '', cita_cita: '',
-  foto_dukuh: '', sejarah: '', telepon: '', email: '', alamat_kantor: ''
+  nama_padukuhan: '', kecamatan: '', kabupaten: '', provinsi: '', kode_pos: '',
+  luas_wilayah: '', jumlah_penduduk: '', jumlah_kk: '', jumlah_rt: '', jumlah_rw: '', jumlah_dusun: '',
+  batas_utara: '', batas_selatan: '', batas_timur: '', batas_barat: '',
+  nama_dukuh: '', sambutan_dukuh: '', cita_cita: '',
+  foto_dukuh: '', sejarah: '', telepon: '', email: '', alamat_kantor: '', maps_embed: ''
 });
 
 watch(() => store.padukuhanProfile, (profile) => {
@@ -1245,18 +1362,28 @@ const openAddModal = (type) => {
   isEditMode.value = false;
   currentModalType.value = type;
   fileUpload.value = null;
+  editingId.value = null; // <-- RESET ID
   const base = { status: 'mendatang', type: 'foto', kategori: 'potensi_desa' };
   if (type === 'agenda') base.date = new Date().toISOString().split('T')[0];
   if (type === 'pengumuman') base.tanggal_posting = new Date().toISOString().split('T')[0];
+  if (type === 'leaders') base.urutan = 1;
   formData.value = base;
   showModal.value = true;
   if (type !== 'overview') activeTab.value = type;
 };
 
 const openEditModal = (type, item) => {
+  // Validasi: harus ada id
+  if (!item || item.id === undefined || item.id === null) {
+    console.error('[openEditModal] Item tidak memiliki id:', item);
+    alert('Error: Data tidak memiliki ID. Silakan refresh halaman.');
+    return;
+  }
+
   isEditMode.value = true;
   currentModalType.value = type;
   fileUpload.value = null;
+  editingId.value = item.id; // <-- SIMPAN ID DI VARIABEL TERPISAH
   const copy = { ...item };
 
   // Khusus agenda: pastikan date format YYYY-MM-DD dan pecah time
@@ -1268,7 +1395,6 @@ const openEditModal = (type, item) => {
         copy.date = d.toISOString().split('T')[0];
       }
     }
-    // Pisah "08:00 - 17:00" jadi time_start & time_end
     if (item.time && item.time.includes('-')) {
       const parts = item.time.split('-').map(s => s.trim().split(' ')[0]);
       copy.time_start = parts[0] || '';
@@ -1297,48 +1423,114 @@ const openDetailView = (type, item) => {
 
 const saveModalData = async () => {
   const type = currentModalType.value;
+  const editMode = isEditMode.value;
+  const id = editingId.value; // <-- AMBIL DARI editingId, BUKAN formData.value.id
+
   try {
-    // Untuk agenda, gabung time_start & time_end jadi time
+    // Khusus agenda: gabungkan time_start & time_end
     if (type === 'agenda') {
       formData.value.time = `${formData.value.time_start || '08:00'} - ${formData.value.time_end || 'selesai'}`;
     }
 
-    // Di saveModalData
-    if (type === 'kategori') {
-      if (isEditMode.value) await store.updateKategori(formData.value.id, formData.value);
-      else await store.addKategori(formData.value);
-      triggerToast(isEditMode.value ? 'Kategori diperbarui!' : 'Kategori ditambahkan!');
+    // Validasi: jika edit mode, id harus ada
+    if (editMode && !id) {
+      alert('Error: ID data tidak ditemukan. Silakan tutup modal dan klik Edit ulang.');
+      return;
     }
-    
-    if (isEditMode.value) {
-      if (type === 'news') await store.updateNews(formData.value.id, formData.value, fileUpload.value);
-      else if (type === 'products') await store.updateProduct(formData.value.id, formData.value, fileUpload.value);
-      else if (type === 'gallery') await store.updateGallery(formData.value.id, formData.value, fileUpload.value);
-      else if (type === 'agenda') await store.updateAgenda(formData.value.id, formData.value);
-      else if (type === 'pengumuman') await store.updatePengumuman(formData.value.id, formData.value);
-      else if (type === 'leaders') await store.updateLeader(formData.value.id, formData.value, fileUpload.value);
-      else if (type === 'faqs') await store.updateFaq(formData.value.id, formData.value);
-      else if (type === 'demographics') await store.updateDemographic(formData.value.id, formData.value);
-      else if (type === 'kependudukan') await store.updateKependudukan(formData.value.id, formData.value);
-      else if (type === 'facilities') await store.updatePotensi(formData.value.id, formData.value, fileUpload.value);
+
+    // Log untuk debugging
+    console.log(`[saveModalData] mode=${editMode ? 'EDIT' : 'ADD'}, type=${type}, id=${id}`);
+
+    if (editMode) {
+      // ==================== UPDATE ====================
+      switch (type) {
+        case 'news':
+          await store.updateNews(id, formData.value, fileUpload.value);
+          break;
+        case 'products':
+          await store.updateProduct(id, formData.value, fileUpload.value);
+          break;
+        case 'gallery':
+          await store.updateGallery(id, formData.value, fileUpload.value);
+          break;
+        case 'agenda':
+          await store.updateAgenda(id, formData.value);
+          break;
+        case 'pengumuman':
+          await store.updatePengumuman(id, formData.value);
+          break;
+        case 'leaders':
+          await store.updateLeader(id, formData.value, fileUpload.value);
+          break;
+        case 'faqs':
+          await store.updateFaq(id, formData.value);
+          break;
+        case 'demographics':
+          await store.updateDemographic(id, formData.value);
+          break;
+        case 'kependudukan':
+          await store.updateKependudukan(id, formData.value);
+          break;
+        case 'facilities':
+          await store.updatePotensi(id, formData.value, fileUpload.value);
+          break;
+        case 'kategori':
+          await store.updateKategori(id, formData.value);
+          break;
+        default:
+          console.warn('Unknown edit type:', type);
+          return;
+      }
       triggerToast('Data berhasil diperbarui!');
     } else {
-      if (type === 'news') await store.addNews(formData.value, fileUpload.value);
-      else if (type === 'products') await store.addProduct(formData.value, fileUpload.value);
-      else if (type === 'gallery') await store.addGallery(formData.value, fileUpload.value);
-      else if (type === 'agenda') await store.addAgenda(formData.value);
-      else if (type === 'pengumuman') await store.addPengumuman(formData.value);
-      else if (type === 'leaders') await store.addLeader(formData.value, fileUpload.value);
-      else if (type === 'faqs') await store.addFaq(formData.value);
-      else if (type === 'demographics') await store.addDemographic(formData.value);
-      else if (type === 'kependudukan') await store.addKependudukan(formData.value);
-      else if (type === 'facilities') await store.addPotensi(formData.value, fileUpload.value);
+      // ==================== ADD ====================
+      switch (type) {
+        case 'news':
+          await store.addNews(formData.value, fileUpload.value);
+          break;
+        case 'products':
+          await store.addProduct(formData.value, fileUpload.value);
+          break;
+        case 'gallery':
+          await store.addGallery(formData.value, fileUpload.value);
+          break;
+        case 'agenda':
+          await store.addAgenda(formData.value);
+          break;
+        case 'pengumuman':
+          await store.addPengumuman(formData.value);
+          break;
+        case 'leaders':
+          await store.addLeader(formData.value, fileUpload.value);
+          break;
+        case 'faqs':
+          await store.addFaq(formData.value);
+          break;
+        case 'demographics':
+          await store.addDemographic(formData.value);
+          break;
+        case 'kependudukan':
+          await store.addKependudukan(formData.value);
+          break;
+        case 'facilities':
+          await store.addPotensi(formData.value, fileUpload.value);
+          break;
+        case 'kategori':
+          await store.addKategori(formData.value);
+          break;
+        default:
+          console.warn('Unknown add type:', type);
+          return;
+      }
       triggerToast('Data baru berhasil ditambahkan!');
     }
+
+    // Reset state
     fileUpload.value = null;
+    editingId.value = null;
     showModal.value = false;
   } catch (e) {
-    console.error(e);
+    console.error('[saveModalData] Error:', e);
     alert('Gagal menyimpan data: ' + e.message);
   }
 };

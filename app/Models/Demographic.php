@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Demographic extends Model
 {
     protected $table = 'demographics';
-
-    protected $fillable = ['kategori', 'label', 'jumlah_jiwa', 'persentase'];
-
+    protected $fillable = [
+        'kategori', 'label', 'urutan', 'jumlah_jiwa', 'persentase'
+    ];
 }

@@ -60,7 +60,7 @@ export const store = reactive({
           created_at: item.created_at,
           image: item.thumbnail || '/images/hero-bg.png',
           foto_url: item.thumbnail || '',
-          excerpt: (item.content || '').substring(0, 150) + '...',
+          excerpt: item.excerpt || (item.content || '').substring(0, 150) + '...',
           content: item.content || '',
           author: item.author?.nama_lengkap || 'Admin'
         }));
@@ -78,11 +78,12 @@ export const store = reactive({
           isBestSeller: item.is_unggulan || false,
           seller: umkm?.nama_usaha || 'Warga',
           sellerPhone: umkm?.nomor_whatsapp || '',
+          sellerMaps: umkm?.maps_lokasi || '',
           penjual_id: item.penjual_id,
           image: item.foto_produk || '/images/anyaman-bambu.png',
           foto_url: item.foto_produk || '',
-          description: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.',
-          fullDescription: item.deskripsi || 'Produk asli warga Ngemplak Kalangan.'
+          description: item.deskripsi || '',
+          fullDescription: item.deskripsi || ''
         };
       });
 
@@ -96,21 +97,29 @@ export const store = reactive({
         image: item.file_url || '/images/galeri-1.png',
         foto_url: item.file_url || '',
         youtube_url: item.youtube_url || '',
+        deskripsi: item.deskripsi || '',
         date: new Date(item.created_at).toLocaleDateString('id-ID'),
         location: item.is_highlight ? 'Highlight' : 'Ngemplak Kalangan',
         description: item.judul
       }));
 
       // Leaders
-      this.leaders = strukturRes.data.map(item => ({
-        id: item.id,
-        name: item.nama,
-        role: item.jabatan,
-        level: item.urutan === 1 ? 'Pimpinan' : 'Seksi',
-        image: item.foto || '/images/hero-bg.png',
-        foto_url: item.foto || '',
-        focus: '-', description: '-'
-      }));
+      this.leaders = strukturRes.data
+        .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
+        .map(item => ({
+          id: item.id,
+          name: item.nama,
+          role: item.jabatan,
+          urutan: item.urutan || 0,
+          level: item.urutan === 1 ? 'Kepala Desa'
+              : item.urutan === 2 ? 'Sekretaris'
+              : 'Kepala Seksi',
+          image: item.foto || '',
+          foto_url: item.foto || '',
+          focus: '-',
+          description: '-',
+          initials: (item.nama || '?').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+        }));
 
       // FAQ
       this.faqs = faqRes.data.map(item => ({
@@ -135,11 +144,10 @@ export const store = reactive({
       this.pengumuman = pengumumanRes.data.map(item => ({
         id: item.id,
         title: item.judul,
-        category_id: item.category_id,
         date: new Date(item.tanggal_posting).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
         tanggal_posting: item.tanggal_posting,
         description: item.isi_ringkas,
-        isImportant: item.category_id === 16
+        isImportant: item.is_important === 1 || item.is_important === true
       }));
 
       // Potensi Wisata
@@ -155,34 +163,44 @@ export const store = reactive({
 
       // Demografi
       this.demographics = demografiRes.data.map(item => ({
-        id: item.id, kategori: item.kategori, label: item.label,
+        id: item.id, kategori: item.kategori, label: item.label, urutan: item.urutan || 0,
         jumlah_jiwa: item.jumlah_jiwa || 0, persentase: item.persentase || 0
       }));
 
-      // Kependudukan Dusun
-      this.kependudukanDusun = kependudukanRes.data.map(item => ({
-        id: item.id,
-        nama_rt: item.nama_rt,
-        nama_dusun: item.nama_dusun || '',
-        laki_laki: item.laki_laki || 0,
-        perempuan: item.perempuan || 0,
-        total: item.total || ((item.laki_laki || 0) + (item.perempuan || 0)),
-        jumlah_kk: item.jumlah_kk || 0,
-        keterangan: item.keterangan || ''
-      }));
+      // Kependudukan per Dusun
+      this.kependudukanDusun = kependudukanRes.data
+        .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
+        .map(item => ({
+          id: item.id,
+          nama_dusun: item.nama_dusun,
+          urutan: item.urutan || 0,
+          laki_laki: item.laki_laki || 0,
+          perempuan: item.perempuan || 0,
+          total: item.total || ((item.laki_laki || 0) + (item.perempuan || 0)),
+          jumlah_kk: item.jumlah_kk || 0,
+          keterangan: item.keterangan || ''
+        }));
 
       // Profil Padukuhan
       if (profilRes.data && profilRes.data.length > 0) {
         const p = profilRes.data[0];
         this.padukuhanProfile = {
           id: p.id,
-          nama_padukuhan: p.nama_padukuhan || 'Ngemplak Kalangan',
-          kecamatan: p.kecamatan || '', kabupaten: p.kabupaten || '', provinsi: p.provinsi || '',
+          nama_padukuhan: p.nama_padukuhan || '',
+          kecamatan: p.kecamatan || '',
+          kabupaten: p.kabupaten || '',
+          provinsi: p.provinsi || '',
+          kode_pos: p.kode_pos || '',
+          luas_wilayah: p.luas_wilayah || '',
           jumlah_penduduk: p.jumlah_penduduk || 0,
           jumlah_kk: p.jumlah_kk || 0,
           jumlah_rt: p.jumlah_rt || 0,
           jumlah_rw: p.jumlah_rw || 0,
-          luas_wilayah: p.luas_wilayah || '',
+          jumlah_dusun: p.jumlah_dusun || 0,
+          batas_utara: p.batas_utara || '',
+          batas_selatan: p.batas_selatan || '',
+          batas_timur: p.batas_timur || '',
+          batas_barat: p.batas_barat || '',
           sejarah: p.sejarah || '',
           cita_cita: p.cita_cita || '',
           nama_dukuh: p.nama_dukuh || '',
@@ -190,7 +208,8 @@ export const store = reactive({
           foto_dukuh: p.foto_dukuh || '',
           alamat_kantor: p.alamat_kantor || '',
           telepon: p.telepon || '',
-          email: p.email || ''
+          email: p.email || '',
+          maps_embed: p.maps_embed || ''
         };
       }
 
@@ -245,7 +264,8 @@ export const store = reactive({
       await api.post('/berita', {
         title: item.title,
         slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now(),
-        content: item.content || item.excerpt || '',
+        content: item.content || '',
+        excerpt: item.excerpt || '',  // <-- TAMBAH
         thumbnail,
         category_id: item.category_id || 1,
         author_id: 1,
@@ -261,7 +281,8 @@ export const store = reactive({
       await api.put(`/berita/${id}`, {
         title: item.title,
         slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now(),
-        content: item.content || item.excerpt,
+        content: item.content || '',
+        excerpt: item.excerpt || '',  // <-- TAMBAH
         thumbnail,
         category_id: item.category_id || 1,
         author_id: 1,
@@ -280,17 +301,24 @@ export const store = reactive({
       let foto_produk = item.foto_url || '';
       if (file) foto_produk = await this.uploadFile(file, 'produk');
 
+      // Data UMKM lengkap (termasuk maps_lokasi)
+      const umkmData = {
+        nama_penjual: item.seller || 'Warga Desa',
+        nama_usaha: item.seller || 'Usaha Desa',
+        nomor_whatsapp: item.sellerPhone || '',
+        alamat_lokasi: item.sellerAddress || 'Ngemplak Kalangan',
+        maps_lokasi: item.sellerMaps || '' // <-- TAMBAH maps lokasi
+      };
+
       let penjualId = this.umkms.find(u => u.nama_usaha === item.seller)?.id;
+
       if (!penjualId) {
-        const umkmRes = await api.post('/umkm', {
-          nama_penjual: item.seller || 'Warga Desa',
-          nama_usaha: item.seller || 'Usaha Desa',
-          nomor_whatsapp: item.sellerPhone || '',
-          alamat_lokasi: 'Ngemplak Kalangan'
-        });
+        // Buat UMKM baru
+        const umkmRes = await api.post('/umkm', umkmData);
         penjualId = umkmRes.data?.id || 1;
-      } else if (item.sellerPhone) {
-        await api.put(`/umkm/${penjualId}`, { nomor_whatsapp: item.sellerPhone });
+      } else {
+        // Update UMKM yang sudah ada (termasuk maps & WhatsApp)
+        await api.put(`/umkm/${penjualId}`, umkmData).catch(() => { });
       }
 
       await api.post('/produk', {
@@ -303,15 +331,32 @@ export const store = reactive({
         is_unggulan: item.isBestSeller ? 1 : 0
       });
       await this.initData();
-    } catch (error) { console.error(error); alert(error.message); }
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   },
+
   async updateProduct(id, item, file = null) {
     try {
       let foto_produk = item.foto_url || '';
       if (file) foto_produk = await this.uploadFile(file, 'produk');
-      if (item.sellerPhone && item.penjual_id) {
-        await api.put(`/umkm/${item.penjual_id}`, { nomor_whatsapp: item.sellerPhone }).catch(() => { });
+
+      // Update UMKM (termasuk maps & WhatsApp) jika ada penjual_id
+      if (item.penjual_id) {
+        const umkmUpdateData = {};
+        if (item.sellerPhone !== undefined) umkmUpdateData.nomor_whatsapp = item.sellerPhone;
+        if (item.sellerMaps !== undefined) umkmUpdateData.maps_lokasi = item.sellerMaps;
+        if (item.seller) {
+          umkmUpdateData.nama_penjual = item.seller;
+          umkmUpdateData.nama_usaha = item.seller;
+        }
+        // Hanya kirim jika ada perubahan
+        if (Object.keys(umkmUpdateData).length > 0) {
+          await api.put(`/umkm/${item.penjual_id}`, umkmUpdateData).catch(() => { });
+        }
       }
+
       await api.put(`/produk/${id}`, {
         nama_produk: item.name,
         harga: Number(item.price) || 0,
@@ -321,7 +366,10 @@ export const store = reactive({
         is_unggulan: item.isBestSeller ? 1 : 0
       });
       await this.initData();
-    } catch (error) { console.error(error); alert(error.message); }
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
   },
   async deleteProduct(id) { try { await api.delete(`/produk/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
@@ -334,8 +382,9 @@ export const store = reactive({
       if (file) file_url = await this.uploadFile(file, 'galeri');
       await api.post('/galeri', {
         judul: item.title,
+        deskripsi: item.deskripsi || item.description || '',
         tipe: item.type || 'foto',
-        category_id: item.category_id || 3,
+        category_id: item.category_id || null,
         file_url,
         youtube_url: item.youtube_url || ''
       });
@@ -344,17 +393,30 @@ export const store = reactive({
   },
   async updateGallery(id, item, file = null) {
     try {
+      // Validasi ID
+      if (!id) {
+        console.error('[updateGallery] ID tidak valid:', id);
+        throw new Error('ID galeri tidak ditemukan');
+      }
+      
       let file_url = item.foto_url || '';
       if (file) file_url = await this.uploadFile(file, 'galeri');
+      
+      console.log(`[updateGallery] Updating galeri id=${id}`, item);
+      
       await api.put(`/galeri/${id}`, {
         judul: item.title,
+        deskripsi: item.deskripsi || item.description || '',
         tipe: item.type || 'foto',
-        category_id: item.category_id || 3,
+        category_id: item.category_id || null,
         file_url,
         youtube_url: item.youtube_url || ''
       });
       await this.initData();
-    } catch (error) { console.error(error); alert(error.message); }
+    } catch (error) { 
+      console.error('[updateGallery] Error:', error); 
+      alert(error.message); 
+    }
   },
   async deleteGallery(id) { try { await api.delete(`/galeri/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
@@ -395,10 +457,10 @@ export const store = reactive({
   async addPengumuman(item) {
     try {
       await api.post('/pengumuman', {
-        category_id: item.category_id || (item.isImportant ? 16 : 17),
         judul: item.title,
         isi_ringkas: item.description,
-        tanggal_posting: item.tanggal_posting || new Date().toISOString().split('T')[0]
+        tanggal_posting: item.tanggal_posting || new Date().toISOString().split('T')[0],
+        is_important: item.isImportant ? 1 : 0
       });
       await this.initData();
     } catch (e) { console.error(e); alert(e.message); }
@@ -406,10 +468,10 @@ export const store = reactive({
   async updatePengumuman(id, item) {
     try {
       await api.put(`/pengumuman/${id}`, {
-        category_id: item.category_id || (item.isImportant ? 16 : 17),
         judul: item.title,
         isi_ringkas: item.description,
-        tanggal_posting: item.tanggal_posting
+        tanggal_posting: item.tanggal_posting,
+        is_important: item.isImportant ? 1 : 0
       });
       await this.initData();
     } catch (e) { console.error(e); alert(e.message); }
@@ -424,8 +486,10 @@ export const store = reactive({
       let foto = item.foto_url || '';
       if (file) foto = await this.uploadFile(file, 'leaders');
       await api.post('/struktur-organisasi', {
-        nama: item.name, jabatan: item.role, foto,
-        urutan: item.level === 'Pimpinan' ? 1 : 2
+        nama: item.name,
+        jabatan: item.role,
+        foto,
+        urutan: Number(item.urutan) || 1
       });
       await this.initData();
     } catch (error) { console.error(error); alert(error.message); }
@@ -435,8 +499,10 @@ export const store = reactive({
       let foto = item.foto_url || '';
       if (file) foto = await this.uploadFile(file, 'leaders');
       await api.put(`/struktur-organisasi/${id}`, {
-        nama: item.name, jabatan: item.role, foto,
-        urutan: item.level === 'Pimpinan' ? 1 : 2
+        nama: item.name,
+        jabatan: item.role,
+        foto,
+        urutan: Number(item.urutan) || 1
       });
       await this.initData();
     } catch (error) { console.error(error); alert(error.message); }
@@ -534,7 +600,9 @@ export const store = reactive({
   async addDemographic(item) {
     try {
       await api.post('/demografi', {
-        kategori: item.kategori, label: item.label,
+        kategori: item.kategori,
+        label: item.label,
+        urutan: Number(item.urutan) || 0,
         jumlah_jiwa: Number(item.jumlah_jiwa) || 0,
         persentase: Number(item.persentase) || 0
       });
@@ -544,7 +612,9 @@ export const store = reactive({
   async updateDemographic(id, item) {
     try {
       await api.put(`/demografi/${id}`, {
-        kategori: item.kategori, label: item.label,
+        kategori: item.kategori,
+        label: item.label,
+        urutan: Number(item.urutan) || 0,
         jumlah_jiwa: Number(item.jumlah_jiwa) || 0,
         persentase: Number(item.persentase) || 0
       });
@@ -553,14 +623,21 @@ export const store = reactive({
   },
   async deleteDemographic(id) { try { await api.delete(`/demografi/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
+  // Helper: ambil demografi per kategori, sudah diurutkan
+  demographicsByKategori(kategori) {
+    return this.demographics
+      .filter(d => d.kategori === kategori)
+      .sort((a, b) => (a.urutan || 0) - (b.urutan || 0));
+  },
+
   // ==========================================
   // CRUD — KEPENDUDUKAN DUSUN
   // ==========================================
   async addKependudukan(item) {
     try {
       await api.post('/kependudukan-dusun', {
-        nama_rt: item.nama_rt,
-        nama_dusun: item.nama_dusun || '',
+        nama_dusun: item.nama_dusun,
+        urutan: Number(item.urutan) || 0,
         laki_laki: Number(item.laki_laki) || 0,
         perempuan: Number(item.perempuan) || 0,
         jumlah_kk: Number(item.jumlah_kk) || 0,
@@ -572,8 +649,8 @@ export const store = reactive({
   async updateKependudukan(id, item) {
     try {
       await api.put(`/kependudukan-dusun/${id}`, {
-        nama_rt: item.nama_rt,
-        nama_dusun: item.nama_dusun || '',
+        nama_dusun: item.nama_dusun,
+        urutan: Number(item.urutan) || 0,
         laki_laki: Number(item.laki_laki) || 0,
         perempuan: Number(item.perempuan) || 0,
         jumlah_kk: Number(item.jumlah_kk) || 0,
