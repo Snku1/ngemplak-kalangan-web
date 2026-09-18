@@ -5,12 +5,31 @@
     <!-- ============================================================ -->
     <section class="relative min-h-[560px] md:min-h-[670px] flex items-center overflow-hidden bg-gray-900 text-white">
       <div class="absolute inset-0 z-0">
+        <!-- Video Background -->
+        <video
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          :poster="heroPoster"
+          class="w-full h-full object-cover object-center opacity-70"
+          @error="handleVideoError"
+        >
+          <source src="/videos/hero-bg.mp4" type="video/mp4" />
+          <source src="/videos/hero-bg.webm" type="video/webm" />
+        </video>
+
+        <!-- Fallback image (muncul kalau video tidak support / error) -->
         <img
+          v-if="videoFailed"
           src="/images/hero-bg.png"
           alt="Latar Belakang Padukuhan"
-          class="w-full h-full object-cover object-center opacity-70 scale-105 animate-pulse-slow"
+          class="absolute inset-0 w-full h-full object-cover object-center opacity-70"
           @error="handleImageError($event, 'hero-bg')"
         />
+
+        <!-- Overlay gradient (tetap) -->
         <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-gray-900/60 to-gray-950/40"></div>
       </div>
 
@@ -116,7 +135,7 @@
           <span class="text-xs font-extrabold text-[#12544F] uppercase tracking-widest">
             Selamat Datang di Padukuhan
           </span>
-          <h2 class="text-3xl sm:text-4xl md:text-[35px] font-extrabold text-[#165823] leading-tight tracking-tight">
+          <h2 class="text-3xl sm:text-4xl md:text-[35px] font-extrabold text-[#0F2D3F] leading-tight tracking-tight">
             {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }}
           </h2>
           <p class="text-sm md:text-base text-gray-600 leading-relaxed whitespace-pre-line">
@@ -185,7 +204,7 @@
           </div>
 
           <div class="lg:col-span-7 space-y-6">
-            <h2 class="text-3xl md:text-4xl font-extrabold text-[#165823] leading-tight">Lihat Padukuhan Dari Perspektif Berbeda</h2>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-[#0F2D3F] leading-tight">Lihat Padukuhan Dari Perspektif Berbeda</h2>
             <p class="text-sm text-gray-600 leading-relaxed font-medium">
               Video profil ini merangkum seluruh potensi desa, mulai dari keasrian alam, kerajinan tangan lokal, hingga kehangatan kebersamaan masyarakat yang guyub rukun.
             </p>
@@ -464,7 +483,7 @@
             NEED SEE MORE<br />OUR MOMENT?
           </h3>
           <a
-            href="https://instagram.com/ecolife.walk"
+            href="https://www.instagram.com/kalangankarsa"
             target="_blank"
             rel="noopener"
             class="inline-flex items-center gap-3 px-8 py-4 bg-black hover:bg-gray-800 text-white text-sm font-bold rounded-full shadow-lg transition-all active:scale-95 cursor-pointer"
@@ -593,7 +612,7 @@
         <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
             <span class="text-xs font-bold text-[#12544F] uppercase tracking-widest">Lokasi</span>
-            <h2 class="text-3xl md:text-4xl font-extrabold text-[#165823] mt-1">Peta Padukuhan</h2>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-[#0F2D3F] mt-1">Peta Padukuhan</h2>
             <p class="text-sm md:text-base text-gray-500 mt-2 max-w-2xl leading-relaxed">
               Temukan lokasi Padukuhan {{ store.padukuhanProfile?.nama_padukuhan || 'Ngemplak Kalangan' }} pada peta di bawah ini.
             </p>
@@ -609,7 +628,7 @@
           <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#0D6847] flex items-center justify-center shrink-0"><MapPinIcon class="w-5 h-5" /></div>
             <div class="min-w-0">
-              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kecamatan</p>
+              <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kapanewon</p>
               <p class="text-sm font-extrabold text-gray-900 truncate">{{ store.padukuhanProfile?.kecamatan || '-' }}</p>
             </div>
           </div>
@@ -1091,6 +1110,26 @@ import {
 import { store } from '../store';
 
 defineEmits(['navigate']);
+
+// ============================================
+// HERO VIDEO BACKGROUND
+// ============================================
+const videoFailed = ref(false);
+
+const heroPoster = computed(() => {
+  // Pakai thumbnail YouTube kalau ada, kalau tidak pakai gambar hero statis
+  const p = store.padukuhanProfile;
+  if (p?.video_url) {
+    const thumb = getYouTubeThumbnail(p.video_url);
+    if (thumb) return thumb;
+  }
+  return '/images/hero-bg.png';
+});
+
+const handleVideoError = () => {
+  console.warn('[Hero] Video gagal dimuat, fallback ke gambar.');
+  videoFailed.value = true;
+};
 
 // ============================================
 // CAROUSEL BERITA — auto-slide @5 detik

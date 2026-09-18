@@ -4,9 +4,9 @@
     <section class="relative min-h-[500px] md:min-h-[580px] flex items-center justify-center overflow-hidden bg-gray-900 text-white">
       <!-- Background Image with Overlay -->
       <div class="absolute inset-0 z-0">
-        <img 
-          src="/images/hero-bg.png" 
-          alt="Latar Belakang Profil" 
+        <img
+          src="/images/hero-bg.png"
+          alt="Latar Belakang Profil"
           class="w-full h-full object-cover object-center opacity-65 scale-105"
           @error="handleImageError($event, 'hero-bg')"
         />
@@ -24,8 +24,8 @@
         </p>
 
         <!-- CTA Button -->
-        <button 
-          @click="scrollToSection('sambutan')" 
+        <button
+          @click="scrollToSection('sambutan')"
           class="inline-flex items-center gap-2 px-7 py-3.5 bg-[#0D6847] hover:bg-[#0A5238] text-white font-bold rounded-xl shadow-lg hover:shadow-emerald-900/30 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
         >
           <span>Lebih Dekat Dengan Kami</span>
@@ -38,14 +38,14 @@
     <section id="sambutan" class="py-16 md:py-24 bg-white scroll-mt-20">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
+
           <!-- Image Column (5 cols) -->
           <div class="lg:col-span-5 flex justify-center">
             <div class="w-full max-w-sm bg-white rounded-3xl p-4 shadow-xl shadow-gray-200/50 border border-gray-100/80 group hover:-translate-y-1 transition-all duration-300">
               <div class="relative overflow-hidden aspect-[4/5] rounded-2xl bg-gray-50 border border-gray-100">
-                <img 
-                  :src="store.padukuhanProfile?.foto_dukuh || '/images/kepala-desa.png'" 
-                  :alt="store.padukuhanProfile?.nama_dukuh || 'Bapak Supriyanto'" 
+                <img
+                  :src="store.padukuhanProfile?.foto_dukuh || '/images/kepala-desa.png'"
+                  :alt="store.padukuhanProfile?.nama_dukuh || 'Bapak Supriyanto'"
                   class="w-full h-full object-cover object-top group-hover:scale-103 transition-transform duration-500"
                   @error="handleImageError($event, 'kepala-desa')"
                 />
@@ -63,11 +63,11 @@
               <MapPinIcon class="w-3.5 h-3.5" />
               <span>Sekilas Wilayah</span>
             </div>
-            
+
             <h2 class="text-3xl md:text-4xl font-extrabold text-gray-950 leading-tight">
               Sejarah & Profil Padukuhan
             </h2>
-            
+
             <div class="space-y-4 text-sm text-gray-600 leading-relaxed font-medium">
               <p v-if="store.padukuhanProfile?.sejarah" class="whitespace-pre-line">{{ store.padukuhanProfile.sejarah }}</p>
               <p v-else>
@@ -172,7 +172,7 @@
         <div class="bg-white rounded-3xl p-8 md:p-10 shadow-xl shadow-gray-200/40 border border-gray-100 relative overflow-hidden group hover:shadow-2xl transition-all duration-300">
           <div class="absolute -right-16 -top-16 w-36 h-36 bg-[#0D6847]/5 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
           <div class="absolute -left-16 -bottom-16 w-36 h-36 bg-[#0D6847]/5 rounded-full group-hover:scale-110 transition-transform duration-500"></div>
-          
+
           <div class="relative z-10 flex flex-col items-center">
             <span class="inline-block text-[10px] font-extrabold text-[#0D6847] bg-[#0D6847]/10 px-4 py-1.5 rounded-full uppercase tracking-wider mb-5">
               Padukuhan Ngemplak Kalangan
@@ -188,7 +188,7 @@
     <!-- STATISTIK KEPENDUDUKAN SECTION -->
     <section class="pt-16 md:pt-24 pb-4 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div class="text-center max-w-2xl mx-auto mb-16">
           <h2 class="text-2xl md:text-3xl font-extrabold text-gray-950">Statistik Kependudukan</h2>
           <p class="text-sm text-gray-500 mt-2 leading-relaxed">
@@ -364,102 +364,86 @@
       </div>
     </section>
 
-<!-- STRUKTUR ORGANISASI PADUKUHAN -->
-<section v-if="store.leaders.length > 0" class="space-y-8 pt-12 border-t border-gray-100">
-  <div class="text-center max-w-2xl mx-auto space-y-2">
-    <h3 class="text-2xl md:text-3xl font-extrabold text-gray-950">Struktur Organisasi Padukuhan</h3>
-    <p class="text-sm text-gray-500 font-medium">
-      Perangkat Padukuhan Ngemplak Kalangan yang siap melayani masyarakat.
-    </p>
-    <div class="w-12 h-1 bg-[#0D6847] mx-auto rounded-full mt-3"></div>
-  </div>
+    <!-- ============================================================ -->
+    <!-- BAGAN STRUKTUR KELEMBAGAAN (Gambar)                          -->
+    <!-- ============================================================ -->
+    <section class="py-16 md:py-20 bg-[#F8FAFC] border-t border-gray-100">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-  <!-- Hierarki Struktur -->
-  <div class="flex flex-col items-center gap-0">
-
-    <!-- LEVEL 1: Kepala Desa (Kartu Besar) -->
-    <div v-if="topLeader" class="relative bg-white rounded-3xl p-8 border border-gray-200 shadow-sm w-full max-w-sm text-center flex flex-col items-center hover:shadow-lg transition-shadow">
-      <!-- Avatar -->
-      <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-md bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-5">
-        <img v-if="topLeader.image" :src="topLeader.image" :alt="topLeader.name" class="w-full h-full object-cover" @error="handleImageError($event, 'leaders')" />
-        <span v-else class="text-3xl font-extrabold text-[#1B8A9C]">{{ topLeader.initials }}</span>
-      </div>
-      <!-- Badge Jabatan -->
-      <span class="inline-block px-4 py-1 bg-[#1B4E5F] text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-3">
-        {{ topLeader.role }}
-      </span>
-      <!-- Nama -->
-      <h4 class="text-2xl font-extrabold text-gray-950 leading-tight">{{ topLeader.name }}</h4>
-      <p class="text-xs text-gray-500 font-semibold mt-1">Pemimpin penyelenggaraan pemerintahan desa</p>
-    </div>
-
-    <!-- Garis vertikal 1 -->
-    <div class="w-px h-10 bg-gray-300"></div>
-
-    <!-- LEVEL 2: Sekretaris Desa (Kartu Sedang) -->
-    <div v-if="middleLeader" class="relative bg-white rounded-3xl p-6 border border-gray-200 shadow-sm w-full max-w-xs text-center flex flex-col items-center hover:shadow-lg transition-shadow">
-      <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md bg-[#1B8A9C] flex items-center justify-center mb-4">
-        <img v-if="middleLeader.image" :src="middleLeader.image" :alt="middleLeader.name" class="w-full h-full object-cover" @error="handleImageError($event, 'leaders')" />
-        <span v-else class="text-3xl font-extrabold text-white">{{ middleLeader.initials.charAt(0) }}</span>
-      </div>
-      <span class="inline-block px-3.5 py-1 bg-[#1B8A9C] text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-2">
-        {{ middleLeader.role }}
-      </span>
-      <h4 class="text-lg font-extrabold text-gray-950 leading-tight">{{ middleLeader.name }}</h4>
-    </div>
-
-    <!-- Garis vertikal 2 + percabangan ke bawah -->
-    <div v-if="bottomLeaders.length > 0" class="relative w-full flex justify-center" style="height: 40px;">
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-gray-300"></div>
-    </div>
-
-    <!-- LEVEL 3: Kepala Seksi (Grid Kartu Kecil) -->
-    <div v-if="bottomLeaders.length > 0" class="relative w-full">
-      <!-- Garis horizontal -->
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-gray-300" 
-        :style="{ width: bottomLeaders.length > 1 ? `${(bottomLeaders.length - 1) * (100 / bottomLeaders.length)}%` : '0' }">
-      </div>
-
-      <div class="grid gap-4 sm:gap-6 pt-8" 
-        :class="{
-          'grid-cols-1 max-w-xs mx-auto': bottomLeaders.length === 1,
-          'grid-cols-1 sm:grid-cols-2 max-w-2xl mx-auto': bottomLeaders.length === 2,
-          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto': bottomLeaders.length === 3,
-          'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 max-w-6xl mx-auto': bottomLeaders.length >= 4
-        }">
-        <div v-for="kasi in bottomLeaders" :key="kasi.id"
-          class="relative bg-white rounded-2xl p-5 border border-gray-200 shadow-sm text-center flex flex-col items-center hover:shadow-lg transition-shadow">
-          <!-- Garis vertikal kecil ke atas -->
-          <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-px h-8 bg-gray-300 hidden sm:block"></div>
-
-          <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-md bg-[#1B8A9C] flex items-center justify-center mb-3">
-            <img v-if="kasi.image" :src="kasi.image" :alt="kasi.name" class="w-full h-full object-cover" @error="handleImageError($event, 'leaders')" />
-            <span v-else class="text-xl font-extrabold text-white">{{ kasi.initials.charAt(0) }}</span>
-          </div>
-          <span class="inline-block px-2.5 py-0.5 bg-amber-50 text-amber-800 text-[9px] font-bold uppercase tracking-widest rounded-full mb-2 border border-amber-200">
-            {{ kasi.role }}
+        <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          <span class="inline-flex items-center gap-2 text-xs font-bold text-[#0D6847] uppercase tracking-wider bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100">
+            <UsersIcon class="w-3.5 h-3.5" />
+            <span>Bagan Kelembagaan</span>
           </span>
-          <h4 class="text-sm font-extrabold text-gray-950 leading-tight">{{ kasi.name }}</h4>
+          <h3 class="text-2xl md:text-3xl font-extrabold text-gray-950">
+            Struktur Kelembagaan Padukuhan
+          </h3>
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Susunan lengkap perangkat dan lembaga kemasyarakatan Padukuhan Ngemplak Kalangan.
+          </p>
+          <div class="w-12 h-1 bg-[#0D6847] mx-auto rounded-full mt-3"></div>
         </div>
-      </div>
-    </div>
 
-  </div>
-</section>
+        <!-- Gambar Bagan -->
+        <div
+          @click="openLightbox('/images/struktur-kelembagaan.jpg', 'Struktur Kelembagaan Padukuhan Ngemplak Kalangan')"
+          class="relative mx-auto max-w-md md:max-w-lg bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden cursor-zoom-in group hover:shadow-2xl transition-all duration-300"
+        >
+          <img
+            src="/images/struktur-kelembagaan.jpg"
+            alt="Struktur Kelembagaan Padukuhan Ngemplak Kalangan"
+            class="w-full h-auto object-contain group-hover:scale-[1.02] transition-transform duration-500"
+            @error="handleImageError($event, 'hero-bg')"
+          />
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+            <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-sm text-[#0D6847] text-xs font-bold rounded-full shadow-lg">
+              <MaximizeIcon class="w-3.5 h-3.5" />
+              <span>Klik untuk memperbesar</span>
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- POTENSI DESA KAMI SECTION -->
     <section class="py-16 md:py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div class="max-w-2xl mb-12">
-          <div class="inline-flex items-center gap-2 text-xs font-bold text-[#0D6847] uppercase tracking-wider bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100 mb-4">
+        <!-- Header -->
+        <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          <span class="inline-flex items-center gap-2 text-xs font-bold text-[#0D6847] uppercase tracking-wider bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100">
             <TrendingUpIcon class="w-3.5 h-3.5 animate-bounce" />
             <span>Potensi</span>
-          </div>
-          <h2 class="text-3xl font-extrabold text-gray-950 leading-tight">Potensi Padukuhan</h2>
-          <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+          </span>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-gray-950">
+            Potensi Padukuhan
+          </h2>
+          <p class="text-sm text-gray-500 leading-relaxed">
             Mengenal potensi yang ada di wilayah Padukuhan Ngemplak Kalangan untuk mendorong ekonomi berkelanjutan.
           </p>
+          <div class="w-12 h-1 bg-[#0D6847] mx-auto rounded-full mt-3"></div>
+        </div>
+
+        <!-- GAMBAR: Potensi & Aspirasi Petani -->
+        <div class="mb-14">
+          <div
+            @click="openLightbox('/images/potensi-aspirasi-petani.jpg', 'Potensi dan Aspirasi Petani Padukuhan Ngemplak Kalangan')"
+            class="relative mx-auto max-w-md md:max-w-lg bg-white rounded-3xl border border-gray-200 shadow-lg overflow-hidden cursor-zoom-in group hover:shadow-2xl transition-all duration-300"
+          >
+            <img
+              src="/images/potensi-aspirasi-petani.jpg"
+              alt="Potensi dan Aspirasi Petani Padukuhan Ngemplak Kalangan"
+              class="w-full h-auto object-contain group-hover:scale-[1.02] transition-transform duration-500"
+              @error="handleImageError($event, 'hero-bg')"
+            />
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center pointer-events-none">
+              <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 inline-flex items-center gap-2 px-4 py-2 bg-white/95 backdrop-blur-sm text-[#0D6847] text-xs font-bold rounded-full shadow-lg">
+                <MaximizeIcon class="w-3.5 h-3.5" />
+                <span>Klik untuk memperbesar</span>
+              </span>
+            </div>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch mb-12">
@@ -514,7 +498,7 @@
         </div>
 
         <div class="text-center">
-          <button 
+          <button
             @click="$emit('navigate', 'potensi')"
             class="px-6 py-3 border-2 border-gray-200 hover:border-[#0D6847] hover:text-[#0D6847] font-bold text-xs rounded-xl transition-all duration-300 active:scale-95 cursor-pointer"
           >
@@ -603,20 +587,84 @@
         </div>
       </div>
     </transition>
+
+        <!-- ============================================================ -->
+    <!-- LIGHTBOX GLOBAL (untuk bagan & poster)                       -->
+    <!-- ============================================================ -->
+    <transition name="fade">
+      <div
+        v-if="lightboxImage"
+        class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm cursor-zoom-out"
+        @click="closeLightbox"
+      >
+        <!-- Close Button -->
+        <button
+          @click="closeLightbox"
+          class="absolute top-4 right-4 z-30 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md cursor-pointer transition-colors"
+          aria-label="Tutup"
+        >
+          <XIcon class="w-5 h-5" />
+        </button>
+
+        <!-- Zoom Controls -->
+        <div class="absolute top-4 left-4 z-30 flex items-center gap-2">
+          <button
+            @click.stop="zoomOut"
+            class="w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md cursor-pointer transition-colors"
+            aria-label="Zoom out"
+          >
+            <span class="text-xl font-bold leading-none">−</span>
+          </button>
+          <span class="px-3 py-2 bg-white/10 backdrop-blur-md text-white text-xs font-bold rounded-full">
+            {{ Math.round(lightboxZoom * 100) }}%
+          </span>
+          <button
+            @click.stop="zoomIn"
+            class="w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 text-white flex items-center justify-center backdrop-blur-md cursor-pointer transition-colors"
+            aria-label="Zoom in"
+          >
+            <span class="text-xl font-bold leading-none">+</span>
+          </button>
+          <button
+            @click.stop="resetZoom"
+            class="px-3 py-2 bg-white/10 hover:bg-white/25 text-white text-xs font-bold rounded-full backdrop-blur-md cursor-pointer transition-colors"
+          >
+            Reset
+          </button>
+        </div>
+
+        <!-- Image -->
+        <div class="w-full h-full overflow-auto flex items-center justify-center" @click.self="closeLightbox">
+          <img
+            :src="lightboxImage"
+            :alt="lightboxCaption"
+            class="max-w-none object-contain transition-transform duration-200"
+            :style="{ transform: `scale(${lightboxZoom})`, maxHeight: '90vh' }"
+            @click.stop
+            @wheel.prevent="handleWheel"
+          />
+        </div>
+
+        <!-- Caption -->
+        <div v-if="lightboxCaption" class="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/70 backdrop-blur-md text-white text-xs font-bold rounded-full max-w-[90vw] text-center">
+          {{ lightboxCaption }}
+        </div>
+      </div>
+    </transition>
+
   </div>
 </template>
 
 <script setup>
 import { store } from '../store';
-import { 
+import {
   ArrowRight as ArrowRightIcon,
   MapPin as MapPinIcon,
   Award as AwardIcon,
   Users as UsersIcon,
-  Home as HomeIcon,
-  ShoppingBag as ShoppingBagIcon,
   TrendingUp as TrendingUpIcon,
-  X as XIcon   // <-- TAMBAH
+  X as XIcon,   // <-- TAMBAH
+  Maximize as MaximizeIcon   // ← TAMBAH
 } from 'lucide-vue-next';
 
 import { computed, ref } from 'vue';
@@ -657,6 +705,36 @@ const LeafIcon = defineComponent({
 
 // State untuk modal detail potensi
 const selectedPotensi = ref(null);
+
+// ============================================
+// LIGHTBOX GLOBAL (untuk bagan & poster)
+// ============================================
+const lightboxImage = ref(null);
+const lightboxCaption = ref('');
+const lightboxZoom = ref(1);
+
+const openLightbox = (src, caption = '') => {
+  lightboxImage.value = src;
+  lightboxCaption.value = caption;
+  lightboxZoom.value = 1;
+  document.body.style.overflow = 'hidden';
+};
+
+const closeLightbox = () => {
+  lightboxImage.value = null;
+  lightboxCaption.value = '';
+  lightboxZoom.value = 1;
+  document.body.style.overflow = '';
+};
+
+const zoomIn  = () => { lightboxZoom.value = Math.min(3, lightboxZoom.value + 0.25); };
+const zoomOut = () => { lightboxZoom.value = Math.max(0.5, lightboxZoom.value - 0.25); };
+const resetZoom = () => { lightboxZoom.value = 1; };
+
+const handleWheel = (e) => {
+  if (e.deltaY < 0) zoomIn();
+  else zoomOut();
+};
 
 const openPotensiDetail = (potensi) => {
   selectedPotensi.value = potensi;
@@ -739,15 +817,6 @@ const getBarWidths = (val) => {
 const formatAngka = (val) => {
   return (val || 0).toLocaleString('id-ID');
 };
-
-// Struktur organisasi — grouping berdasarkan urutan
-const topLeader = computed(() => store.leaders.find(l => l.urutan === 1));
-const middleLeader = computed(() => store.leaders.find(l => l.urutan === 2));
-const bottomLeaders = computed(() =>
-  store.leaders
-    .filter(l => l.urutan >= 3)
-    .sort((a, b) => a.urutan - b.urutan)
-);
 
 // Konversi berbagai format link Maps menjadi URL embed
 // ============================================

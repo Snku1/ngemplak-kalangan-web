@@ -307,53 +307,6 @@
             </div>
           </div>
 
-          <!-- 7. TOKOH & PERANGKAT -->
-          <div v-else-if="activeTab === 'leaders'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5 animate-fade-in">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
-              <div>
-                <h2 class="text-xl font-black text-gray-900">Kelola Tokoh &amp; Perangkat Dusun</h2>
-                <p class="text-xs text-gray-500">{{ store.leaders.length }} tokoh · tampil di halaman Informasi</p>
-              </div>
-              <button @click="openAddModal('leaders')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
-                <PlusIcon class="w-4 h-4" /><span>Tambah Tokoh</span>
-              </button>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-left text-xs">
-                <thead>
-                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                    <th class="py-3 px-4">Foto</th>
-                    <th class="py-3 px-4">Nama Lengkap</th>
-                    <th class="py-3 px-4">Jabatan</th>
-                    <th class="py-3 px-4 text-center">Urutan</th>
-                    <th class="py-3 px-4 text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                  <tr v-for="item in store.leaders" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 w-16">
-                      <img v-if="item.image" :src="item.image" :alt="item.name" class="w-10 h-10 rounded-full object-cover bg-gray-100" @error="handleFallbackImg" />
-                      <div v-else class="w-10 h-10 rounded-full bg-[#1B8A9C] text-white flex items-center justify-center font-bold text-sm">
-                        {{ item.initials }}
-                      </div>
-                    </td>
-                    <td class="py-3 px-4 font-bold text-gray-900">{{ item.name }}</td>
-                    <td class="py-3 px-4 font-semibold text-[#0D6847]">{{ item.role }}</td>
-                    <td class="py-3 px-4 text-center text-gray-500 font-mono">{{ item.urutan }}</td>
-                    <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
-                      <button @click="openDetailView('leaders', item)" class="p-2 bg-gray-100 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors cursor-pointer" title="Lihat Detail"><EyeIcon class="w-3.5 h-3.5" /></button>
-                      <button @click="openEditModal('leaders', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
-                      <button @click="confirmDelete('leaders', item.id, item.name)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
-                    </td>
-                  </tr>
-                  <tr v-if="store.leaders.length === 0">
-                    <td colspan="5" class="py-6 text-center text-gray-400">Belum ada data tokoh &amp; perangkat.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
           <!-- 8. DEMOGRAFI -->
           <div v-else-if="activeTab === 'demographics'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5 animate-fade-in">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
@@ -1060,41 +1013,6 @@
             </div>
           </template>
 
-          <!-- FORM: TOKOH & PERANGKAT -->
-          <template v-else-if="currentModalType === 'leaders'">
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
-              <input v-model="formData.name" type="text" required
-                placeholder="cth: Papang Suherlan"
-                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Jabatan <span class="text-red-500">*</span></label>
-              <input v-model="formData.role" type="text" required
-                placeholder="cth: Kepala Desa / Sekretaris Desa / Kepala Seksi Pemerintahan"
-                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Urutan <span class="text-red-500">*</span></label>
-              <input v-model.number="formData.urutan" type="number" required min="1"
-                placeholder="cth: 1"
-                class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p class="text-[10px] text-gray-400 mt-1">
-                <strong>1</strong> = Kepala Dusun · <strong>2</strong> = Sekretaris · <strong>3+</strong> = Kepala Seksi
-              </p>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto (opsional)</label>
-              <input type="file" accept="image/*" @change="e => fileUpload = e.target.files[0]"
-                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p v-if="fileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ fileUpload.name }}</p>
-              <div v-if="formData.foto_url && !fileUpload" class="mt-2">
-                <img :src="formData.foto_url" class="h-16 w-16 rounded-full object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
-              </div>
-              <p class="text-[10px] text-gray-400 mt-1">Jika tidak upload foto, akan tampil inisial nama secara otomatis.</p>
-            </div>
-          </template>
-
           <!-- FORM: DEMOGRAPHICS -->
           <template v-else-if="currentModalType === 'demographics'">
             <div>
@@ -1375,7 +1293,6 @@ const menuItems = computed(() => [
   { id: 'gallery', label: 'Galeri Foto & Video', icon: ImageIcon, count: store.gallery.length },
   { id: 'agenda', label: 'Agenda Kegiatan', icon: CalendarIcon, count: store.agenda.length },
   { id: 'pengumuman', label: 'Pengumuman', icon: BellIcon, count: store.pengumuman.length },
-  { id: 'leaders', label: 'Tokoh & Perangkat', icon: UsersIcon, count: store.leaders.length },
   { id: 'demographics', label: 'Statistik Kependudukan', icon: PieChartIcon, count: store.demographics.length },
   { id: 'kependudukan', label: 'Kependudukan per Dusun', icon: UsersIcon, count: store.kependudukanDusun.length },
   { id: 'facilities', label: 'Potensi & Fasilitas', icon: MapPinIcon, count: store.facilities.length },
@@ -1430,7 +1347,7 @@ const currentModalType = ref('news');
 const formData = ref({});
 const fileUpload = ref(null);
 const fileUploadMultiple = ref([]);  // <-- TAMBAH
-const profileFileUpload = ref(null);     
+const profileFileUpload = ref(null);
 const editingId = ref(null);  // <-- TAMBAH INI
 const toastMessage = ref('');
 const deleteTarget = ref(null);
@@ -1439,7 +1356,7 @@ const detailItem = ref(null);
 const modalTypeLabel = computed(() => {
   const labels = {
     news: 'Berita & Informasi', umkm: 'UMKM', gallery: 'Galeri Foto',
-    agenda: 'Agenda Kegiatan', pengumuman: 'Pengumuman', leaders: 'Tokoh & Perangkat',
+    agenda: 'Agenda Kegiatan', pengumuman: 'Pengumuman',
     demographics: 'Statistik Demografi', kependudukan: 'Kependudukan per Dusun',
     facilities: 'Potensi & Fasilitas', faqs: 'FAQ', kategori: 'Master Kategori'
   };
@@ -1517,7 +1434,6 @@ const openAddModal = (type) => {
   const base = { status: 'mendatang', type: 'foto', kategori: 'potensi_desa' };
   if (type === 'agenda') base.date = new Date().toISOString().split('T')[0];
   if (type === 'pengumuman') base.tanggal_posting = new Date().toISOString().split('T')[0];
-  if (type === 'leaders') base.urutan = 1;
   formData.value = base;
   showModal.value = true;
   if (type !== 'overview') activeTab.value = type;
@@ -1614,9 +1530,6 @@ const saveModalData = async () => {
         case 'pengumuman':
           await store.updatePengumuman(id, formData.value);
           break;
-        case 'leaders':
-          await store.updateLeader(id, formData.value, fileUpload.value);
-          break;
         case 'faqs':
           await store.updateFaq(id, formData.value);
           break;
@@ -1654,9 +1567,6 @@ const saveModalData = async () => {
           break;
         case 'pengumuman':
           await store.addPengumuman(formData.value);
-          break;
-        case 'leaders':
-          await store.addLeader(formData.value, fileUpload.value);
           break;
         case 'faqs':
           await store.addFaq(formData.value);
@@ -1704,7 +1614,6 @@ const executeDelete = async () => {
     else if (type === 'gallery') await store.deleteGallery(id);
     else if (type === 'agenda') await store.deleteAgenda(id);
     else if (type === 'pengumuman') await store.deletePengumuman(id);
-    else if (type === 'leaders') await store.deleteLeader(id);
     else if (type === 'kategori') await store.deleteKategori(id);
     else if (type === 'faqs') await store.deleteFaq(id);
     else if (type === 'inbox') await store.deleteInbox(id);

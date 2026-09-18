@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MasterKategoriController;
 use App\Http\Controllers\Api\PadukuhanProfileController;
 use App\Http\Controllers\Api\DemographicController;
-use App\Http\Controllers\Api\OrganizationalStructureController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\AgendaController;
 use App\Http\Controllers\Api\PengumumanController;
@@ -39,10 +38,6 @@ Route::get('profil/{id}', [PadukuhanProfileController::class, 'show']);
 // Demografi
 Route::get('demografi', [DemographicController::class, 'index']);
 Route::get('demografi/{id}', [DemographicController::class, 'show']);
-
-// Struktur Organisasi
-Route::get('struktur-organisasi', [OrganizationalStructureController::class, 'index']);
-Route::get('struktur-organisasi/{id}', [OrganizationalStructureController::class, 'show']);
 
 // Berita (News)
 Route::get('berita', [NewsController::class, 'index']);
@@ -90,12 +85,12 @@ Route::get('kependudukan-dusun/{id}', [KependudukanDusunController::class, 'show
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('me', [AuthController::class, 'me']);   // ← TAMBAH
     Route::post('logout', [AuthController::class, 'logout']);
-    
+
     // Kategori
     Route::post('kategori', [MasterKategoriController::class, 'store']);
     Route::put('kategori/{id}', [MasterKategoriController::class, 'update']);
     Route::delete('kategori/{id}', [MasterKategoriController::class, 'destroy']);
-    
+
     // Padukuhan Profile
     Route::post('profil', [PadukuhanProfileController::class, 'store']);
     Route::put('profil/{id}', [PadukuhanProfileController::class, 'update']);
@@ -105,11 +100,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('demografi', [DemographicController::class, 'store']);
     Route::put('demografi/{id}', [DemographicController::class, 'update']);
     Route::delete('demografi/{id}', [DemographicController::class, 'destroy']);
-
-    // Struktur Organisasi
-    Route::post('struktur-organisasi', [OrganizationalStructureController::class, 'store']);
-    Route::put('struktur-organisasi/{id}', [OrganizationalStructureController::class, 'update']);
-    Route::delete('struktur-organisasi/{id}', [OrganizationalStructureController::class, 'destroy']);
 
     // Berita
     Route::post('berita', [NewsController::class, 'store']);

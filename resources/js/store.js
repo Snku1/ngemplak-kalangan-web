@@ -6,7 +6,7 @@ export const store = reactive({
   adminUser: { username: 'admin', name: 'Administrator Padukuhan', role: 'Super Admin' },
 
   // Data collections
-  news: [], gallery: [], leaders: [], faqs: [], inbox: [],
+  news: [], gallery: [], faqs: [], inbox: [],
   categories: [], umkms: [], agenda: [], pengumuman: [],
   potensiWisata: [], demographics: [], kependudukanDusun: [],
   padukuhanProfile: null,
@@ -35,11 +35,11 @@ export const store = reactive({
   async initData() {
     try {
       const [
-        beritaRes, galeriRes, strukturRes, faqRes, kategoriRes, umkmRes,
+        beritaRes, galeriRes, faqRes, kategoriRes, umkmRes,
         agendaRes, pengumumanRes, potensiRes, demografiRes, profilRes, kependudukanRes
       ] = await Promise.all([
         api.get('/berita'), api.get('/galeri'),
-        api.get('/struktur-organisasi'), api.get('/faq'), api.get('/kategori'), api.get('/umkm'),
+        api.get('/faq'), api.get('/kategori'), api.get('/umkm'),
         api.get('/agenda'), api.get('/pengumuman'), api.get('/potensi-wisata'),
         api.get('/demografi'), api.get('/profil'), api.get('/kependudukan-dusun')
       ]);
@@ -107,24 +107,6 @@ export const store = reactive({
         location: item.is_highlight ? 'Highlight' : 'Ngemplak Kalangan',
         description: item.deskripsi || item.judul
       }));
-
-      // Leaders
-      this.leaders = strukturRes.data
-        .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
-        .map(item => ({
-          id: item.id,
-          name: item.nama,
-          role: item.jabatan,
-          urutan: item.urutan || 0,
-          level: item.urutan === 1 ? 'Kepala Desa'
-            : item.urutan === 2 ? 'Sekretaris'
-              : 'Kepala Seksi',
-          image: item.foto || '',
-          foto_url: item.foto || '',
-          focus: '-',
-          description: '-',
-          initials: (item.nama || '?').split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
-        }));
 
       // FAQ
       this.faqs = faqRes.data.map(item => ({
@@ -548,37 +530,6 @@ export const store = reactive({
     } catch (e) { console.error(e); alert(e.message); }
   },
   async deletePengumuman(id) { try { await api.delete(`/pengumuman/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
-
-  // ==========================================
-  // CRUD — LEADERS
-  // ==========================================
-  async addLeader(item, file = null) {
-    try {
-      let foto = item.foto_url || '';
-      if (file) foto = await this.uploadFile(file, 'leaders');
-      await api.post('/struktur-organisasi', {
-        nama: item.name,
-        jabatan: item.role,
-        foto,
-        urutan: Number(item.urutan) || 1
-      });
-      await this.initData();
-    } catch (error) { console.error(error); alert(error.message); }
-  },
-  async updateLeader(id, item, file = null) {
-    try {
-      let foto = item.foto_url || '';
-      if (file) foto = await this.uploadFile(file, 'leaders');
-      await api.put(`/struktur-organisasi/${id}`, {
-        nama: item.name,
-        jabatan: item.role,
-        foto,
-        urutan: Number(item.urutan) || 1
-      });
-      await this.initData();
-    } catch (error) { console.error(error); alert(error.message); }
-  },
-  async deleteLeader(id) { try { await api.delete(`/struktur-organisasi/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
   // ==========================================
   // CRUD — FAQS
