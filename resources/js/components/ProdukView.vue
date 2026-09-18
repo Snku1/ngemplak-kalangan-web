@@ -4,30 +4,20 @@
     <section class="relative bg-gradient-to-b from-[#0B5439] via-[#0D6847] to-[#09472F] text-white py-16 md:py-24 overflow-hidden">
       <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
 
-      <div class="absolute -right-16 -top-16 opacity-15 pointer-events-none hidden lg:block">
-        <svg width="480" height="480" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8">
-          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-        </svg>
-      </div>
-
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="max-w-3xl">
-
           <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight mb-5">
             UMKM Unggulan <br class="hidden sm:inline" />
             <span class="text-emerald-200">Padukuhan Ngemplak Kalangan</span>
           </h1>
-
           <p class="text-sm md:text-base text-emerald-100/90 leading-relaxed mb-8 max-w-2xl">
-            Dukung pertumbuhan ekonomi lokal dengan memborong produk-produk terbaik karya warga Padukuhan. Mulai dari kerajinan tangan tradisional hingga hasil bumi organik berkualitas tinggi.
+            Dukung pertumbuhan ekonomi lokal dengan mendukung UMKM warga Padukuhan. Mulai dari kuliner, kerajinan tangan, hingga jasa kreatif warga kami.
           </p>
-
         </div>
       </div>
     </section>
 
-    <!-- KATALOG PRODUK MAIN SECTION -->
+    <!-- KATALOG UMKM -->
     <section class="py-12 md:py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -39,7 +29,7 @@
             </div>
             <div>
               <h2 class="text-2xl font-bold text-gray-900 leading-tight">Direktori UMKM</h2>
-              <p class="text-xs text-gray-500 font-medium">Menampilkan {{ filteredProducts.length }} produk UMKM unggulan warga</p>
+              <p class="text-xs text-gray-500 font-medium">Menampilkan {{ filteredUmkm.length }} UMKM warga</p>
             </div>
           </div>
 
@@ -49,284 +39,117 @@
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="Cari produk desa atau penjual..."
+                placeholder="Cari UMKM atau penjual..."
                 class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#0D6847] focus:ring-2 focus:ring-[#0D6847]/20 transition-all shadow-sm"
               />
-              <button
-                v-if="searchQuery"
-                @click="searchQuery = ''"
-                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
+              <button v-if="searchQuery" @click="searchQuery = ''" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                 <XIcon class="w-3.5 h-3.5" />
               </button>
-            </div>
-
-            <div class="relative">
-              <select
-                v-model="sortBy"
-                class="appearance-none bg-white border border-gray-200 rounded-xl px-4 py-2.5 pr-8 text-xs font-semibold text-gray-700 hover:border-gray-300 focus:outline-none focus:border-[#0D6847] cursor-pointer shadow-sm"
-              >
-                <option value="terpopuler">Terpopuler</option>
-                <option value="rating">Rating Tertinggi</option>
-                <option value="termurah">Harga: Terendah</option>
-                <option value="termahal">Harga: Tertinggi</option>
-              </select>
-              <ChevronDownIcon class="w-4 h-4 text-gray-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
         </div>
 
-        <!-- Filter Category Tabs (dari master_kategori) -->
+        <!-- Filter Kategori (dari master_kategori tipe 'umkm') -->
         <div class="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none mb-8">
           <button
-            v-for="cat in categories"
-            :key="cat.id"
-            @click="activeCategory = cat.id"
+            @click="activeKategori = 'Semua'"
             :class="[
-              activeCategory === cat.id
+              activeKategori === 'Semua'
                 ? 'bg-[#0D6847] text-white shadow-md shadow-[#0D6847]/20'
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
             ]"
-            class="px-5 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 cursor-pointer flex items-center gap-2"
+            class="px-5 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 cursor-pointer"
           >
-            <span>{{ cat.name }}</span>
-            <span
-              :class="activeCategory === cat.id ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'"
-              class="px-1.5 py-0.5 rounded-md text-[10px] font-bold"
-            >
-              {{ getCategoryCount(cat.id) }}
-            </span>
+            Semua
+          </button>
+          <button
+            v-for="cat in kategoriFilters"
+            :key="cat.id"
+            @click="activeKategori = cat.nama"
+            :class="[
+              activeKategori === cat.nama
+                ? 'bg-[#0D6847] text-white shadow-md shadow-[#0D6847]/20'
+                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900'
+            ]"
+            class="px-5 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-200 active:scale-95 cursor-pointer"
+          >
+            {{ cat.nama }}
           </button>
         </div>
 
-        <!-- PRODUCT CARDS GRID -->
-        <div v-if="filteredProducts.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <!-- UMKM CARDS GRID -->
+        <div v-if="filteredUmkm.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div
-            v-for="product in filteredProducts"
-            :key="product.id"
-            class="bg-white rounded-2xl border border-gray-150 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group"
+            v-for="item in filteredUmkm"
+            :key="item.id"
+            @click="openDetailModal(item)"
+            class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col group cursor-pointer border border-transparent hover:border-emerald-200"
           >
-            <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden cursor-pointer" @click="openDetailModal(product)">
-              <img
-                :src="product.image"
-                :alt="product.name"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                @error="handleImageFallback($event)"
-              />
-
-              <span class="absolute top-3.5 left-3.5 px-3 py-1 bg-[#0D6847]/90 backdrop-blur-md text-white text-[11px] font-semibold rounded-lg shadow-sm">
-                {{ product.category }}
-              </span>
-
-              <div class="absolute top-3.5 right-3.5 px-2.5 py-1 bg-white/90 backdrop-blur-md rounded-lg shadow-sm flex items-center gap-1 text-xs font-bold text-gray-800">
-                <StarIcon class="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span>{{ product.rating }}</span>
-              </div>
-
-              <!-- Best Seller Badge -->
-              <div v-if="product.isBestSeller" class="absolute bottom-3.5 left-3.5 px-2.5 py-1 bg-amber-500 text-white text-[10px] font-bold uppercase rounded-lg shadow-sm">
-                Terlaris
-              </div>
+            <div class="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+              <img :src="item.image" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" @error="handleImageFallback($event)" />
             </div>
 
-            <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-              <div>
-                <div class="flex items-start justify-between gap-2 mb-1.5">
-                  <h3
-                    @click="openDetailModal(product)"
-                    class="text-base font-bold text-gray-900 group-hover:text-[#0D6847] transition-colors cursor-pointer line-clamp-1"
-                  >
-                    {{ product.name }}
-                  </h3>
-                </div>
+            <div class="p-5 flex-1 flex flex-col">
+              <span :class="getKategoriClass()" class="inline-block w-fit px-4 py-1.5 text-[11px] font-extrabold rounded-full uppercase tracking-widest mb-3">
+                {{ item.kategori }}
+              </span>
 
-                <p class="text-lg font-extrabold text-[#D97706] mb-2">
-                  {{ formatRupiah(product.price) }}
-                  <span class="text-xs font-normal text-gray-400" v-if="product.unit"> / {{ product.unit }}</span>
-                </p>
+              <h3 class="text-base font-extrabold text-[#0F2D3F] leading-snug mb-1.5 group-hover:text-[#0D6847] transition-colors line-clamp-1">
+                {{ item.name }}
+              </h3>
 
-                <p class="text-xs text-gray-600 line-clamp-2 leading-relaxed mb-4">
-                  {{ product.description }}
-                </p>
+              <p class="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-4 flex-1">
+                {{ item.alamat_lokasi || 'Padukuhan Ngemplak Kalangan' }}
+              </p>
 
-                <div class="bg-gray-50 rounded-xl p-3 border border-gray-100 flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-[#0D6847] shrink-0 font-bold text-xs shadow-2xs">
-                    <StoreIcon class="w-4 h-4" />
-                  </div>
-                  <div class="min-w-0 flex-1">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Penyedia</p>
-                    <p class="text-xs font-bold text-gray-800 truncate">{{ product.seller }}</p>
-                  </div>
-                  <span v-if="product.sellerMaps" class="text-[#0D6847]" title="Lokasi tersedia">
-                    <MapPinIcon class="w-4 h-4" />
-                  </span>
-                </div>
-              </div>
+              <button class="text-xs font-extrabold text-[#0D6847] hover:underline text-left mb-3 flex items-center gap-1 cursor-pointer">
+                <span>Lihat Detail</span>
+              </button>
 
-              <div class="pt-2 space-y-2">
-                <a
-                  :href="getWhatsAppUrl(product)"
-                  target="_blank"
-                  class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#25D366] hover:bg-[#1EBE5A] text-white text-xs font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-95 cursor-pointer"
-                >
-                  <MessageSquareIcon class="w-4 h-4" />
-                  <span>Hubungi via WhatsApp</span>
-                </a>
-
-                <button
-                  @click="openDetailModal(product)"
-                  class="w-full text-center text-xs font-bold text-gray-500 hover:text-[#0D6847] py-1 transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                >
-                  <span>Lihat Detail Produk</span>
-                  <ChevronDownIcon class="w-3.5 h-3.5 -rotate-90 group-hover:translate-x-0.5 transition-transform" />
-                </button>
-              </div>
+              <a
+                :href="getWhatsAppUrl(item)"
+                target="_blank"
+                @click.stop
+                class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#1F7A3F] hover:bg-[#186030] text-white text-xs font-bold rounded-xl shadow-sm transition-all duration-200 active:scale-95 cursor-pointer"
+              >
+                <MessageSquareIcon class="w-4 h-4" />
+                <span>WhatsApp</span>
+              </a>
             </div>
           </div>
         </div>
 
         <!-- Empty State -->
-        <div v-else class="bg-white rounded-2xl border border-gray-200 p-12 text-center max-w-lg mx-auto my-8">
+        <div v-else class="bg-white rounded-2xl p-12 text-center max-w-lg mx-auto my-8 shadow-sm">
           <div class="w-16 h-16 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto mb-4">
             <SearchIcon class="w-8 h-8" />
           </div>
-          <h3 class="text-lg font-bold text-gray-800 mb-1">Produk Tidak Ditemukan</h3>
-          <p class="text-xs text-gray-500 mb-6">Tidak ada produk yang sesuai dengan pencarian atau filter yang Anda pilih.</p>
-          <button
-            @click="resetFilters"
-            class="px-5 py-2.5 bg-[#0D6847] text-white text-xs font-bold rounded-xl hover:bg-[#0A5238] transition-colors"
-          >
-            Reset Filter &amp; Pencarian
+          <h3 class="text-lg font-bold text-gray-800 mb-1">UMKM Tidak Ditemukan</h3>
+          <p class="text-xs text-gray-500 mb-6">Tidak ada UMKM yang sesuai dengan pencarian atau filter yang Anda pilih.</p>
+          <button @click="resetFilters" class="px-5 py-2.5 bg-[#0D6847] text-white text-xs font-bold rounded-xl hover:bg-[#0A5238] transition-colors">
+            Reset Filter
           </button>
         </div>
 
       </div>
     </section>
 
-    <!-- CTA BANNER -->
-    <section class="py-6 mb-12">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="relative bg-emerald-50/80 border border-emerald-200/80 rounded-3xl p-8 sm:p-10 md:p-12 overflow-hidden shadow-sm">
-          <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-emerald-200/40 rounded-full blur-2xl pointer-events-none"></div>
-          <div class="absolute right-24 top-0 w-32 h-32 bg-[#0D6847]/10 rounded-full blur-xl pointer-events-none"></div>
-
-          <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-            <div class="max-w-2xl">
-              <h2 class="text-2xl sm:text-3xl font-extrabold text-[#064E3B] tracking-tight mb-3">
-                Punya Produk Padukuhan Berkualitas?
-              </h2>
-              <p class="text-xs sm:text-sm text-emerald-800/90 leading-relaxed">
-                Mari bergabung dengan ratusan UMKM warga lainnya untuk memperluas jangkauan pasar dan meningkatkan penjualan produk lokal Padukuhan kita.
-              </p>
-            </div>
-
-            <div class="flex flex-wrap items-center gap-3.5 shrink-0">
-              <button
-                @click="openRegisterModal"
-                class="px-6 py-3.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-md transition-all duration-200 active:scale-95 cursor-pointer flex items-center gap-2"
-              >
-                <PlusCircleIcon class="w-4 h-4" />
-                <span>Daftar Jadi Penjual</span>
-              </button>
-
-              <button
-                @click="showGuideToast"
-                class="px-6 py-3.5 bg-white text-[#0D6847] border border-emerald-300 hover:bg-emerald-100/50 text-xs font-bold rounded-xl transition-all duration-200 active:scale-95 cursor-pointer flex items-center gap-2"
-              >
-                <InfoIcon class="w-4 h-4" />
-                <span>Petunjuk Pendaftaran</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- MENGAPA BERBELANJA -->
-    <section class="py-16 bg-white border-t border-b border-gray-150">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-xl mx-auto mb-14">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mb-3">
-            Mengapa Berbelanja di Sini?
-          </h2>
-          <p class="text-xs sm:text-sm text-gray-500">
-            Setiap transaksi Anda berdampak nyata dalam memajukan perekonomian warga desa kami.
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="text-center p-6 rounded-2xl bg-gray-50/50 border border-gray-100 hover:bg-white hover:shadow-lg transition-all duration-300 group">
-            <div class="w-14 h-14 rounded-2xl bg-[#0D6847]/10 text-[#0D6847] flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
-              <ShieldCheckIcon class="w-7 h-7" />
-            </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Kualitas Terjamin</h3>
-            <p class="text-xs text-gray-600 leading-relaxed">
-              Semua produk disortir dan diproduksi langsung oleh warga padukuhan demi menjaga standar mutu terbaik.
-            </p>
-          </div>
-
-          <div class="text-center p-6 rounded-2xl bg-gray-50/50 border border-gray-100 hover:bg-white hover:shadow-lg transition-all duration-300 group">
-            <div class="w-14 h-14 rounded-2xl bg-[#0D6847]/10 text-[#0D6847] flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
-              <PhoneCallIcon class="w-7 h-7" />
-            </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Kontak Langsung</h3>
-            <p class="text-xs text-gray-600 leading-relaxed">
-              Anda bertransaksi langsung dengan pembuat/petani lokal tanpa perantara, memperkuat ekonomi basis warga.
-            </p>
-          </div>
-
-          <div class="text-center p-6 rounded-2xl bg-gray-50/50 border border-gray-100 hover:bg-white hover:shadow-lg transition-all duration-300 group">
-            <div class="w-14 h-14 rounded-2xl bg-[#0D6847]/10 text-[#0D6847] flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
-              <HeartIcon class="w-7 h-7" />
-            </div>
-            <h3 class="text-base font-bold text-gray-900 mb-2">Dukungan Lokal</h3>
-            <p class="text-xs text-gray-600 leading-relaxed">
-              Setiap pembelian Anda memberikan dampak langsung bagi peningkatan kesejahteraan keluarga warga desa.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- BUTUH BANTUAN -->
-    <section class="py-16 bg-[#F8FAFC]">
+    <section class="py-16 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-
           <div class="lg:col-span-5 space-y-6">
             <div>
               <span class="text-xs font-bold text-[#0D6847] uppercase tracking-widest">Bantuan &amp; Informasi</span>
               <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight mt-1 mb-4">Butuh Bantuan?</h2>
               <p class="text-xs sm:text-sm text-gray-600 leading-relaxed mb-6">
-                Jika Anda memiliki pertanyaan mengenai produk, sistem pemesanan, atau ingin mendaftarkan usaha Anda, jangan ragu untuk menghubungi tim pengelola informasi kami.
+                Jika Anda memiliki pertanyaan mengenai UMKM, sistem pemesanan, atau ingin mendaftarkan usaha Anda, jangan ragu untuk menghubungi tim pengelola informasi kami.
               </p>
-            </div>
-
-            <div class="space-y-4">
-              <div class="bg-white rounded-2xl p-4.5 border border-gray-200/80 shadow-xs flex items-center gap-4">
-                <div class="w-11 h-11 rounded-xl bg-[#0D6847]/10 text-[#0D6847] flex items-center justify-center shrink-0">
-                  <PhoneCallIcon class="w-5 h-5" />
-                </div>
-                <div>
-                  <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Hotline Layanan UMKM</p>
-                  <p class="text-sm font-extrabold text-gray-900">+62 812-3456-7890</p>
-                </div>
-              </div>
-
-              <div class="bg-white rounded-2xl p-4.5 border border-gray-200/80 shadow-xs flex items-center gap-4">
-                <div class="w-11 h-11 rounded-xl bg-[#0D6847]/10 text-[#0D6847] flex items-center justify-center shrink-0">
-                  <MailIcon class="w-5 h-5" />
-                </div>
-                <div>
-                  <p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email Resmi Pengelola</p>
-                  <p class="text-sm font-extrabold text-gray-900">produk@ngempakkan.id</p>
-                </div>
-              </div>
             </div>
           </div>
 
           <div class="lg:col-span-7">
-            <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/90 shadow-lg">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lg">
               <h3 class="text-xl font-bold text-gray-900 mb-6 pb-3 border-b border-gray-100 flex items-center gap-2">
                 <MessageSquareIcon class="w-5 h-5 text-[#0D6847]" />
                 <span>Hubungi Kami</span>
@@ -351,357 +174,338 @@
 
                 <div>
                   <label class="block text-xs font-bold text-gray-700 mb-1.5">Pesan atau Pertanyaan</label>
-                  <textarea v-model="contactForm.message" rows="4" required placeholder="Tuliskan pesan, pertanyaan, atau permohonan informasi Anda di sini..." class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#0D6847] focus:bg-white transition-all"></textarea>
+                  <textarea v-model="contactForm.message" rows="4" required placeholder="Tuliskan pesan..." class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#0D6847] focus:bg-white transition-all"></textarea>
                 </div>
 
-                <button type="submit" :disabled="isSubmittingForm" class="w-full py-3.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-md transition-all duration-200 active:scale-98 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
+                <button type="submit" :disabled="isSubmittingForm" class="w-full py-3.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50">
                   <SendIcon v-if="!isSubmittingForm" class="w-4 h-4" />
-                  <span v-if="isSubmittingForm">Mengirim Pesan...</span>
-                  <span v-else>Kirim Pesan</span>
+                  <span>{{ isSubmittingForm ? 'Mengirim Pesan...' : 'Kirim Pesan' }}</span>
                 </button>
               </form>
             </div>
           </div>
-
         </div>
       </div>
     </section>
 
-    <!-- PRODUCT DETAIL MODAL -->
-    <div v-if="selectedProduct" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-      <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100 relative">
+    <!-- ============================================================ -->
+    <!-- UMKM DETAIL MODAL — dengan FULLSCREEN + Warna Hijau Gelap     -->
+    <!-- ============================================================ -->
+    <transition name="fade">
+      <div
+        v-if="selectedUmkm"
+        id="umkm-lightbox"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xs"
+        @click.self="closeDetail"
+      >
 
-        <button
-          @click="selectedProduct = null"
-          class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors cursor-pointer"
-        >
-          <XIcon class="w-5 h-5" />
-        </button>
+        <!-- ============================================ -->
+        <!-- FULLSCREEN MODE                              -->
+        <!-- ============================================ -->
+        <div v-if="isFullscreen" class="relative w-full h-full flex items-center justify-center">
 
-        <!-- Modal Header Image -->
-        <div class="relative aspect-[16/9] bg-gray-100">
-          <img
-            :src="selectedProduct.image"
-            :alt="selectedProduct.name"
-            class="w-full h-full object-cover"
-            @error="handleImageFallback($event)"
-          />
-          <span class="absolute bottom-3 left-4 px-3 py-1 bg-[#0D6847] text-white text-xs font-bold rounded-lg shadow-sm">
-            {{ selectedProduct.category }}
-          </span>
-        </div>
-
-        <!-- Modal Content Body -->
-        <div class="p-6 sm:p-8 space-y-6">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <h3 class="text-2xl font-extrabold text-gray-900">{{ selectedProduct.name }}</h3>
-              <div class="flex items-center gap-2 mt-1">
-                <div class="flex items-center text-amber-400 text-xs font-bold">
-                  <StarIcon class="w-4 h-4 fill-amber-400 mr-1" />
-                  <span>{{ selectedProduct.rating }}</span>
-                </div>
-                <span class="text-gray-300">•</span>
-                <span class="text-xs text-gray-500 font-medium">Stok Tersedia</span>
-              </div>
-            </div>
-
-            <p class="text-2xl font-black text-[#D97706]">
-              {{ formatRupiah(selectedProduct.price) }}
-            </p>
+          <div class="absolute top-4 left-4 z-30 text-white text-sm font-bold">
+            {{ currentUmkmImageIndex + 1 }} / {{ umkmImages.length }}
           </div>
 
-          <!-- Description -->
-          <div>
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Deskripsi Produk</h4>
-            <p class="text-xs sm:text-sm text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100 whitespace-pre-line">
-              {{ selectedProduct.fullDescription || selectedProduct.description }}
-            </p>
+          <div class="absolute top-4 right-4 z-30 flex items-center gap-2">
+            <button @click.stop="toggleFullscreen" class="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center cursor-pointer">
+              <MinimizeIcon class="w-5 h-5" />
+            </button>
+            <button @click.stop="closeDetail" class="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center cursor-pointer">
+              <XIcon class="w-5 h-5" />
+            </button>
           </div>
 
-          <!-- Seller Detail Card -->
-          <div class="bg-emerald-50/60 rounded-2xl p-4 border border-emerald-100 flex items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-[#0D6847] text-white flex items-center justify-center font-bold text-sm">
-                <StoreIcon class="w-5 h-5" />
-              </div>
-              <div>
-                <p class="text-[10px] font-bold text-emerald-800/80 uppercase">Penjual / Pembuat</p>
-                <p class="text-sm font-bold text-gray-900">{{ selectedProduct.seller }}</p>
-                <p class="text-[11px] text-gray-500">Padukuhan Ngemplak Kalangan</p>
-              </div>
-            </div>
+          <img :src="activeUmkmImage" :alt="selectedUmkm.name" class="max-w-full max-h-full object-contain" />
 
-            <span class="px-3 py-1 bg-white text-[#0D6847] text-[11px] font-bold rounded-lg border border-emerald-200">
-              Terverifikasi
-            </span>
-          </div>
+          <template v-if="umkmImages.length > 1">
+            <button @click.stop="prevUmkmImage" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center z-20 cursor-pointer">
+              <ChevronLeftIcon class="w-6 h-6" />
+            </button>
+            <button @click.stop="nextUmkmImage" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center z-20 cursor-pointer">
+              <ChevronRightIcon class="w-6 h-6" />
+            </button>
+          </template>
 
-          <!-- MAPS LOKASI PENJUAL (OSM) -->
-          <div v-if="selectedProduct.sellerMaps" class="space-y-3">
-            <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                <MapPinIcon class="w-3.5 h-3.5" />
-                <span>Lokasi Penjual</span>
-              </h4>
-              <a
-                :href="selectedProduct.sellerMaps"
-                target="_blank"
-                class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 hover:bg-[#0D6847] text-[#0D6847] hover:text-white text-[10px] font-bold rounded-lg transition-colors"
-              >
-                <ExternalLinkIcon class="w-3 h-3" />
-                <span>Buka di Google Maps</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Modal Action Buttons -->
-          <div class="flex items-center gap-3 pt-2">
-            <a
-              :href="getWhatsAppUrl(selectedProduct)"
-              target="_blank"
-              class="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#25D366] hover:bg-[#1EBE5A] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all cursor-pointer"
-            >
-              <MessageSquareIcon class="w-4.5 h-4.5" />
-              <span>Pesan via WhatsApp</span>
-            </a>
-
-            <button
-              @click="copyShareLink(selectedProduct)"
-              class="p-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors cursor-pointer"
-              title="Bagikan Tautan Produk"
-            >
-              <Share2Icon class="w-5 h-5" />
+          <div v-if="umkmImages.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 bg-black/60 rounded-2xl backdrop-blur-md max-w-[90vw] overflow-x-auto z-20">
+            <button v-for="(img, idx) in umkmImages" :key="idx" @click.stop="currentUmkmImageIndex = idx"
+              :class="currentUmkmImageIndex === idx ? 'ring-2 ring-[#0D6847] opacity-100' : 'opacity-50 hover:opacity-80'"
+              class="relative w-14 h-10 shrink-0 rounded-md overflow-hidden transition-all cursor-pointer">
+              <img :src="img" class="w-full h-full object-cover" />
             </button>
           </div>
 
         </div>
-      </div>
-    </div>
 
-    <!-- SELLER REGISTRATION MODAL -->
-    <div v-if="showRegisterModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-      <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 relative">
-        <button
-          @click="showRegisterModal = false"
-          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1"
-        >
-          <XIcon class="w-5 h-5" />
-        </button>
+        <!-- ============================================ -->
+        <!-- NORMAL MODE                                  -->
+        <!-- ============================================ -->
+        <div v-else class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
 
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 rounded-xl bg-[#0D6847]/10 text-[#0D6847] flex items-center justify-center">
-            <PlusCircleIcon class="w-6 h-6" />
+          <!-- Foto -->
+          <div class="relative bg-gray-900 shrink-0">
+            <div class="relative aspect-[16/10] overflow-hidden">
+              <img :src="activeUmkmImage" :alt="selectedUmkm.name" class="w-full h-full object-cover" @error="handleImageFallback($event)" />
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-60"></div>
+
+              <button @click="closeDetail" class="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/55 hover:bg-black/75 text-white flex items-center justify-center cursor-pointer">
+                <XIcon class="w-5 h-5" />
+              </button>
+
+              <template v-if="umkmImages.length > 1">
+                <button @click.stop="prevUmkmImage" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/75 text-white rounded-full flex items-center justify-center z-10 cursor-pointer">
+                  <ChevronLeftIcon class="w-5 h-5" />
+                </button>
+                <button @click.stop="nextUmkmImage" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/75 text-white rounded-full flex items-center justify-center z-10 cursor-pointer">
+                  <ChevronRightIcon class="w-5 h-5" />
+                </button>
+              </template>
+
+              <!-- Counter kiri bawah -->
+              <span v-if="umkmImages.length > 1" class="absolute bottom-4 left-4 bg-black/60 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10">
+                {{ currentUmkmImageIndex + 1 }} / {{ umkmImages.length }}
+              </span>
+
+              <!-- Fullscreen kanan bawah -->
+              <button @click.stop="toggleFullscreen" class="absolute bottom-4 right-4 p-2 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors cursor-pointer z-10" title="Tampilkan Fullscreen">
+                <MaximizeIcon class="w-4 h-4" />
+              </button>
+
+              <span :class="getKategoriClass()" class="absolute top-4 left-4 text-[11px] font-extrabold px-4 py-1.5 rounded-full uppercase tracking-widest z-10">
+                {{ selectedUmkm.kategori }}
+              </span>
+            </div>
+
+            <div v-if="umkmImages.length > 1" class="flex items-center gap-2 p-3 bg-black/30 overflow-x-auto">
+              <button v-for="(img, idx) in umkmImages" :key="idx" @click="currentUmkmImageIndex = idx"
+                :class="currentUmkmImageIndex === idx ? 'ring-2 ring-[#0D6847] opacity-100' : 'opacity-50 hover:opacity-80'"
+                class="relative w-16 h-12 shrink-0 rounded-lg overflow-hidden transition-all cursor-pointer">
+                <img :src="img" class="w-full h-full object-cover" />
+              </button>
+            </div>
           </div>
-          <div>
-            <h3 class="text-xl font-bold text-gray-900">Pendaftaran Penjual UMKM</h3>
-            <p class="text-xs text-gray-500">Khusus warga Padukuhan Ngemplak Kalangan</p>
+
+          <!-- Content -->
+          <div class="p-6 sm:p-8 space-y-6">
+            <!-- Deskripsi -->
+            <div>
+              <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                {{ selectedUmkm.description || 'Tidak ada deskripsi.' }}
+              </p>
+            </div>
+
+            <!-- Produk — hijau gelap -->
+            <div v-if="selectedUmkm.daftar_produk">
+              <h4 class="text-base font-extrabold text-[#0A4A34] mb-3 flex items-center gap-2 border-l-4 border-[#0A4A34] pl-3">
+                Produk
+              </h4>
+              <ul class="space-y-1.5">
+                <li v-for="(prod, idx) in produkList" :key="idx" class="flex items-start gap-2 text-sm text-gray-700">
+                  <span class="text-gray-400 mt-1">•</span>
+                  <span>{{ prod }}</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Jam Buka — hijau gelap -->
+            <div v-if="selectedUmkm.jam_buka">
+              <h4 class="text-base font-extrabold text-[#0A4A34] mb-3 flex items-center gap-2 border-l-4 border-[#0A4A34] pl-3">
+                Jam Buka
+              </h4>
+              <p class="text-sm text-gray-700">{{ selectedUmkm.jam_buka }}</p>
+            </div>
+
+            <!-- Cara Pesan & Pembayaran — hijau gelap -->
+            <div v-if="selectedUmkm.cara_bayar">
+              <h4 class="text-base font-extrabold text-[#0A4A34] mb-3 flex items-center gap-2 border-l-4 border-[#0A4A34] pl-3">
+                Cara Pesan &amp; Pembayaran
+              </h4>
+              <p class="text-sm text-gray-700 mb-2">Hubungi melalui WhatsApp</p>
+              <p class="text-sm text-gray-700">Menerima pembayaran {{ selectedUmkm.cara_bayar }}.</p>
+            </div>
+
+            <!-- Lokasi -->
+            <div v-if="selectedUmkm.alamat_lokasi || selectedUmkm.maps_lokasi" class="border border-gray-200 rounded-2xl p-4">
+              <div class="flex items-start gap-3">
+                <div class="w-6 h-6 rounded-full bg-emerald-50 text-[#0D6847] flex items-center justify-center shrink-0 mt-0.5">
+                  <MapPinIcon class="w-3.5 h-3.5" />
+                </div>
+                <div class="flex-1">
+                  <h5 class="text-sm font-extrabold text-gray-900 mb-1">Lokasi</h5>
+                  <p class="text-xs text-gray-500 mb-1">{{ selectedUmkm.alamat_lokasi || '-' }}</p>
+                  <a v-if="selectedUmkm.maps_lokasi" :href="selectedUmkm.maps_lokasi" target="_blank" class="text-xs font-bold text-[#1B8A9C] hover:underline inline-flex items-center gap-1">
+                    <span>Buka di Google Maps</span>
+                    <ArrowRightIcon class="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3 pt-2">
+              <a :href="getWhatsAppUrl(selectedUmkm)" target="_blank" class="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1F7A3F] hover:bg-[#186030] text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all cursor-pointer">
+                <MessageSquareIcon class="w-4 h-4" />
+                <span>Hubungi via WhatsApp</span>
+              </a>
+              <button @click="copyShareLink(selectedUmkm)" class="p-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl transition-colors cursor-pointer" title="Bagikan">
+                <Share2Icon class="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
 
-        <form @submit.prevent="submitVendorRegistration" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Nama Pemilik / Usaha</label>
-            <input v-model="vendorForm.name" type="text" required placeholder="Contoh: Ibu Suminah / Kerajinan Bambu" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:border-[#0D6847]" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Kategori Produk</label>
-            <select v-model="vendorForm.category" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:border-[#0D6847]">
-              <option v-for="cat in store.categoriesByTipe('produk')" :key="cat.id" :value="cat.nama">{{ cat.nama }}</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">No. WhatsApp Aktif</label>
-            <input v-model="vendorForm.phone" type="text" required placeholder="08xxxxxxxxxx" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:border-[#0D6847]" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Singkat Produk</label>
-            <textarea v-model="vendorForm.description" rows="3" required placeholder="Jelaskan produk unggulan yang ingin Anda tampilkan di katalog web desa..." class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:outline-none focus:border-[#0D6847]"></textarea>
-          </div>
-
-          <button type="submit" class="w-full py-3.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-md transition-colors cursor-pointer mt-2">
-            Kirim Permohonan Pendaftaran
-          </button>
-        </form>
       </div>
-    </div>
+    </transition>
 
     <!-- TOAST -->
-    <div
-      v-if="toastMessage"
-      class="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-gray-800 flex items-center gap-3 animate-bounce-subtle"
-    >
+    <div v-if="toastMessage" class="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3">
       <CheckCircle2Icon class="w-5 h-5 text-emerald-400 shrink-0" />
       <span class="text-xs font-semibold">{{ toastMessage }}</span>
     </div>
-
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import {
   ShoppingBag as ShoppingBagIcon,
   Search as SearchIcon,
   X as XIcon,
-  ChevronDown as ChevronDownIcon,
-  Star as StarIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
   MessageSquare as MessageSquareIcon,
-  Leaf as LeafIcon,
-  ShieldCheck as ShieldCheckIcon,
-  PhoneCall as PhoneCallIcon,
-  Heart as HeartIcon,
-  Mail as MailIcon,
   Send as SendIcon,
   CheckCircle2 as CheckCircle2Icon,
   Share2 as Share2Icon,
-  Store as StoreIcon,
-  Info as InfoIcon,
-  PlusCircle as PlusCircleIcon,
   MapPin as MapPinIcon,
-  ExternalLink as ExternalLinkIcon
+  ArrowRight as ArrowRightIcon,
+  Maximize as MaximizeIcon,
+  Minimize as MinimizeIcon
 } from 'lucide-vue-next';
 
 import { store } from '../store';
 
-// ============================================
-// KATEGORI DARI MASTER_KATEGORI
-// ============================================
-const categories = computed(() => {
-  const cats = store.categoriesByTipe('produk').map(c => ({
-    id: c.nama, name: c.nama
-  }));
-  return [
-    { id: 'semua', name: 'Semua' },
-    ...cats,
-    { id: 'terlaris', name: 'Terlaris' }
-  ];
-});
-
-const activeCategory = ref('semua');
-const searchQuery = ref('');
-const sortBy = ref('terpopuler');
-
 // States
-const selectedProduct = ref(null);
-const showRegisterModal = ref(false);
+const activeKategori = ref('Semua');
+const searchQuery = ref('');
+const selectedUmkm = ref(null);
+const currentUmkmImageIndex = ref(0);
 const toastMessage = ref('');
 const isSubmittingForm = ref(false);
+const isFullscreen = ref(false);
 
-const contactForm = ref({
-  name: '',
-  phone: '',
-  email: '',
-  message: ''
+const contactForm = ref({ name: '', phone: '', email: '', message: '' });
+
+// Kategori dari master_kategori (tipe 'umkm')
+const kategoriFilters = computed(() => store.categoriesByTipe('umkm'));
+
+// Daftar produk (dari daftar_produk, dipisah per baris)
+const produkList = computed(() => {
+  if (!selectedUmkm.value?.daftar_produk) return [];
+  return selectedUmkm.value.daftar_produk
+    .split('\n')
+    .map(s => s.trim())
+    .filter(Boolean);
 });
 
-const vendorForm = ref({
-  name: '',
-  category: '',
-  phone: '',
-  description: ''
+// Daftar foto UMKM
+const umkmImages = computed(() => {
+  if (!selectedUmkm.value) return [];
+  const list = [];
+  if (selectedUmkm.value.image) list.push(selectedUmkm.value.image);
+  if (Array.isArray(selectedUmkm.value.images)) {
+    selectedUmkm.value.images.forEach(img => {
+      if (img && !list.includes(img)) list.push(img);
+    });
+  }
+  return list.length > 0 ? list : ['/images/hero-bg.png'];
 });
 
-// Category count
-const getCategoryCount = (catId) => {
-  if (catId === 'semua') return store.products.length;
-  if (catId === 'terlaris') return store.products.filter(p => p.isBestSeller).length;
-  return store.products.filter(p => p.category === catId).length;
-};
+const activeUmkmImage = computed(() => umkmImages.value[currentUmkmImageIndex.value] || '/images/hero-bg.png');
 
-// Filtered Products
-const filteredProducts = computed(() => {
-  return store.products.filter(product => {
-    if (activeCategory.value === 'terlaris' && !product.isBestSeller) return false;
-    if (activeCategory.value !== 'semua' && activeCategory.value !== 'terlaris' && product.category !== activeCategory.value) {
-      return false;
-    }
-
-    if (searchQuery.value.trim() !== '') {
+// Filtered UMKM
+const filteredUmkm = computed(() => {
+  return store.umkms.filter(item => {
+    if (activeKategori.value !== 'Semua' && item.kategori !== activeKategori.value) return false;
+    if (searchQuery.value.trim()) {
       const q = searchQuery.value.toLowerCase();
-      const matchName = product.name.toLowerCase().includes(q);
-      const matchSeller = (product.seller || '').toLowerCase().includes(q);
-      const matchCategory = (product.category || '').toLowerCase().includes(q);
-      const matchDesc = (product.description || '').toLowerCase().includes(q);
-      if (!matchName && !matchSeller && !matchCategory && !matchDesc) return false;
+      return (item.name || '').toLowerCase().includes(q) ||
+             (item.nama_penjual || '').toLowerCase().includes(q) ||
+             (item.kategori || '').toLowerCase().includes(q) ||
+             (item.description || '').toLowerCase().includes(q);
     }
-
     return true;
-  }).sort((a, b) => {
-    if (sortBy.value === 'rating') return (b.rating || 5) - (a.rating || 5);
-    if (sortBy.value === 'termurah') return a.price - b.price;
-    if (sortBy.value === 'termahal') return b.price - a.price;
-    return a.id - b.id;
   });
 });
 
-// Formatters
-const formatRupiah = (val) => {
-  return new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0
-  }).format(val || 0);
+// Helpers
+const getKategoriClass = () => {
+  // Semua kategori pakai style seragam: hijau gelap elegan
+  return 'bg-[#0A4A34] text-white shadow-md shadow-emerald-900/20';
 };
 
-// WhatsApp URL
-const getWhatsAppUrl = (product) => {
-  const phone = product.sellerPhone
-    ? product.sellerPhone.replace(/[^0-9]/g, '')
-    : '6281234567890';
+const getWhatsAppUrl = (item) => {
+  const phone = (item.nomor_whatsapp || item.sellerPhone || '').replace(/[^0-9]/g, '') || '6281234567890';
   const text = encodeURIComponent(
-    `Halo, saya berminat untuk memesan produk "${product.name}" (${formatRupiah(product.price)}) yang ada di Website Padukuhan Ngemplak Kalangan. Mohon informasi pemesanan & ketersediaannya. Terima kasih!`
+    `Halo, saya tertarik dengan UMKM "${item.name}". Mohon informasi lebih lanjut. Terima kasih!`
   );
   return `https://wa.me/${phone}?text=${text}`;
 };
 
-// ============================================
-// OPENSTREETMAP EMBED URL
-// Mengubah link Google Maps apapun menjadi embed OSM
-// ============================================
-const getOSMEmbedUrl = (url) => {
-  if (!url) return 'https://www.openstreetmap.org/export/embed.html?layer=mapnik';
+const openDetailModal = (item) => {
+  selectedUmkm.value = item;
+  currentUmkmImageIndex.value = 0;
+  isFullscreen.value = false;
+};
 
-  // Format 1: https://www.google.com/maps/@-7.123,110.123,15z
-  const m1 = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (m1) {
-    const lat = parseFloat(m1[1]);
-    const lon = parseFloat(m1[2]);
-    const d = 0.005;
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${lon - d},${lat - d},${lon + d},${lat + d}&layer=mapnik&marker=${lat},${lon}`;
+const closeDetail = async () => {
+  if (document.fullscreenElement) {
+    try { await document.exitFullscreen(); } catch (e) {}
   }
-
-  // Format 2: https://maps.google.com/?q=-7.123,110.123
-  const m2 = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
-  if (m2) {
-    const lat = parseFloat(m2[1]);
-    const lon = parseFloat(m2[2]);
-    const d = 0.005;
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${lon - d},${lat - d},${lon + d},${lat + d}&layer=mapnik&marker=${lat},${lon}`;
-  }
-
-  // Format 3: https://maps.app.goo.gl/xxx atau short link (tidak bisa parse koordinat)
-  // → fallback ke pencarian dengan query string
-  return `https://www.openstreetmap.org/export/embed.html?layer=mapnik`;
+  isFullscreen.value = false;
+  selectedUmkm.value = null;
 };
 
-// Modals
-const openDetailModal = (product) => {
-  selectedProduct.value = product;
+const prevUmkmImage = () => {
+  if (currentUmkmImageIndex.value > 0) currentUmkmImageIndex.value--;
+  else currentUmkmImageIndex.value = umkmImages.value.length - 1;
 };
 
-const openRegisterModal = () => {
-  vendorForm.value.category = store.categoriesByTipe('produk')[0]?.nama || '';
-  showRegisterModal.value = true;
+const nextUmkmImage = () => {
+  if (currentUmkmImageIndex.value < umkmImages.value.length - 1) currentUmkmImageIndex.value++;
+  else currentUmkmImageIndex.value = 0;
 };
+
+const toggleFullscreen = async () => {
+  const el = document.getElementById('umkm-lightbox');
+  if (!el) return;
+  try {
+    if (!document.fullscreenElement) {
+      await el.requestFullscreen();
+      isFullscreen.value = true;
+    } else {
+      await document.exitFullscreen();
+      isFullscreen.value = false;
+    }
+  } catch (err) { console.warn(err); }
+};
+
+const handleFullscreenChange = () => {
+  isFullscreen.value = !!document.fullscreenElement;
+};
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+});
 
 const resetFilters = () => {
-  activeCategory.value = 'semua';
+  activeKategori.value = 'Semua';
   searchQuery.value = '';
-  sortBy.value = 'terpopuler';
 };
 
 const handleImageFallback = (event) => {
@@ -713,16 +517,11 @@ const triggerToast = (msg) => {
   setTimeout(() => { toastMessage.value = ''; }, 3500);
 };
 
-const showGuideToast = () => {
-  triggerToast('Petunjuk: Pendaftaran terbuka gratis untuk seluruh warga Padukuhan. Klik "Daftar Jadi Penjual" untuk mulai!');
-};
-
-const copyShareLink = (product) => {
+const copyShareLink = (item) => {
   navigator.clipboard.writeText(window.location.href);
-  triggerToast(`Tautan produk "${product.name}" berhasil disalin!`);
+  triggerToast(`Tautan UMKM "${item.name}" berhasil disalin!`);
 };
 
-// Form Submissions
 const submitContactForm = () => {
   isSubmittingForm.value = true;
   store.addInbox({
@@ -737,37 +536,12 @@ const submitContactForm = () => {
     contactForm.value = { name: '', phone: '', email: '', message: '' };
   }, 600);
 };
-
-const submitVendorRegistration = () => {
-  store.addInbox({
-    name: vendorForm.value.name,
-    phone: vendorForm.value.phone,
-    email: '-',
-    message: `[PENDAFTARAN PENJUAL UMKM]\nKategori: ${vendorForm.value.category}\nDeskripsi: ${vendorForm.value.description}`
-  });
-  showRegisterModal.value = false;
-  triggerToast(`Permohonan UMKM atas nama "${vendorForm.value.name}" telah diterima! Kami akan mengontak Anda via WhatsApp.`);
-  vendorForm.value = { name: '', category: '', phone: '', description: '' };
-};
 </script>
 
 <style scoped>
 .scrollbar-none::-webkit-scrollbar { display: none; }
 .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
-}
-.animate-fade-in {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes bounceSubtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-.animate-bounce-subtle {
-  animation: bounceSubtle 2s ease-in-out infinite;
-}
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>

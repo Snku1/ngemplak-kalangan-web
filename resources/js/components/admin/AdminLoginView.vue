@@ -15,7 +15,7 @@
         class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-[#0D6847] transition-colors mb-6 cursor-pointer"
       >
         <ArrowLeftIcon class="w-4 h-4" />
-        <span>Kembali ke Website Desa</span>
+        <span>Kembali ke Website Padukuhan</span>
       </button>
 
       <!-- Header Icon & Titles -->
@@ -23,8 +23,8 @@
         <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#0D6847] to-emerald-500 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-900/30">
           <ShieldLockIcon class="w-8 h-8" />
         </div>
-        <h2 class="text-2xl font-black text-gray-900 tracking-tight">Panel Administrasi</h2>
-        <p class="text-xs text-gray-500 mt-1.5 font-medium">Padukuhan Ngemplak Kalangan, Kalasan</p>
+        <h2 class="text-2xl font-black text-gray-900 tracking-tight">Kelola Informasi Padukuhan</h2>
+        <p class="text-xs text-gray-500 mt-1.5 font-medium">Padukuhan Ngemplak Kalangan, Trimulyo</p>
       </div>
 
       <!-- Credentials Hint Banner (Requested: user: admin, password: admin12345) -->
@@ -114,7 +114,7 @@
 
       <div class="mt-8 pt-6 border-t border-gray-150 text-center">
         <p class="text-[11px] text-gray-400 font-semibold">
-          Sistem Pengelolaan Informasi Desa Terpadu • Versi 2.4
+          Sistem Pengelolaan Informasi Padukuhan Ngemplak Kalangan
         </p>
       </div>
 

@@ -117,7 +117,7 @@
         <!-- Grid: Kecamatan, Kabupaten, Provinsi, Kode Pos -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0 mb-14">
           <div class="flex items-center justify-between py-4 border-b border-gray-200">
-            <span class="text-sm font-bold text-gray-900">Kecamatan</span>
+            <span class="text-sm font-bold text-gray-900">Kapanewon</span>
             <span class="text-sm text-gray-500">{{ store.padukuhanProfile?.kecamatan || '-' }}</span>
           </div>
           <div class="flex items-center justify-between py-4 border-b border-gray-200">
@@ -137,24 +137,24 @@
         <!-- Batas Wilayah -->
         <div>
           <h3 class="text-2xl md:text-3xl font-extrabold text-[#0D6847] mb-6">Batas Wilayah</h3>
-          <ul class="space-y-3">
-            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
-              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
-              <span><strong class="font-bold text-gray-900">Utara:</strong> {{ store.padukuhanProfile?.batas_utara || '-' }}</span>
-            </li>
-            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
-              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
-              <span><strong class="font-bold text-gray-900">Selatan:</strong> {{ store.padukuhanProfile?.batas_selatan || '-' }}</span>
-            </li>
-            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
-              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
-              <span><strong class="font-bold text-gray-900">Timur:</strong> {{ store.padukuhanProfile?.batas_timur || '-' }}</span>
-            </li>
-            <li class="flex items-start gap-3 text-sm md:text-base text-gray-700">
-              <span class="text-gray-400 shrink-0 mt-1.5">•</span>
-              <span><strong class="font-bold text-gray-900">Barat:</strong> {{ store.padukuhanProfile?.batas_barat || '-' }}</span>
-            </li>
-          </ul>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-0">
+            <div class="flex items-center justify-between py-4 border-b border-gray-200">
+              <span class="text-sm font-bold text-gray-900">Utara</span>
+              <span class="text-sm text-gray-500 text-right">{{ store.padukuhanProfile?.batas_utara || '-' }}</span>
+            </div>
+            <div class="flex items-center justify-between py-4 border-b border-gray-200">
+              <span class="text-sm font-bold text-gray-900">Selatan</span>
+              <span class="text-sm text-gray-500 text-right">{{ store.padukuhanProfile?.batas_selatan || '-' }}</span>
+            </div>
+            <div class="flex items-center justify-between py-4 border-b border-gray-200">
+              <span class="text-sm font-bold text-gray-900">Timur</span>
+              <span class="text-sm text-gray-500 text-right">{{ store.padukuhanProfile?.batas_timur || '-' }}</span>
+            </div>
+            <div class="flex items-center justify-between py-4 border-b border-gray-200">
+              <span class="text-sm font-bold text-gray-900">Barat</span>
+              <span class="text-sm text-gray-500 text-right">{{ store.padukuhanProfile?.batas_barat || '-' }}</span>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -450,7 +450,7 @@
     <!-- POTENSI DESA KAMI SECTION -->
     <section class="py-16 md:py-24 bg-white">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div class="max-w-2xl mb-12">
           <div class="inline-flex items-center gap-2 text-xs font-bold text-[#0D6847] uppercase tracking-wider bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100 mb-4">
             <TrendingUpIcon class="w-3.5 h-3.5 animate-bounce" />
@@ -463,13 +463,18 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch mb-12">
-          
-          <div v-for="potensi in store.facilities" :key="potensi.id" class="bg-white border border-gray-150 rounded-2xl overflow-hidden flex flex-col group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+
+          <div
+            v-for="potensi in store.facilities"
+            :key="potensi.id"
+            @click="openPotensiDetail(potensi)"
+            class="bg-white rounded-2xl overflow-hidden flex flex-col group shadow-sm hover:shadow-xl border border-transparent hover:border-emerald-200 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+          >
             <!-- Image Section -->
             <div class="relative h-48 overflow-hidden bg-gray-100">
-              <img 
-                :src="potensi.foto_url || '/images/hero-bg.png'" 
-                :alt="potensi.nama" 
+              <img
+                :src="potensi.foto_url || '/images/hero-bg.png'"
+                :alt="potensi.nama"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 @error="handleImageError($event, 'hero-bg')"
               />
@@ -479,32 +484,29 @@
                 </span>
               </div>
             </div>
-            
+
             <!-- Content Section -->
             <div class="p-6 flex flex-col flex-1">
-              <h3 class="text-xl font-extrabold text-gray-950 leading-snug mb-2">{{ potensi.nama }}</h3>
+              <h3 class="text-xl font-extrabold text-gray-950 leading-snug mb-2 group-hover:text-[#0D6847] transition-colors">
+                {{ potensi.nama }}
+              </h3>
               <p class="text-sm text-gray-600 leading-relaxed flex-1 mb-4 line-clamp-3">
                 {{ potensi.deskripsi }}
               </p>
-              
-              <!-- Action Button / Link -->
-              <div class="mt-auto pt-4 border-t border-gray-100">
-                <a 
-                  v-if="potensi.lokasi && potensi.lokasi !== '-'" 
-                  :href="potensi.lokasi" 
-                  target="_blank" 
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-[#0D6847] text-[#0D6847] hover:text-white text-xs font-bold rounded-xl transition-colors w-fit"
+
+              <!-- Tombol Detail (visual) -->
+              <div class="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold text-[#0D6847] group-hover:underline">
+                  <span>Lihat Detail</span>
+                  <ArrowRightIcon class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span
+                  v-if="potensi.lokasi && potensi.lokasi !== '-'"
+                  class="inline-flex items-center gap-1 text-[10px] font-bold text-gray-400"
                 >
-                  <MapPinIcon class="w-4 h-4" />
-                  <span>Lihat di Google Maps</span>
-                </a>
-                <!-- Preview Embed -->
-                <div class="rounded-xl overflow-hidden border border-gray-200 h-40">
-                  <iframe
-                    :src="getOSMEmbedUrl(potensi.lokasi)"
-                    width="100%" height="160" style="border:0" loading="lazy">
-                  </iframe>
-                </div>
+                  <MapPinIcon class="w-3 h-3" />
+                  <span>Ada Lokasi</span>
+                </span>
               </div>
             </div>
           </div>
@@ -512,13 +514,95 @@
         </div>
 
         <div class="text-center">
-          <button class="px-6 py-3 border-2 border-gray-200 hover:border-[#0D6847] hover:text-[#0D6847] font-bold text-xs rounded-xl transition-all duration-300 active:scale-95 cursor-pointer">
+          <button 
+            @click="$emit('navigate', 'potensi')"
+            class="px-6 py-3 border-2 border-gray-200 hover:border-[#0D6847] hover:text-[#0D6847] font-bold text-xs rounded-xl transition-all duration-300 active:scale-95 cursor-pointer"
+          >
             Jelajahi Potensi Desa Selengkapnya
           </button>
         </div>
 
       </div>
     </section>
+
+    <!-- ============================================================ -->
+    <!-- MODAL DETAIL POTENSI                                          -->
+    <!-- ============================================================ -->
+    <transition name="fade">
+      <div
+        v-if="selectedPotensi"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+        @click.self="selectedPotensi = null"
+      >
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
+
+          <!-- Image Header -->
+          <div class="relative h-56 md:h-72 bg-gray-100 shrink-0">
+            <img
+              :src="selectedPotensi.foto_url || '/images/hero-bg.png'"
+              :alt="selectedPotensi.nama"
+              class="w-full h-full object-cover"
+              @error="handleImageError($event, 'hero-bg')"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-75"></div>
+            <button
+              @click="selectedPotensi = null"
+              class="absolute top-4 right-4 p-2 bg-black/55 hover:bg-black/75 text-white rounded-full transition-colors cursor-pointer"
+              aria-label="Tutup"
+            >
+              <XIcon class="w-5 h-5" />
+            </button>
+            <span class="absolute bottom-6 left-6 bg-[#0D6847] text-white text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full">
+              {{ selectedPotensi.kategori === 'wisata' ? 'Fasilitas / Wisata' : 'Potensi Desa' }}
+            </span>
+          </div>
+
+          <!-- Content -->
+          <div class="p-6 md:p-8 space-y-5">
+            <h3 class="text-2xl font-extrabold text-gray-900 leading-snug">
+              {{ selectedPotensi.nama }}
+            </h3>
+
+            <p class="text-sm md:text-base text-gray-600 leading-relaxed whitespace-pre-line">
+              {{ selectedPotensi.deskripsi || 'Tidak ada deskripsi.' }}
+            </p>
+
+            <!-- Lokasi + Peta (jika ada) -->
+            <div v-if="selectedPotensi.lokasi && selectedPotensi.lokasi !== '-'" class="space-y-3 pt-2 border-t border-gray-100">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                <MapPinIcon class="w-3.5 h-3.5" />
+                <span>Lokasi</span>
+              </h4>
+              <a
+                :href="selectedPotensi.lokasi"
+                target="_blank"
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-50 hover:bg-[#0D6847] text-[#0D6847] hover:text-white text-xs font-bold rounded-xl transition-colors"
+              >
+                <MapPinIcon class="w-4 h-4" />
+                <span>Buka di Google Maps</span>
+              </a>
+              <div class="rounded-xl overflow-hidden border border-gray-200 h-56">
+                <iframe
+                  :src="getOSMEmbedUrl(selectedPotensi.lokasi)"
+                  width="100%" height="224" style="border:0" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
+
+            <div class="pt-4 flex justify-end">
+              <button
+                @click="selectedPotensi = null"
+                class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold rounded-xl transition-all cursor-pointer"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -531,13 +615,16 @@ import {
   Users as UsersIcon,
   Home as HomeIcon,
   ShoppingBag as ShoppingBagIcon,
-  TrendingUp as TrendingUpIcon
+  TrendingUp as TrendingUpIcon,
+  X as XIcon   // <-- TAMBAH
 } from 'lucide-vue-next';
 
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 // Define custom simple icon components inline using simple SVGs for genders and leaf to avoid missing lucide icon definitions
 import { defineComponent, h } from 'vue';
+
+defineEmits(['navigate']);
 
 const MaleIcon = defineComponent({
   render() {
@@ -567,6 +654,13 @@ const LeafIcon = defineComponent({
     ]);
   }
 });
+
+// State untuk modal detail potensi
+const selectedPotensi = ref(null);
+
+const openPotensiDetail = (potensi) => {
+  selectedPotensi.value = potensi;
+};
 
 const handleImageError = (event, type) => {
   if (type === 'hero-bg') {

@@ -9,7 +9,11 @@ class News extends Model
     protected $table = 'news';
     protected $fillable = [
         'category_id', 'author_id', 'title', 'slug', 'content',
-        'excerpt', 'thumbnail', 'status', 'view_count'
+        'excerpt', 'thumbnail', 'images', 'status', 'view_count'
+    ];
+
+    protected $casts = [
+        'images' => 'array', // otomatis decode/encode JSON
     ];
 
     public function kategori()

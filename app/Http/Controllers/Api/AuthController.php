@@ -30,6 +30,14 @@ class AuthController extends BaseController
         } 
     }
 
+    public function me(Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'user' => $request->user(),
+        ]);
+    }
+
     /**
      * Logout api
      *

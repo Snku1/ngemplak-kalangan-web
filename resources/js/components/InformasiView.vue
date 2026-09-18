@@ -154,7 +154,7 @@
                       class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       @error="handleImageError($event, 'placeholder')"
                     />
-                    <span class="absolute top-4 left-4 bg-[#0D6847] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                    <span class="absolute top-4 left-4 bg-[#0A4A34] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
                       {{ news.category }}
                     </span>
                   </div>
@@ -358,7 +358,7 @@
               <div class="w-8 h-8 rounded-lg bg-[#0D6847]/10 flex items-center justify-center text-[#0D6847]">
                 <CalendarIcon class="w-4.5 h-4.5" />
               </div>
-              <h3 class="font-extrabold text-gray-900 text-base">Agenda Desa</h3>
+              <h3 class="font-extrabold text-gray-900 text-base">Agenda Padukuhan</h3>
             </div>
 
             <div class="space-y-4">
@@ -414,31 +414,165 @@
       </div>
     </main>
 
-    <!-- ARTICLE DETAIL MODAL -->
+    <!-- ============================================================ -->
+    <!-- ARTICLE DETAIL MODAL — dengan Fullscreen                      -->
+    <!-- ============================================================ -->
     <transition name="fade">
       <div
         v-if="selectedNews"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+        id="info-news-lightbox"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-xs"
         @click.self="closeNewsDetail"
       >
-        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col">
-          <div class="relative h-64 md:h-80 bg-gray-100 shrink-0">
-            <img :src="selectedNews.image" :alt="selectedNews.title" class="w-full h-full object-cover" />
-            <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-75"></div>
+
+        <!-- ============================================ -->
+        <!-- FULLSCREEN MODE                              -->
+        <!-- ============================================ -->
+        <div v-if="isNewsFullscreen" class="relative w-full h-full flex items-center justify-center">
+
+          <!-- Counter kiri atas -->
+          <div class="absolute top-4 left-4 z-30 text-white text-sm font-bold">
+            {{ currentImageIndex + 1 }} / {{ newsImages.length }}
+          </div>
+
+          <!-- Tombol Minimize + Close kanan atas -->
+          <div class="absolute top-4 right-4 z-30 flex items-center gap-2">
             <button
-              @click="closeNewsDetail"
-              class="absolute top-4 right-4 p-2 bg-black/55 hover:bg-black/75 text-white rounded-full transition-colors cursor-pointer"
-              aria-label="Tutup"
+              @click.stop="toggleNewsFullscreen"
+              class="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
+              title="Keluar Fullscreen"
+            >
+              <MinimizeIcon class="w-5 h-5" />
+            </button>
+            <button
+              @click.stop="closeNewsDetail"
+              class="w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors cursor-pointer"
+              title="Tutup"
             >
               <XIcon class="w-5 h-5" />
             </button>
-            <span class="absolute bottom-6 left-6 bg-[#0D6847] text-white text-[10px] font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full">
-              {{ selectedNews.category }}
-            </span>
           </div>
 
+          <!-- Foto Fullscreen -->
+          <img
+            :src="activeNewsImage"
+            :alt="selectedNews.title"
+            class="max-w-full max-h-full object-contain"
+          />
+
+          <!-- Navigasi Prev/Next -->
+          <template v-if="newsImages.length > 1">
+            <button
+              @click.stop="prevImage"
+              class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer z-20"
+            >
+              <ChevronLeftIcon class="w-6 h-6" />
+            </button>
+            <button
+              @click.stop="nextImage"
+              class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer z-20"
+            >
+              <ChevronRightIcon class="w-6 h-6" />
+            </button>
+          </template>
+
+          <!-- Thumbnail strip -->
+          <div
+            v-if="newsImages.length > 1"
+            class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 bg-black/60 rounded-2xl backdrop-blur-md max-w-[90vw] overflow-x-auto z-20"
+          >
+            <button
+              v-for="(img, idx) in newsImages"
+              :key="idx"
+              @click.stop="currentImageIndex = idx"
+              :class="currentImageIndex === idx ? 'ring-2 ring-[#0D6847] opacity-100' : 'opacity-50 hover:opacity-80'"
+              class="relative w-14 h-10 shrink-0 rounded-md overflow-hidden transition-all cursor-pointer"
+            >
+              <img :src="img" class="w-full h-full object-cover" />
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ============================================ -->
+        <!-- NORMAL MODE                                  -->
+        <!-- ============================================ -->
+        <div v-else class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl flex flex-col">
+
+          <!-- Galeri Foto (Multiple) -->
+          <div class="relative bg-gray-900 shrink-0">
+
+            <!-- Foto Utama -->
+            <div class="relative h-64 md:h-80">
+              <img
+                :src="activeNewsImage"
+                :alt="selectedNews.title"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent opacity-75"></div>
+
+              <!-- Tombol Close (kanan atas) -->
+              <button
+                @click="closeNewsDetail"
+                class="absolute top-4 right-4 p-2 bg-black/55 hover:bg-black/75 text-white rounded-full transition-colors cursor-pointer z-10"
+                aria-label="Tutup"
+              >
+                <XIcon class="w-5 h-5" />
+              </button>
+
+              <!-- Tombol Prev/Next -->
+              <template v-if="newsImages.length > 1">
+                <button
+                  @click.stop="prevImage"
+                  class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/75 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer z-10"
+                  aria-label="Foto sebelumnya"
+                >
+                  <ChevronLeftIcon class="w-5 h-5" />
+                </button>
+                <button
+                  @click.stop="nextImage"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/75 text-white rounded-full flex items-center justify-center transition-colors cursor-pointer z-10"
+                  aria-label="Foto berikutnya"
+                >
+                  <ChevronRightIcon class="w-5 h-5" />
+                </button>
+              </template>
+
+              <!-- Counter Foto (KIRI BAWAH) -->
+              <span
+                v-if="newsImages.length > 1"
+                class="absolute bottom-4 left-4 bg-black/60 text-white text-[10px] font-bold px-2.5 py-1 rounded-full z-10"
+              >
+                {{ currentImageIndex + 1 }} / {{ newsImages.length }}
+              </span>
+
+              <!-- Tombol Fullscreen (KANAN BAWAH) -->
+              <button
+                @click.stop="toggleNewsFullscreen"
+                class="absolute bottom-4 right-4 p-2 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors cursor-pointer z-10"
+                title="Tampilkan Fullscreen"
+              >
+                <MaximizeIcon class="w-4 h-4" />
+              </button>
+            </div>
+
+            <!-- Thumbnails -->
+            <div v-if="newsImages.length > 1" class="flex items-center gap-2 p-3 bg-black/30 overflow-x-auto">
+              <button
+                v-for="(img, idx) in newsImages"
+                :key="idx"
+                @click="currentImageIndex = idx"
+                :class="currentImageIndex === idx ? 'ring-2 ring-[#0D6847] opacity-100' : 'opacity-50 hover:opacity-80'"
+                class="relative w-16 h-12 shrink-0 rounded-lg overflow-hidden transition-all cursor-pointer"
+              >
+                <img :src="img" class="w-full h-full object-cover" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Content -->
           <div class="p-6 md:p-8 space-y-6">
-            <div class="flex items-center gap-4 text-xs text-gray-400 font-bold uppercase tracking-wider">
+            <div class="flex flex-wrap items-center gap-3 text-xs text-gray-400 font-bold uppercase tracking-wider">
               <span class="flex items-center gap-1">
                 <CalendarIcon class="w-4 h-4" />
                 {{ selectedNews.date }}
@@ -447,6 +581,11 @@
               <span class="flex items-center gap-1">
                 <UserIcon class="w-4 h-4" />
                 {{ selectedNews.author }}
+              </span>
+              <span>•</span>
+              <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 text-[#0D6847] border border-emerald-200 rounded-full">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#0D6847]"></span>
+                <span>{{ selectedNews.category }}</span>
               </span>
             </div>
 
@@ -468,6 +607,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </transition>
 
@@ -579,13 +719,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import {
   Search as SearchIcon, Sliders as SlidersIcon, FileText as FileTextIcon,
   Calendar as CalendarIcon, Bell as BellIcon, Clock as ClockIcon,
   MapPin as MapPinIcon, ArrowRight as ArrowRightIcon,
   ArrowLeft as ArrowLeftIcon, X as XIcon, User as UserIcon,
-  CheckCircle as CheckCircleIcon, AlertCircle as AlertCircleIcon
+  CheckCircle as CheckCircleIcon, AlertCircle as AlertCircleIcon,
+  ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon,
+  Maximize as MaximizeIcon, Minimize as MinimizeIcon
 } from 'lucide-vue-next';
 import { store } from '../store';
 
@@ -615,6 +757,64 @@ const popularCategories = computed(() => {
   const cats = store.categoriesByTipe('berita').map(c => c.nama);
   return cats.length ? cats : ['Infrastruktur', 'Kesehatan', 'Pendidikan', 'UMKM'];
 });
+
+const currentImageIndex = ref(0);
+
+// State fullscreen untuk berita
+const isNewsFullscreen = ref(false);
+
+const toggleNewsFullscreen = async () => {
+  const el = document.getElementById('info-news-lightbox');
+  if (!el) return;
+  try {
+    if (!document.fullscreenElement) {
+      await el.requestFullscreen();
+      isNewsFullscreen.value = true;
+    } else {
+      await document.exitFullscreen();
+      isNewsFullscreen.value = false;
+    }
+  } catch (err) {
+    console.warn('Fullscreen tidak didukung:', err);
+  }
+};
+
+const handleFullscreenChange = () => {
+  isNewsFullscreen.value = !!document.fullscreenElement;
+};
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullscreenChange);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('fullscreenchange', handleFullscreenChange);
+});
+
+// Ambil daftar foto berita (gabungan thumbnail + images, unik)
+const newsImages = computed(() => {
+  if (!selectedNews.value) return [];
+  const list = [];
+  if (selectedNews.value.image) list.push(selectedNews.value.image);
+  if (Array.isArray(selectedNews.value.images)) {
+    selectedNews.value.images.forEach(img => {
+      if (img && !list.includes(img)) list.push(img);
+    });
+  }
+  return list.length > 0 ? list : ['/images/hero-bg.png'];
+});
+
+const activeNewsImage = computed(() => newsImages.value[currentImageIndex.value] || '/images/hero-bg.png');
+
+const prevImage = () => {
+  if (currentImageIndex.value > 0) currentImageIndex.value--;
+  else currentImageIndex.value = newsImages.value.length - 1;
+};
+
+const nextImage = () => {
+  if (currentImageIndex.value < newsImages.value.length - 1) currentImageIndex.value++;
+  else currentImageIndex.value = 0;
+};
 
 const filteredNews = computed(() => {
   let result = [...newsData.value];
@@ -677,8 +877,19 @@ const setTab = (tabValue) => { activeTab.value = tabValue; selectedCategory.valu
 const resetFilters = () => { searchQuery.value = ''; selectedCategory.value = ''; activeTab.value = 'semua'; };
 
 const showToast = (msg) => { toastMessage.value = msg; setTimeout(() => toastMessage.value = '', 3000); };
-const openNewsDetail = (news) => { selectedNews.value = news; };
-const closeNewsDetail = () => { selectedNews.value = null; };
+const openNewsDetail = (news) => {
+  selectedNews.value = news;
+  currentImageIndex.value = 0;
+  isNewsFullscreen.value = false; // reset
+};
+
+const closeNewsDetail = async () => {
+  if (document.fullscreenElement) {
+    try { await document.exitFullscreen(); } catch (e) {}
+  }
+  isNewsFullscreen.value = false;
+  selectedNews.value = null;
+};
 const openAnnDetail = (ann) => { activeModalDetail.value = { ...ann, type: 'pengumuman' }; };
 const openEventDetail = (event) => { activeModalDetail.value = { ...event, type: 'agenda' }; };
 const closeActiveModal = () => { activeModalDetail.value = null; };

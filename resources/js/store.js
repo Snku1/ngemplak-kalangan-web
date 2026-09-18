@@ -6,14 +6,13 @@ export const store = reactive({
   adminUser: { username: 'admin', name: 'Administrator Padukuhan', role: 'Super Admin' },
 
   // Data collections
-  news: [], products: [], gallery: [], leaders: [], faqs: [], inbox: [],
+  news: [], gallery: [], leaders: [], faqs: [], inbox: [],
   categories: [], umkms: [], agenda: [], pengumuman: [],
   potensiWisata: [], demographics: [], kependudukanDusun: [],
   padukuhanProfile: null,
 
   get facilities() { return this.potensiWisata; },
 
-  // Helper untuk filter kategori berdasarkan tipe
   categoriesByTipe(tipe) {
     return this.categories.filter(c => c.tipe === tipe);
   },
@@ -36,17 +35,16 @@ export const store = reactive({
   async initData() {
     try {
       const [
-        beritaRes, produkRes, galeriRes, strukturRes, faqRes, kategoriRes, umkmRes,
+        beritaRes, galeriRes, strukturRes, faqRes, kategoriRes, umkmRes,
         agendaRes, pengumumanRes, potensiRes, demografiRes, profilRes, kependudukanRes
       ] = await Promise.all([
-        api.get('/berita'), api.get('/produk'), api.get('/galeri'),
+        api.get('/berita'), api.get('/galeri'),
         api.get('/struktur-organisasi'), api.get('/faq'), api.get('/kategori'), api.get('/umkm'),
         api.get('/agenda'), api.get('/pengumuman'), api.get('/potensi-wisata'),
         api.get('/demografi'), api.get('/profil'), api.get('/kependudukan-dusun')
       ]);
 
       this.categories = kategoriRes.data;
-      this.umkms = umkmRes.data;
 
       // Berita
       this.news = beritaRes.data
@@ -60,32 +58,38 @@ export const store = reactive({
           created_at: item.created_at,
           image: item.thumbnail || '/images/hero-bg.png',
           foto_url: item.thumbnail || '',
+          images: Array.isArray(item.images) ? item.images : [],
           excerpt: item.excerpt || (item.content || '').substring(0, 150) + '...',
           content: item.content || '',
           author: item.author?.nama_lengkap || 'Admin'
         }));
 
-      // Produk
-      this.products = produkRes.data.map(item => {
-        const umkm = this.umkms.find(u => u.id === item.penjual_id);
-        return {
-          id: item.id,
-          name: item.nama_produk,
-          category: this.categories.find(c => c.id === item.category_id)?.nama || 'Produk',
-          category_id: item.category_id,
-          price: item.harga || 0,
-          unit: 'pcs', rating: 5.0,
-          isBestSeller: item.is_unggulan || false,
-          seller: umkm?.nama_usaha || 'Warga',
-          sellerPhone: umkm?.nomor_whatsapp || '',
-          sellerMaps: umkm?.maps_lokasi || '',
-          penjual_id: item.penjual_id,
-          image: item.foto_produk || '/images/anyaman-bambu.png',
-          foto_url: item.foto_produk || '',
-          description: item.deskripsi || '',
-          fullDescription: item.deskripsi || ''
-        };
-      });
+      // ==========================================
+      // MAPPING UMKM (menggantikan products)
+      // ==========================================
+      this.umkms = umkmRes.data.map(item => ({
+        id: item.id,
+        name: item.nama_usaha,
+        nama_usaha: item.nama_usaha,
+        nama_penjual: item.nama_penjual,
+        seller: item.nama_usaha,
+        category: item.kategori || 'UMKM',
+        kategori: item.kategori || 'UMKM',
+        description: item.deskripsi || '',
+        deskripsi: item.deskripsi || '',
+        image: item.foto_usaha || '/images/hero-bg.png',
+        foto_usaha: item.foto_usaha || '',
+        foto_url: item.foto_usaha || '',
+        images: Array.isArray(item.images) ? item.images : [],
+        daftar_produk: item.daftar_produk || '',
+        sellerPhone: item.nomor_whatsapp || '',
+        nomor_whatsapp: item.nomor_whatsapp || '',
+        alamat_lokasi: item.alamat_lokasi || '',
+        sellerMaps: item.maps_lokasi || '',
+        maps_lokasi: item.maps_lokasi || '',
+        jam_buka: item.jam_buka || '',
+        cara_bayar: item.cara_bayar || ''
+      }));
 
       // Galeri
       this.gallery = galeriRes.data.map(item => ({
@@ -97,10 +101,11 @@ export const store = reactive({
         image: item.file_url || '/images/galeri-1.png',
         foto_url: item.file_url || '',
         youtube_url: item.youtube_url || '',
+        images: Array.isArray(item.images) ? item.images : [],
         deskripsi: item.deskripsi || '',
         date: new Date(item.created_at).toLocaleDateString('id-ID'),
         location: item.is_highlight ? 'Highlight' : 'Ngemplak Kalangan',
-        description: item.judul
+        description: item.deskripsi || item.judul
       }));
 
       // Leaders
@@ -112,7 +117,7 @@ export const store = reactive({
           role: item.jabatan,
           urutan: item.urutan || 0,
           level: item.urutan === 1 ? 'Kepala Desa'
-              : item.urutan === 2 ? 'Sekretaris'
+            : item.urutan === 2 ? 'Sekretaris'
               : 'Kepala Seksi',
           image: item.foto || '',
           foto_url: item.foto || '',
@@ -126,12 +131,12 @@ export const store = reactive({
         id: item.id, question: item.pertanyaan, answer: item.jawaban
       }));
 
-      // Agenda — format tanggal agar terisi di form edit
+      // Agenda
       this.agenda = agendaRes.data.map(item => ({
         id: item.id,
         month: new Date(item.tanggal_kegiatan).toLocaleString('id-ID', { month: 'short' }),
         day: new Date(item.tanggal_kegiatan).getDate(),
-        date: item.tanggal_kegiatan, // format YYYY-MM-DD untuk <input type="date">
+        date: item.tanggal_kegiatan,
         title: item.nama_kegiatan,
         time: item.waktu,
         location: item.lokasi,
@@ -158,6 +163,7 @@ export const store = reactive({
         deskripsi: item.deskripsi || '',
         foto_url: item.foto_url || '',
         image: item.foto_url || '/images/hero-bg.png',
+        images: Array.isArray(item.images) ? item.images : [],
         lokasi: item.link_gmaps || ''
       }));
 
@@ -167,7 +173,7 @@ export const store = reactive({
         jumlah_jiwa: item.jumlah_jiwa || 0, persentase: item.persentase || 0
       }));
 
-      // Kependudukan per Dusun
+      // Kependudukan
       this.kependudukanDusun = kependudukanRes.data
         .sort((a, b) => (a.urutan || 0) - (b.urutan || 0))
         .map(item => ({
@@ -181,7 +187,7 @@ export const store = reactive({
           keterangan: item.keterangan || ''
         }));
 
-      // Profil Padukuhan
+      // Profil
       if (profilRes.data && profilRes.data.length > 0) {
         const p = profilRes.data[0];
         this.padukuhanProfile = {
@@ -209,7 +215,9 @@ export const store = reactive({
           alamat_kantor: p.alamat_kantor || '',
           telepon: p.telepon || '',
           email: p.email || '',
-          maps_embed: p.maps_embed || ''
+          maps_embed: p.maps_embed || '',
+          video_url: p.video_url || '',
+          video_thumbnail: p.video_thumbnail || ''
         };
       }
 
@@ -254,19 +262,54 @@ export const store = reactive({
     localStorage.removeItem('ngemplak_admin_token');
   },
 
+  // Di dalam export const store = reactive({ ... })
+
+  async validateSession() {
+    if (!this.token) return false;
+    try {
+      const res = await fetch('/api/me', {
+        headers: {
+          'Authorization': `Bearer ${this.token}`,
+          'Accept': 'application/json',
+        },
+      });
+      if (res.status === 401 || res.status === 403) {
+        return false;
+      }
+      return res.ok;
+    } catch (err) {
+      // Server mati / tidak bisa dijangkau → anggap invalid
+      console.warn('[store] validateSession failed:', err);
+      return false;
+    }
+  },
+
   // ==========================================
   // CRUD — NEWS
   // ==========================================
-  async addNews(item, file = null) {
+  async addNews(item, files = []) {
     try {
       let thumbnail = item.foto_url || '';
-      if (file) thumbnail = await this.uploadFile(file, 'news');
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const uploadedUrls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'news');
+          if (url) uploadedUrls.push(url);
+        }
+        if (uploadedUrls.length > 0) {
+          thumbnail = uploadedUrls[0];
+          images = [...uploadedUrls];
+        }
+      }
+
       await api.post('/berita', {
         title: item.title,
         slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now(),
         content: item.content || '',
-        excerpt: item.excerpt || '',  // <-- TAMBAH
-        thumbnail,
+        excerpt: item.excerpt || '',
+        thumbnail, images,
         category_id: item.category_id || 1,
         author_id: 1,
         status: 'published'
@@ -274,16 +317,30 @@ export const store = reactive({
       await this.initData();
     } catch (error) { console.error(error); alert(error.message); }
   },
-  async updateNews(id, item, file = null) {
+
+  async updateNews(id, item, files = []) {
     try {
       let thumbnail = item.foto_url || '';
-      if (file) thumbnail = await this.uploadFile(file, 'news');
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const uploadedUrls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'news');
+          if (url) uploadedUrls.push(url);
+        }
+        if (uploadedUrls.length > 0) {
+          thumbnail = uploadedUrls[0];
+          images = [...uploadedUrls];
+        }
+      }
+
       await api.put(`/berita/${id}`, {
         title: item.title,
         slug: item.title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') + '-' + Date.now(),
         content: item.content || '',
-        excerpt: item.excerpt || '',  // <-- TAMBAH
-        thumbnail,
+        excerpt: item.excerpt || '',
+        thumbnail, images,
         category_id: item.category_id || 1,
         author_id: 1,
         status: 'published'
@@ -294,129 +351,143 @@ export const store = reactive({
   async deleteNews(id) { try { await api.delete(`/berita/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
   // ==========================================
-  // CRUD — PRODUCTS
+  // CRUD — UMKM (menggantikan products)
   // ==========================================
-  async addProduct(item, file = null) {
+  async addUmkm(item, files = []) {
     try {
-      let foto_produk = item.foto_url || '';
-      if (file) foto_produk = await this.uploadFile(file, 'produk');
+      let foto_usaha = item.foto_usaha || item.foto_url || '';
+      let images = item.images || [];
 
-      // Data UMKM lengkap (termasuk maps_lokasi)
-      const umkmData = {
-        nama_penjual: item.seller || 'Warga Desa',
-        nama_usaha: item.seller || 'Usaha Desa',
-        nomor_whatsapp: item.sellerPhone || '',
-        alamat_lokasi: item.sellerAddress || 'Ngemplak Kalangan',
-        maps_lokasi: item.sellerMaps || '' // <-- TAMBAH maps lokasi
-      };
-
-      let penjualId = this.umkms.find(u => u.nama_usaha === item.seller)?.id;
-
-      if (!penjualId) {
-        // Buat UMKM baru
-        const umkmRes = await api.post('/umkm', umkmData);
-        penjualId = umkmRes.data?.id || 1;
-      } else {
-        // Update UMKM yang sudah ada (termasuk maps & WhatsApp)
-        await api.put(`/umkm/${penjualId}`, umkmData).catch(() => { });
-      }
-
-      await api.post('/produk', {
-        nama_produk: item.name,
-        harga: Number(item.price) || 0,
-        category_id: item.category_id || 2,
-        penjual_id: penjualId || 1,
-        deskripsi: item.description || '',
-        foto_produk,
-        is_unggulan: item.isBestSeller ? 1 : 0
-      });
-      await this.initData();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
-  },
-
-  async updateProduct(id, item, file = null) {
-    try {
-      let foto_produk = item.foto_url || '';
-      if (file) foto_produk = await this.uploadFile(file, 'produk');
-
-      // Update UMKM (termasuk maps & WhatsApp) jika ada penjual_id
-      if (item.penjual_id) {
-        const umkmUpdateData = {};
-        if (item.sellerPhone !== undefined) umkmUpdateData.nomor_whatsapp = item.sellerPhone;
-        if (item.sellerMaps !== undefined) umkmUpdateData.maps_lokasi = item.sellerMaps;
-        if (item.seller) {
-          umkmUpdateData.nama_penjual = item.seller;
-          umkmUpdateData.nama_usaha = item.seller;
+      if (files && files.length > 0) {
+        const uploadedUrls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'umkm');
+          if (url) uploadedUrls.push(url);
         }
-        // Hanya kirim jika ada perubahan
-        if (Object.keys(umkmUpdateData).length > 0) {
-          await api.put(`/umkm/${item.penjual_id}`, umkmUpdateData).catch(() => { });
+        if (uploadedUrls.length > 0) {
+          foto_usaha = uploadedUrls[0];
+          images = [...uploadedUrls];
         }
       }
 
-      await api.put(`/produk/${id}`, {
-        nama_produk: item.name,
-        harga: Number(item.price) || 0,
-        category_id: item.category_id || 2,
-        deskripsi: item.description || '',
-        foto_produk,
-        is_unggulan: item.isBestSeller ? 1 : 0
+      await api.post('/umkm', {
+        nama_penjual: item.nama_penjual || 'Warga Desa',
+        nama_usaha: item.name || item.nama_usaha || 'Usaha Desa',
+        kategori: item.kategori || item.category || 'UMKM',
+        deskripsi: item.deskripsi || item.description || '',
+        foto_usaha,
+        images,
+        daftar_produk: item.daftar_produk || '',
+        nomor_whatsapp: item.nomor_whatsapp || '',
+        alamat_lokasi: item.alamat_lokasi || '',
+        maps_lokasi: item.maps_lokasi || '',
+        jam_buka: item.jam_buka || '',
+        cara_bayar: item.cara_bayar || ''
       });
       await this.initData();
-    } catch (error) {
-      console.error(error);
-      alert(error.message);
-    }
+    } catch (error) { console.error(error); alert(error.message); }
   },
-  async deleteProduct(id) { try { await api.delete(`/produk/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
+
+  async updateUmkm(id, item, files = []) {
+    try {
+      let foto_usaha = item.foto_usaha || item.foto_url || '';
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const uploadedUrls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'umkm');
+          if (url) uploadedUrls.push(url);
+        }
+        if (uploadedUrls.length > 0) {
+          foto_usaha = uploadedUrls[0];
+          images = [...uploadedUrls];
+        }
+      }
+
+      await api.put(`/umkm/${id}`, {
+        nama_penjual: item.nama_penjual || 'Warga Desa',
+        nama_usaha: item.name || item.nama_usaha,
+        kategori: item.kategori || item.category,
+        deskripsi: item.deskripsi || item.description,
+        foto_usaha,
+        images,
+        daftar_produk: item.daftar_produk || '',
+        nomor_whatsapp: item.nomor_whatsapp || '',
+        alamat_lokasi: item.alamat_lokasi || '',
+        maps_lokasi: item.maps_lokasi || '',
+        jam_buka: item.jam_buka || '',
+        cara_bayar: item.cara_bayar || ''
+      });
+      await this.initData();
+    } catch (error) { console.error(error); alert(error.message); }
+  },
+
+  async deleteUmkm(id) {
+    try { await api.delete(`/umkm/${id}`); await this.initData(); }
+    catch (e) { alert(e.message); }
+  },
 
   // ==========================================
   // CRUD — GALLERY
   // ==========================================
-  async addGallery(item, file = null) {
+  async addGallery(item, files = []) {
     try {
       let file_url = item.foto_url || '';
-      if (file) file_url = await this.uploadFile(file, 'galeri');
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const uploadedUrls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'galeri');
+          if (url) uploadedUrls.push(url);
+        }
+        if (uploadedUrls.length > 0) {
+          file_url = uploadedUrls[0];
+          images = [...uploadedUrls];
+        }
+      }
+
       await api.post('/galeri', {
         judul: item.title,
         deskripsi: item.deskripsi || item.description || '',
         tipe: item.type || 'foto',
         category_id: item.category_id || null,
         file_url,
-        youtube_url: item.youtube_url || ''
+        youtube_url: item.youtube_url || '',
+        images
       });
       await this.initData();
     } catch (error) { console.error(error); alert(error.message); }
   },
-  async updateGallery(id, item, file = null) {
+  async updateGallery(id, item, files = []) {
     try {
-      // Validasi ID
-      if (!id) {
-        console.error('[updateGallery] ID tidak valid:', id);
-        throw new Error('ID galeri tidak ditemukan');
-      }
-      
       let file_url = item.foto_url || '';
-      if (file) file_url = await this.uploadFile(file, 'galeri');
-      
-      console.log(`[updateGallery] Updating galeri id=${id}`, item);
-      
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const uploadedUrls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'galeri');
+          if (url) uploadedUrls.push(url);
+        }
+        if (uploadedUrls.length > 0) {
+          file_url = uploadedUrls[0];
+          images = [...uploadedUrls];
+        }
+      }
+
       await api.put(`/galeri/${id}`, {
         judul: item.title,
         deskripsi: item.deskripsi || item.description || '',
         tipe: item.type || 'foto',
         category_id: item.category_id || null,
         file_url,
-        youtube_url: item.youtube_url || ''
+        youtube_url: item.youtube_url || '',
+        images
       });
       await this.initData();
-    } catch (error) { 
-      console.error('[updateGallery] Error:', error); 
-      alert(error.message); 
-    }
+    } catch (error) { console.error(error); alert(error.message); }
   },
   async deleteGallery(id) { try { await api.delete(`/galeri/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
@@ -556,37 +627,59 @@ export const store = reactive({
     } catch (e) { console.error(e); alert(e.message); }
   },
   async deleteKategori(id) {
-    try {
-      await api.delete(`/kategori/${id}`);
-      await this.initData();
-    } catch (e) { console.error(e); alert(e.message); }
+    try { await api.delete(`/kategori/${id}`); await this.initData(); }
+    catch (e) { console.error(e); alert(e.message); }
   },
+
   // ==========================================
   // CRUD — POTENSI WISATA
   // ==========================================
-  async addPotensi(item, file = null) {
+  async addPotensi(item, files = []) {
     try {
       let foto_url = item.foto_url || '';
-      if (file) foto_url = await this.uploadFile(file, 'potensi');
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const urls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'potensi');
+          if (url) urls.push(url);
+        }
+        if (urls.length > 0) { foto_url = urls[0]; images = [...urls]; }
+      }
+
       await api.post('/potensi-wisata', {
         nama: item.nama,
         kategori: item.kategori === 'Fasilitas / Wisata' ? 'wisata' : (item.kategori || 'potensi_desa'),
         deskripsi: item.deskripsi || '',
         foto_url,
+        images,
         link_gmaps: item.lokasi || ''
       });
       await this.initData();
     } catch (e) { console.error(e); alert(e.message); }
   },
-  async updatePotensi(id, item, file = null) {
+
+  async updatePotensi(id, item, files = []) {
     try {
       let foto_url = item.foto_url || '';
-      if (file) foto_url = await this.uploadFile(file, 'potensi');
+      let images = item.images || [];
+
+      if (files && files.length > 0) {
+        const urls = [];
+        for (const file of files) {
+          const url = await this.uploadFile(file, 'potensi');
+          if (url) urls.push(url);
+        }
+        if (urls.length > 0) { foto_url = urls[0]; images = [...urls]; }
+      }
+
       await api.put(`/potensi-wisata/${id}`, {
         nama: item.nama,
         kategori: item.kategori === 'Fasilitas / Wisata' ? 'wisata' : (item.kategori || 'potensi_desa'),
         deskripsi: item.deskripsi,
         foto_url,
+        images,
         link_gmaps: item.lokasi || ''
       });
       await this.initData();
@@ -600,8 +693,7 @@ export const store = reactive({
   async addDemographic(item) {
     try {
       await api.post('/demografi', {
-        kategori: item.kategori,
-        label: item.label,
+        kategori: item.kategori, label: item.label,
         urutan: Number(item.urutan) || 0,
         jumlah_jiwa: Number(item.jumlah_jiwa) || 0,
         persentase: Number(item.persentase) || 0
@@ -612,8 +704,7 @@ export const store = reactive({
   async updateDemographic(id, item) {
     try {
       await api.put(`/demografi/${id}`, {
-        kategori: item.kategori,
-        label: item.label,
+        kategori: item.kategori, label: item.label,
         urutan: Number(item.urutan) || 0,
         jumlah_jiwa: Number(item.jumlah_jiwa) || 0,
         persentase: Number(item.persentase) || 0
@@ -623,7 +714,6 @@ export const store = reactive({
   },
   async deleteDemographic(id) { try { await api.delete(`/demografi/${id}`); await this.initData(); } catch (e) { alert(e.message); } },
 
-  // Helper: ambil demografi per kategori, sudah diurutkan
   demographicsByKategori(kategori) {
     return this.demographics
       .filter(d => d.kategori === kategori)
@@ -666,15 +756,23 @@ export const store = reactive({
   // ==========================================
   async updatePadukuhanProfile(data, fotoFile = null) {
     try {
+      // Upload foto kepala dukuh (jika ada file baru)
       if (fotoFile) {
         data.foto_dukuh = await this.uploadFile(fotoFile, 'profil');
       }
+
+      // video_url sudah berupa link YouTube dari form (string)
+      // video_thumbnail tidak dipakai lagi — YouTube auto-generate thumbnail
+
       if (this.padukuhanProfile?.id) {
         await api.put(`/profil/${this.padukuhanProfile.id}`, data);
       } else {
         await api.post('/profil', data);
       }
       await this.initData();
-    } catch (e) { console.error(e); alert(e.message); }
+    } catch (e) {
+      console.error(e);
+      alert(e.message);
+    }
   }
 });

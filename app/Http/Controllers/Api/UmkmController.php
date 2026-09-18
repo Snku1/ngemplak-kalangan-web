@@ -10,60 +10,63 @@ class UmkmController extends BaseController
 {
     public function index()
     {
-        $data = Umkm::all();
+        $data = Umkm::orderBy('nama_usaha')->get();
         return $this->sendResponse($data, 'Umkm retrieved successfully.');
     }
 
     public function store(Request $request)
     {
         $input = $request->all();
-   
         $validator = Validator::make($input, [
-            'nama_penjual' => 'required|max:100',
-            'nama_usaha' => 'required|max:100',
+            'nama_penjual'   => 'required|max:100',
+            'nama_usaha'     => 'required|max:100',
+            'kategori'       => 'nullable|max:50',
+            'deskripsi'      => 'nullable|string',
+            'foto_usaha'     => 'nullable|string|max:255',
+            'images'         => 'nullable|array',
+            'images.*'       => 'nullable|string|max:255',
+            'daftar_produk'  => 'nullable|string',
             'nomor_whatsapp' => 'required|max:20',
-            'alamat_lokasi' => 'nullable|string',
-            'maps_lokasi' => 'nullable|string|max:255',  // <-- TAMBAH
+            'alamat_lokasi'  => 'nullable|string',
+            'maps_lokasi'    => 'nullable|string|max:255',
+            'jam_buka'       => 'nullable|max:100',
+            'cara_bayar'     => 'nullable|string',
         ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
+        if ($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
         $data = Umkm::create($input);
         return $this->sendResponse($data, 'Umkm created successfully.');
-    } 
+    }
 
     public function show($id)
     {
         $data = Umkm::find($id);
-        if (is_null($data)) {
-            return $this->sendError('Umkm not found.');
-        }
+        if (is_null($data)) return $this->sendError('Umkm not found.');
         return $this->sendResponse($data, 'Umkm retrieved successfully.');
     }
 
     public function update(Request $request, $id)
     {
         $input = $request->all();
-   
         $validator = Validator::make($input, [
-            'nama_penjual' => 'required|max:100',
-            'nama_usaha' => 'required|max:100',
+            'nama_penjual'   => 'required|max:100',
+            'nama_usaha'     => 'required|max:100',
+            'kategori'       => 'nullable|max:50',
+            'deskripsi'      => 'nullable|string',
+            'foto_usaha'     => 'nullable|string|max:255',
+            'images'         => 'nullable|array',
+            'images.*'       => 'nullable|string|max:255',
+            'daftar_produk'  => 'nullable|string',
             'nomor_whatsapp' => 'required|max:20',
-            'alamat_lokasi' => 'nullable|string',
-            'maps_lokasi' => 'nullable|string|max:255',  // <-- TAMBAH
+            'alamat_lokasi'  => 'nullable|string',
+            'maps_lokasi'    => 'nullable|string|max:255',
+            'jam_buka'       => 'nullable|max:100',
+            'cara_bayar'     => 'nullable|string',
         ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
-        }
-   
-        $data = Umkm::find($id);
-        if (is_null($data)) {
-            return $this->sendError('Umkm not found.');
-        }
+        if ($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
 
+        $data = Umkm::find($id);
+        if (is_null($data)) return $this->sendError('Umkm not found.');
         $data->update($input);
         return $this->sendResponse($data, 'Umkm updated successfully.');
     }
@@ -71,9 +74,7 @@ class UmkmController extends BaseController
     public function destroy($id)
     {
         $data = Umkm::find($id);
-        if (is_null($data)) {
-            return $this->sendError('Umkm not found.');
-        }
+        if (is_null($data)) return $this->sendError('Umkm not found.');
         $data->delete();
         return $this->sendResponse([], 'Umkm deleted successfully.');
     }

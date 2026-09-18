@@ -8,6 +8,11 @@ class PotensiDanWisata extends Model
 {
     protected $table = 'potensi_dan_wisata';
 
-    protected $fillable = ['nama', 'kategori', 'deskripsi', 'foto_url', 'link_gmaps'];
+    protected $fillable = [
+    'nama', 'kategori', 'deskripsi', 'foto_url', 'images', 'link_gmaps'
+    ];
 
+    protected $casts = [
+    'images' => 'array',
+    ];
 }

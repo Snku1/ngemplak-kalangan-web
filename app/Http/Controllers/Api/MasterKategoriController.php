@@ -31,7 +31,7 @@ class MasterKategoriController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'tipe' => 'required|in:berita,produk,galeri,pengumuman',
+            'tipe' => 'required|in:berita,umkm,galeri',
             'nama' => 'required|max:50',
             'slug' => 'required|max:60|unique:master_kategori,slug'
         ]);
@@ -74,7 +74,7 @@ class MasterKategoriController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'tipe' => 'required|in:berita,produk,galeri',
+            'tipe' => 'required|in:berita,umkm,galeri',
             'nama' => 'required|max:50',
             'slug' => 'required|max:60|unique:master_kategori,slug,'.$id
         ]);

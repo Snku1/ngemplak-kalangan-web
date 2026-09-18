@@ -19,15 +19,15 @@ class GaleriController extends BaseController
         $input = $request->all();
         $validator = Validator::make($input, [
             'category_id' => 'required|exists:master_kategori,id',
-            'judul' => 'required|max:150',
-            'deskripsi' => 'nullable|string',
-            'tipe' => 'nullable|in:foto,video',
-            'file_url' => 'nullable|string|max:255',
+            'judul'       => 'required|max:150',
+            'deskripsi'   => 'nullable|string',
+            'tipe'        => 'nullable|in:foto,video',
+            'file_url'    => 'nullable|string|max:255',
             'youtube_url' => 'nullable|string|max:255',
+            'images'      => 'nullable|array',
+            'images.*'    => 'nullable|string|max:255',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
+        if ($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
         $data = Galeri::create($input);
         return $this->sendResponse($data, 'Galeri created successfully.');
     }
@@ -41,27 +41,22 @@ class GaleriController extends BaseController
         return $this->sendResponse($data, 'Galeri retrieved successfully.');
     }
 
-    public function update(Request $request, $id)  // <-- PERBAIKAN: tambah $id
+    public function update(Request $request, $id)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
             'category_id' => 'required|exists:master_kategori,id',
-            'judul' => 'required|max:150',
-            'deskripsi' => 'nullable|string',
-            'tipe' => 'nullable|in:foto,video',
-            'file_url' => 'nullable|string|max:255',
+            'judul'       => 'required|max:150',
+            'deskripsi'   => 'nullable|string',
+            'tipe'        => 'nullable|in:foto,video',
+            'file_url'    => 'nullable|string|max:255',
             'youtube_url' => 'nullable|string|max:255',
+            'images'      => 'nullable|array',
+            'images.*'    => 'nullable|string|max:255',
         ]);
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
-
-        // PERBAIKAN: cari data berdasarkan ID, lalu update
+        if ($validator->fails()) return $this->sendError('Validation Error.', $validator->errors());
         $data = Galeri::find($id);
-        if (is_null($data)) {
-            return $this->sendError('Galeri not found.');
-        }
-
+        if (is_null($data)) return $this->sendError('Galeri not found.');
         $data->update($input);
         return $this->sendResponse($data, 'Galeri updated successfully.');
     }

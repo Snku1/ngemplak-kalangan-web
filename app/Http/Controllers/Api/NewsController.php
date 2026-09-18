@@ -25,6 +25,8 @@ class NewsController extends BaseController
             'content'     => 'required',
             'excerpt'     => 'nullable|string',
             'thumbnail'   => 'nullable|string|max:255',
+            'images'      => 'nullable|array',        // <-- TAMBAH
+            'images.*'    => 'nullable|string|max:255', // <-- TAMBAH
             'status'      => 'nullable|in:draft,published',
         ]);
         if ($validator->fails()) {
@@ -52,6 +54,8 @@ class NewsController extends BaseController
             'content'     => 'required',
             'excerpt'     => 'nullable|string',
             'thumbnail'   => 'nullable|string|max:255',
+            'images'      => 'nullable|array',
+            'images.*'    => 'nullable|string|max:255',
             'status'      => 'nullable|in:draft,published',
         ]);
         if ($validator->fails()) {

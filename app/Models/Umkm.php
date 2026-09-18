@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Umkm extends Model
 {
     protected $table = 'umkm';
+    protected $fillable = [
+        'nama_penjual', 'nama_usaha', 'kategori', 'deskripsi',
+        'foto_usaha', 'images', 'daftar_produk', 'nomor_whatsapp',
+        'alamat_lokasi', 'maps_lokasi', 'jam_buka', 'cara_bayar'
+    ];
 
-    protected $fillable = ['nama_penjual', 'nama_usaha', 'nomor_whatsapp', 'alamat_lokasi', 'maps_lokasi'];
-
-    public function produk()
-    {
-        return $this->hasMany(Produk::class, 'penjual_id');
-    }
-
+    protected $casts = [
+        'images' => 'array',
+    ];
 }

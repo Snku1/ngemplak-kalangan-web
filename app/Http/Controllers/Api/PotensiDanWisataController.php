@@ -19,7 +19,12 @@ class PotensiDanWisataController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'nama' => 'required|max:150', 'kategori' => 'nullable|in:potensi_desa,wisata'
+            'nama'     => 'required|max:150',
+            'kategori' => 'nullable|in:potensi_desa,wisata',
+            'deskripsi'=> 'nullable|string',
+            'foto_url' => 'nullable|string|max:255',
+            'images'   => 'nullable|array',
+            'images.*' => 'nullable|string|max:255',
         ]);
    
         if($validator->fails()){
@@ -44,7 +49,12 @@ class PotensiDanWisataController extends BaseController
         $input = $request->all();
    
         $validator = Validator::make($input, [
-            'nama' => 'required|max:150', 'kategori' => 'nullable|in:potensi_desa,wisata'
+            'nama'     => 'required|max:150',
+            'kategori' => 'nullable|in:potensi_desa,wisata',
+            'deskripsi'=> 'nullable|string',
+            'foto_url' => 'nullable|string|max:255',
+            'images'   => 'nullable|array',
+            'images.*' => 'nullable|string|max:255',
         ]);
    
         if($validator->fails()){

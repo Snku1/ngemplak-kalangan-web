@@ -6,11 +6,11 @@ Route::get('/', function () {
     // Self-healing asset copy logic
     $sourceDir = 'C:/Users/LENOVO/.gemini/antigravity-ide/brain/bfedeae5-7f40-4b49-9e1f-55a749f0a6c2';
     $destDir = public_path('images');
-    
+
     if (!is_dir($destDir)) {
         mkdir($destDir, 0755, true);
     }
-    
+
     $mapping = [
         'hero_background_1786553913270.png' => 'hero-bg.png',
         'lomba_polowidi_1786554007926.png' => 'lomba-polowidi.png',
@@ -19,7 +19,7 @@ Route::get('/', function () {
         'kepala_desa_1786554264969.png' => 'kepala-desa.png',
         'anyaman_bambu_1786554661460.png' => 'anyaman-bambu.png',
     ];
-    
+
     foreach ($mapping as $srcName => $destName) {
         $srcPath = $sourceDir . '/' . $srcName;
         $destPath = $destDir . '/' . $destName;
@@ -37,7 +37,7 @@ Route::get('/', function () {
         'seni_rodat_1787295536177.png' => 'seni-rodat.png',
         'senam_sore_1787295552827.png' => 'senam-sore.png',
     ];
-    
+
     foreach ($mappingCurrent as $srcName => $destName) {
         $srcPath = $currentSourceDir . '/' . $srcName;
         $destPath = $destDir . '/' . $destName;
@@ -45,8 +45,7 @@ Route::get('/', function () {
             copy($srcPath, $destPath);
         }
     }
-    
-    // Also copy duplicates for galeri
+
     $galeri1 = $destDir . '/galeri-1.png';
     $galeri2 = $destDir . '/galeri-2.png';
     if (file_exists($destDir . '/lomba-polowidi.png') && !file_exists($galeri1)) {
@@ -58,3 +57,11 @@ Route::get('/', function () {
 
     return view('welcome');
 });
+
+// ============================================
+// SPA FALLBACK: /admin (dan turunannya)
+// Supaya refresh di /admin tidak 404
+// ============================================
+Route::get('/admin/{any?}', function () {
+    return view('welcome');
+})->where('any', '.*');

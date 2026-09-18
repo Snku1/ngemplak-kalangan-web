@@ -11,7 +11,7 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h1 class="text-base font-extrabold text-gray-950 leading-tight">Panel Admin Desa</h1>
+                <h1 class="text-base font-extrabold text-gray-950 leading-tight">Panel Admin Padukuhan</h1>
                 <span class="px-2 py-0.5 bg-emerald-100 text-[#0D6847] font-bold text-[10px] uppercase rounded-md tracking-wider">Super Admin</span>
               </div>
               <p class="text-[11px] text-gray-400 font-medium">Padukuhan Ngemplak Kalangan</p>
@@ -137,42 +137,46 @@
             </div>
           </div>
 
-          <!-- 3. PRODUK UMKM -->
-          <div v-else-if="activeTab === 'products'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5 animate-fade-in">
+          <!-- 3. UMKM -->
+          <div v-else-if="activeTab === 'umkm'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5 animate-fade-in">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
               <div>
-                <h2 class="text-xl font-black text-gray-900">Kelola Produk UMKM Desa</h2>
-                <p class="text-xs text-gray-500">{{ store.products.length }} produk terdaftar di Katalog Produk</p>
+                <h2 class="text-xl font-black text-gray-900">Kelola UMKM Dusun</h2>
+                <p class="text-xs text-gray-500">{{ store.umkms.length }} UMKM terdaftar</p>
               </div>
-              <button @click="openAddModal('products')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
-                <PlusIcon class="w-4 h-4" /><span>Tambah Produk</span>
+              <button @click="openAddModal('umkm')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
+                <PlusIcon class="w-4 h-4" /><span>Tambah UMKM</span>
               </button>
             </div>
             <div class="overflow-x-auto">
               <table class="w-full text-left text-xs">
-                <thead><tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
-                  <th class="py-3 px-4">Foto</th>
-                  <th class="py-3 px-4">Nama &amp; Kategori</th>
-                  <th class="py-3 px-4">Harga</th>
-                  <th class="py-3 px-4">Penjual</th>
-                  <th class="py-3 px-4 text-right">Aksi</th>
-                </tr></thead>
+                <thead>
+                  <tr class="bg-gray-50 border-b border-gray-200 text-gray-500 font-bold uppercase tracking-wider">
+                    <th class="py-3 px-4">Foto</th>
+                    <th class="py-3 px-4">Nama Usaha &amp; Kategori</th>
+                    <th class="py-3 px-4">Penjual</th>
+                    <th class="py-3 px-4">No. WA</th>
+                    <th class="py-3 px-4 text-right">Aksi</th>
+                  </tr>
+                </thead>
                 <tbody class="divide-y divide-gray-100">
-                  <tr v-for="item in store.products" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
-                    <td class="py-3 px-4 w-20"><img :src="item.image" :alt="item.name" class="w-14 h-10 rounded-lg object-cover bg-gray-100" @error="handleFallbackImg" /></td>
+                  <tr v-for="item in store.umkms" :key="item.id" class="hover:bg-gray-50/80 transition-colors">
+                    <td class="py-3 px-4 w-20">
+                      <img :src="item.image" :alt="item.name" class="w-14 h-10 rounded-lg object-cover bg-gray-100" @error="handleFallbackImg" />
+                    </td>
                     <td class="py-3 px-4">
                       <div class="font-bold text-gray-900 line-clamp-1">{{ item.name }}</div>
-                      <div class="flex items-center gap-1.5 mt-1">
-                        <span class="px-2 py-0.5 bg-emerald-50 text-[#0D6847] text-[10px] font-bold rounded-md">{{ item.category }}</span>
-                        <span v-if="item.isBestSeller" class="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded">Terlaris</span>
-                      </div>
+                      <span class="inline-block mt-1 px-2 py-0.5 bg-emerald-50 text-[#0D6847] text-[10px] font-bold rounded-md">{{ item.kategori }}</span>
                     </td>
-                    <td class="py-3 px-4 font-bold text-amber-600 whitespace-nowrap">{{ formatRupiah(item.price) }}</td>
-                    <td class="py-3 px-4 text-gray-600">{{ item.seller }}</td>
+                    <td class="py-3 px-4 text-gray-600">{{ item.nama_penjual }}</td>
+                    <td class="py-3 px-4">
+                      <a v-if="item.nomor_whatsapp" :href="`https://wa.me/${item.nomor_whatsapp.replace(/[^0-9]/g,'')}`" target="_blank" class="text-[#25D366] font-bold hover:underline">{{ item.nomor_whatsapp }}</a>
+                      <span v-else class="text-gray-300">-</span>
+                    </td>
                     <td class="py-3 px-4 text-right whitespace-nowrap space-x-1">
-                      <button @click="openDetailView('products', item)" class="p-2 bg-gray-100 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors cursor-pointer" title="Lihat Detail"><EyeIcon class="w-3.5 h-3.5" /></button>
-                      <button @click="openEditModal('products', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
-                      <button @click="confirmDelete('products', item.id, item.name)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
+                      <button @click="openDetailView('umkm', item)" class="p-2 bg-gray-100 hover:bg-emerald-50 text-emerald-600 rounded-lg transition-colors cursor-pointer" title="Lihat Detail"><EyeIcon class="w-3.5 h-3.5" /></button>
+                      <button @click="openEditModal('umkm', item)" class="p-2 bg-gray-100 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors cursor-pointer"><PencilIcon class="w-3.5 h-3.5" /></button>
+                      <button @click="confirmDelete('umkm', item.id, item.name)" class="p-2 bg-gray-100 hover:bg-red-50 text-red-600 rounded-lg transition-colors cursor-pointer"><Trash2Icon class="w-3.5 h-3.5" /></button>
                     </td>
                   </tr>
                 </tbody>
@@ -456,7 +460,7 @@
           <div v-else-if="activeTab === 'facilities'" class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm space-y-5 animate-fade-in">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
               <div>
-                <h2 class="text-xl font-black text-gray-900">Kelola Potensi &amp; Fasilitas Desa</h2>
+                <h2 class="text-xl font-black text-gray-900">Kelola Potensi &amp; Fasilitas Dusun</h2>
                 <p class="text-xs text-gray-500">Sarana prasarana dan potensi dusun</p>
               </div>
               <button @click="openAddModal('facilities')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
@@ -525,7 +529,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
               <div>
                 <h2 class="text-xl font-black text-gray-900">Kelola Master Kategori</h2>
-                <p class="text-xs text-gray-500">Kategori untuk Berita, Produk, Galeri, dan Pengumuman ({{ store.categories.length }} total)</p>
+                <p class="text-xs text-gray-500">Kategori untuk Berita, UMKM, dan Galeri ({{ store.categories.length }} total)</p>
               </div>
               <button @click="openAddModal('kategori')" class="px-4 py-2.5 bg-[#0D6847] hover:bg-[#0A5238] text-white text-xs font-bold rounded-xl shadow-sm transition-all active:scale-95 cursor-pointer flex items-center gap-2">
                 <PlusIcon class="w-4 h-4" /><span>Tambah Kategori</span>
@@ -535,7 +539,7 @@
             <!-- Filter Tipe -->
             <div class="flex flex-wrap items-center gap-2">
               <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Filter Tipe:</span>
-              <button v-for="t in ['semua', 'berita', 'produk', 'galeri']" :key="t"
+              <button v-for="t in ['semua', 'berita', 'umkm', 'galeri']" :key="t"
                 @click="kategoriFilter = t"
                 :class="kategoriFilter === t ? 'bg-[#0D6847] text-white shadow-xs' : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-200'"
                 class="px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer capitalize">
@@ -559,9 +563,8 @@
                     <td class="py-3 px-4">
                       <span :class="{
                         'bg-emerald-100 text-emerald-700': item.tipe === 'berita',
-                        'bg-blue-100 text-blue-700': item.tipe === 'produk',
+                        'bg-blue-100 text-blue-700': item.tipe === 'umkm',
                         'bg-purple-100 text-purple-700': item.tipe === 'galeri',
-                        'bg-amber-100 text-amber-700': item.tipe === 'pengumuman'
                       }" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase">{{ item.tipe }}</span>
                     </td>
                     <td class="py-3 px-4 text-gray-500 font-mono text-[11px]">{{ item.slug }}</td>
@@ -597,7 +600,7 @@
                   <input v-model="profileForm.nama_dukuh" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
-                  <label class="block text-xs font-bold text-gray-700 mb-1">Kecamatan</label>
+                  <label class="block text-xs font-bold text-gray-700 mb-1">Kapanewon</label>
                   <input v-model="profileForm.kecamatan" type="text" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 </div>
                 <div>
@@ -679,6 +682,45 @@
                 <label class="block text-xs font-bold text-gray-700 mb-1">URL Google Maps (untuk Beranda)</label>
                 <input v-model="profileForm.maps_embed" type="text" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
                 <p class="text-[10px] text-gray-400 mt-1">Salin link dari Google Maps → Share → Copy Link.</p>
+              </div>
+
+              <!-- Video Profil Padukuhan (YouTube) -->
+              <div class="border-t border-gray-100 pt-4 space-y-4">
+                <h4 class="text-xs font-bold text-gray-700 uppercase tracking-wider">Video Profil Padukuhan</h4>
+
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1">
+                    Link YouTube
+                    <span class="text-gray-400 font-normal">(video profil yang sudah di-upload ke YouTube)</span>
+                  </label>
+                  <input
+                    v-model="profileForm.video_url"
+                    type="url"
+                    placeholder="https://www.youtube.com/watch?v=xxxxxxxxxxx"
+                    class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"
+                  />
+                  <p class="text-[10px] text-gray-400 mt-1">
+                    Copy URL dari YouTube → Share → Copy Link. Format: <span class="font-mono">https://youtu.be/xxxxx</span> atau <span class="font-mono">https://www.youtube.com/watch?v=xxxxx</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Preview YouTube -->
+              <div v-if="profileForm.video_url" class="space-y-2">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Preview Video:</p>
+                <div class="aspect-video w-full rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
+                  <iframe
+                    v-if="youtubeEmbedUrl"
+                    :src="youtubeEmbedUrl"
+                    class="w-full h-full"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                  ></iframe>
+                  <div v-else class="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                    URL YouTube tidak valid
+                  </div>
+                </div>
               </div>
 
               <!-- Foto -->
@@ -776,19 +818,42 @@
                 <option v-for="cat in store.categoriesByTipe('berita')" :key="cat.id" :value="cat.id">{{ cat.nama }}</option>
               </select>
             </div>
+
+            <!-- Upload Multiple Foto -->
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto (JPG/PNG, maks 5MB)</label>
-              <input type="file" accept="image/*" @change="e => fileUpload = e.target.files[0]"
-                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p v-if="fileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ fileUpload.name }}</p>
-              <div v-if="formData.foto_url && !fileUpload" class="mt-2">
-                <img :src="formData.foto_url" class="h-20 rounded-lg object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
+              <label class="block text-xs font-bold text-gray-700 mb-1">
+                Upload Foto Berita
+                <span class="text-gray-400 font-normal">(bisa pilih beberapa sekaligus)</span>
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                @change="e => fileUploadMultiple = Array.from(e.target.files)"
+                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
+              />
+              <p v-if="fileUploadMultiple.length > 0" class="text-[10px] text-emerald-600 font-bold mt-1">
+                ✓ {{ fileUploadMultiple.length }} file dipilih
+              </p>
+
+              <!-- Preview Foto Lama (jika edit) -->
+              <div v-if="formData.images && formData.images.length > 0 && fileUploadMultiple.length === 0" class="mt-3">
+                <p class="text-[10px] text-gray-500 font-bold mb-2">Foto saat ini:</p>
+                <div class="grid grid-cols-4 gap-2">
+                  <img
+                    v-for="(img, idx) in formData.images"
+                    :key="idx"
+                    :src="img"
+                    class="w-full h-16 object-cover rounded-lg border border-gray-200"
+                    @error="e => e.target.style.display='none'"
+                  />
+                </div>
               </div>
             </div>
+
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Ringkasan (Excerpt)</label>
-              <textarea v-model="formData.excerpt" rows="2" placeholder="Ringkasan singkat berita yang tampil di kartu..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
-              <p class="text-[10px] text-gray-400 mt-1">Ringkasan ini tampil di halaman Informasi sebagai preview berita.</p>
+              <textarea v-model="formData.excerpt" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Isi Lengkap</label>
@@ -796,56 +861,84 @@
             </div>
           </template>
 
-          <!-- FORM: PRODUK -->
-          <template v-else-if="currentModalType === 'products'">
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Nama Produk <span class="text-red-500">*</span></label>
-              <input v-model="formData.name" type="text" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" placeholder="Masukkan nama produk..." />
-            </div>
-            <div class="grid grid-cols-2 gap-3">
+          <!-- FORM: UMKM -->
+          <template v-else-if="currentModalType === 'umkm'">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Kategori <span class="text-red-500">*</span></label>
-                <select v-model="formData.category_id" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
+                <label class="block text-xs font-bold text-gray-700 mb-1">Nama Usaha <span class="text-red-500">*</span></label>
+                <input v-model="formData.name" type="text" required placeholder="cth: Keripik Bu Siti" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Nama Penjual <span class="text-red-500">*</span></label>
+                <input v-model="formData.nama_penjual" type="text" required placeholder="cth: Ibu Siti" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1">Kategori</label>
+                <select v-model="formData.kategori" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                   <option value="">-- Pilih Kategori --</option>
-                  <option v-for="cat in store.categoriesByTipe('produk')" :key="cat.id" :value="cat.id">{{ cat.nama }}</option>
+                  <option v-for="cat in store.categoriesByTipe('umkm')" :key="cat.id" :value="cat.nama">{{ cat.nama }}</option>
                 </select>
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Harga (Rp) <span class="text-red-500">*</span></label>
-                <input v-model="formData.price" type="number" required min="0" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" placeholder="0" />
+                <label class="block text-xs font-bold text-gray-700 mb-1">No. WhatsApp <span class="text-red-500">*</span></label>
+                <input v-model="formData.nomor_whatsapp" type="text" required placeholder="628xxx" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
             </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Usaha</label>
+              <textarea v-model="formData.deskripsi" rows="3" placeholder="Ceritakan tentang usaha ini..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">
+                Daftar Produk
+                <span class="text-gray-400 font-normal">(satu per baris)</span>
+              </label>
+              <textarea v-model="formData.daftar_produk" rows="3" placeholder="keripik singkong&#10;keripik talas&#10;keripik pisang" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
+            </div>
+
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">Nama Penjual / UMKM</label>
-                <input v-model="formData.seller" type="text" placeholder="cth: Ibu Suminah" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                <label class="block text-xs font-bold text-gray-700 mb-1">Jam Buka</label>
+                <input v-model="formData.jam_buka" type="text" placeholder="09.00 - 17.00" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
               <div>
-                <label class="block text-xs font-bold text-gray-700 mb-1">No. WhatsApp Penjual</label>
-                <input v-model="formData.sellerPhone" type="text" placeholder="628xxx" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+                <label class="block text-xs font-bold text-gray-700 mb-1">Cara Bayar</label>
+                <input v-model="formData.cara_bayar" type="text" placeholder="Tunai, transfer, QRIS" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               </div>
             </div>
+
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Link Google Maps Lokasi Penjual</label>
-              <input v-model="formData.sellerMaps" type="text" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p class="text-[10px] text-gray-400 mt-1">Buka Google Maps → Share → Copy Link.</p>
+              <label class="block text-xs font-bold text-gray-700 mb-1">Alamat Lokasi</label>
+              <textarea v-model="formData.alamat_lokasi" rows="2" placeholder="Kp. Bojongkopo, Desa Loji..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
             </div>
+
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto Produk (JPG/PNG)</label>
-              <input type="file" accept="image/*" @change="e => fileUpload = e.target.files[0]"
+              <label class="block text-xs font-bold text-gray-700 mb-1">Link Google Maps</label>
+              <input v-model="formData.maps_lokasi" type="text" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
+            </div>
+
+            <!-- Upload Multiple Foto -->
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">
+                Upload Foto Usaha
+                <span class="text-gray-400 font-normal">(bisa pilih beberapa sekaligus)</span>
+              </label>
+              <input type="file" accept="image/*" multiple
+                @change="e => fileUploadMultiple = Array.from(e.target.files)"
                 class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p v-if="fileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ fileUpload.name }}</p>
-              <div v-if="formData.foto_url && !fileUpload" class="mt-2">
-                <img :src="formData.foto_url" class="h-20 rounded-lg object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
+              <p v-if="fileUploadMultiple.length > 0" class="text-[10px] text-emerald-600 font-bold mt-1">
+                ✓ {{ fileUploadMultiple.length }} file dipilih
+              </p>
+              <div v-if="formData.images && formData.images.length > 0 && fileUploadMultiple.length === 0" class="mt-3">
+                <p class="text-[10px] text-gray-500 font-bold mb-2">Foto saat ini:</p>
+                <div class="grid grid-cols-4 gap-2">
+                  <img v-for="(img, idx) in formData.images" :key="idx" :src="img"
+                    class="w-full h-16 object-cover rounded-lg border border-gray-200"
+                    @error="e => e.target.style.display='none'" />
+                </div>
               </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <input v-model="formData.isBestSeller" type="checkbox" id="bestSeller" class="w-4 h-4 text-[#0D6847] rounded cursor-pointer" />
-              <label for="bestSeller" class="text-xs font-bold text-gray-700 cursor-pointer">Tandai sebagai Produk Terlaris</label>
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Produk</label>
-              <textarea v-model="formData.description" rows="2" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs"></textarea>
             </div>
           </template>
 
@@ -871,22 +964,38 @@
                 </select>
               </div>
             </div>
+
+            <!-- Multiple Upload -->
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Upload File (JPG/PNG/MP4, maks 10MB)</label>
-              <input type="file" accept="image/*,video/*" @change="e => fileUpload = e.target.files[0]"
-                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p v-if="fileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ fileUpload.name }}</p>
-              <div v-if="formData.foto_url && !fileUpload" class="mt-2">
-                <img :src="formData.foto_url" class="h-20 rounded-lg object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
+              <label class="block text-xs font-bold text-gray-700 mb-1">
+                Upload File
+                <span class="text-gray-400 font-normal">(bisa pilih beberapa untuk multi-foto)</span>
+              </label>
+              <input
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                @change="e => fileUploadMultiple = Array.from(e.target.files)"
+                class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
+              />
+              <p v-if="fileUploadMultiple.length > 0" class="text-[10px] text-emerald-600 font-bold mt-1">
+                ✓ {{ fileUploadMultiple.length }} file dipilih
+              </p>
+
+              <!-- Preview Foto Lama -->
+              <div v-if="formData.images && formData.images.length > 0 && fileUploadMultiple.length === 0" class="mt-3">
+                <p class="text-[10px] text-gray-500 font-bold mb-2">Foto saat ini:</p>
+                <div class="grid grid-cols-4 gap-2">
+                  <img v-for="(img, idx) in formData.images" :key="idx" :src="img"
+                    class="w-full h-16 object-cover rounded-lg border border-gray-200"
+                    @error="e => e.target.style.display='none'" />
+                </div>
               </div>
             </div>
+
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">URL YouTube (opsional, untuk video)</label>
               <input v-model="formData.youtube_url" type="url" placeholder="https://youtube.com/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-            </div>
-            <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Lokasi</label>
-              <input v-model="formData.location" type="text" placeholder="Lapangan Padukuhan" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi</label>
@@ -971,7 +1080,7 @@
                 placeholder="cth: 1"
                 class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
               <p class="text-[10px] text-gray-400 mt-1">
-                <strong>1</strong> = Kepala Desa · <strong>2</strong> = Sekretaris · <strong>3+</strong> = Kepala Seksi
+                <strong>1</strong> = Kepala Dusun · <strong>2</strong> = Sekretaris · <strong>3+</strong> = Kepala Seksi
               </p>
             </div>
             <div>
@@ -1068,19 +1177,32 @@
                 <option value="wisata">Sarana Umum &amp; Wisata</option>
               </select>
             </div>
+
+            <!-- Upload Multiple Foto -->
             <div>
-              <label class="block text-xs font-bold text-gray-700 mb-1">Upload Foto</label>
-              <input type="file" accept="image/*" @change="e => fileUpload = e.target.files[0]"
+              <label class="block text-xs font-bold text-gray-700 mb-1">
+                Upload Foto
+                <span class="text-gray-400 font-normal">(bisa pilih beberapa sekaligus)</span>
+              </label>
+              <input type="file" accept="image/*" multiple
+                @change="e => fileUploadMultiple = Array.from(e.target.files)"
                 class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p v-if="fileUpload" class="text-[10px] text-emerald-600 font-bold mt-1">✓ {{ fileUpload.name }}</p>
-              <div v-if="formData.foto_url && !fileUpload" class="mt-2">
-                <img :src="formData.foto_url" class="h-20 rounded-lg object-cover border border-gray-200" @error="e => e.target.style.display='none'" />
+              <p v-if="fileUploadMultiple.length > 0" class="text-[10px] text-emerald-600 font-bold mt-1">
+                ✓ {{ fileUploadMultiple.length }} file dipilih
+              </p>
+              <div v-if="formData.images && formData.images.length > 0 && fileUploadMultiple.length === 0" class="mt-3">
+                <p class="text-[10px] text-gray-500 font-bold mb-2">Foto saat ini:</p>
+                <div class="grid grid-cols-4 gap-2">
+                  <img v-for="(img, idx) in formData.images" :key="idx" :src="img"
+                    class="w-full h-16 object-cover rounded-lg border border-gray-200"
+                    @error="e => e.target.style.display='none'" />
+                </div>
               </div>
             </div>
+
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Link Google Maps</label>
               <input v-model="formData.lokasi" type="text" placeholder="https://maps.app.goo.gl/..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs" />
-              <p class="text-[10px] text-gray-400 mt-1">Salin link dari Google Maps (Share → Copy Link).</p>
             </div>
             <div>
               <label class="block text-xs font-bold text-gray-700 mb-1">Deskripsi Singkat</label>
@@ -1099,9 +1221,8 @@
               <select v-model="formData.tipe" required class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs">
                 <option value="">-- Pilih Tipe --</option>
                 <option value="berita">Berita</option>
-                <option value="produk">Produk</option>
+                <option value="umkm">UMKM</option>
                 <option value="galeri">Galeri</option>
-                <option value="pengumuman">Pengumuman</option>
               </select>
               <p class="text-[10px] text-gray-400 mt-1">Slug akan dibuat otomatis dari nama kategori.</p>
             </div>
@@ -1250,7 +1371,7 @@ const activeTab = ref('overview');
 const menuItems = computed(() => [
   { id: 'overview', label: 'Ringkasan Dashboard', icon: LayoutDashboardIcon },
   { id: 'news', label: 'Berita & Informasi', icon: NewspaperIcon, count: store.news.length },
-  { id: 'products', label: 'Produk UMKM', icon: ShoppingBagIcon, count: store.products.length },
+  { id: 'umkm', label: 'UMKM', icon: ShoppingBagIcon, count: store.umkms.length },  // <-- UBAH
   { id: 'gallery', label: 'Galeri Foto & Video', icon: ImageIcon, count: store.gallery.length },
   { id: 'agenda', label: 'Agenda Kegiatan', icon: CalendarIcon, count: store.agenda.length },
   { id: 'pengumuman', label: 'Pengumuman', icon: BellIcon, count: store.pengumuman.length },
@@ -1283,15 +1404,15 @@ const filteredDemografi = computed(() => {
 
 const overviewCards = computed(() => [
   { tab: 'news', label: 'Berita', icon: NewspaperIcon, color: 'text-emerald-600', count: store.news.length, sub: 'Artikel Terbit' },
-  { tab: 'products', label: 'Produk', icon: ShoppingBagIcon, color: 'text-blue-600', count: store.products.length, sub: 'UMKM Terdaftar' },
+  { tab: 'umkm', label: 'UMKM', icon: ShoppingBagIcon, color: 'text-blue-600', count: store.umkms.length, sub: 'UMKM Terdaftar' },
   { tab: 'gallery', label: 'Galeri', icon: ImageIcon, color: 'text-purple-600', count: store.gallery.length, sub: 'Foto & Video' },
   { tab: 'inbox', label: 'Pesan', icon: MailIcon, color: 'text-amber-600', count: store.inbox.length, sub: 'Pesan Masuk' },
 ]);
 
 const quickActions = [
   { type: 'kategori', label: 'Tambah Kategori', sub: 'Kelola master kategori', icon: TagsIcon, bg: 'bg-indigo-50/70 hover:bg-indigo-100/70 border-indigo-100', iconColor: 'text-indigo-600' },
-  { type: 'news', label: 'Tambah Berita', sub: 'Publikasi kabar desa', icon: NewspaperIcon, bg: 'bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-100', iconColor: 'text-[#0D6847]' },
-  { type: 'products', label: 'Tambah Produk', sub: 'Daftarkan produk warga', icon: ShoppingBagIcon, bg: 'bg-blue-50/70 hover:bg-blue-100/70 border-blue-100', iconColor: 'text-blue-600' },
+  { type: 'news', label: 'Tambah Berita', sub: 'Publikasi kabar dusun', icon: NewspaperIcon, bg: 'bg-emerald-50/70 hover:bg-emerald-100/70 border-emerald-100', iconColor: 'text-[#0D6847]' },
+  { type: 'umkm', label: 'Tambah UMKM', sub: 'Daftarkan produk warga', icon: ShoppingBagIcon, bg: 'bg-blue-50/70 hover:bg-blue-100/70 border-blue-100', iconColor: 'text-blue-600' },
   { type: 'agenda', label: 'Tambah Agenda', sub: 'Jadwalkan kegiatan', icon: CalendarIcon, bg: 'bg-amber-50/70 hover:bg-amber-100/70 border-amber-100', iconColor: 'text-amber-600' },
   { type: 'pengumuman', label: 'Tambah Pengumuman', sub: 'Info penting desa', icon: BellIcon, bg: 'bg-red-50/70 hover:bg-red-100/70 border-red-100', iconColor: 'text-red-600' },
   { type: 'gallery', label: 'Tambah Galeri', sub: 'Upload foto dokumentasi', icon: ImageIcon, bg: 'bg-purple-50/70 hover:bg-purple-100/70 border-purple-100', iconColor: 'text-purple-600' },
@@ -1308,7 +1429,8 @@ const isEditMode = ref(false);
 const currentModalType = ref('news');
 const formData = ref({});
 const fileUpload = ref(null);
-const profileFileUpload = ref(null);
+const fileUploadMultiple = ref([]);  // <-- TAMBAH
+const profileFileUpload = ref(null);     
 const editingId = ref(null);  // <-- TAMBAH INI
 const toastMessage = ref('');
 const deleteTarget = ref(null);
@@ -1316,7 +1438,7 @@ const detailItem = ref(null);
 
 const modalTypeLabel = computed(() => {
   const labels = {
-    news: 'Berita & Informasi', products: 'Produk UMKM', gallery: 'Galeri Foto',
+    news: 'Berita & Informasi', umkm: 'UMKM', gallery: 'Galeri Foto',
     agenda: 'Agenda Kegiatan', pengumuman: 'Pengumuman', leaders: 'Tokoh & Perangkat',
     demographics: 'Statistik Demografi', kependudukan: 'Kependudukan per Dusun',
     facilities: 'Potensi & Fasilitas', faqs: 'FAQ', kategori: 'Master Kategori'
@@ -1344,7 +1466,32 @@ const profileForm = ref({
   luas_wilayah: '', jumlah_penduduk: '', jumlah_kk: '', jumlah_rt: '', jumlah_rw: '', jumlah_dusun: '',
   batas_utara: '', batas_selatan: '', batas_timur: '', batas_barat: '',
   nama_dukuh: '', sambutan_dukuh: '', cita_cita: '',
-  foto_dukuh: '', sejarah: '', telepon: '', email: '', alamat_kantor: '', maps_embed: ''
+  foto_dukuh: '', sejarah: '', telepon: '', email: '', alamat_kantor: '', maps_embed: '',
+  video_url: '',         // <-- TAMBAH
+  video_thumbnail: ''    // <-- TAMBAH
+});
+
+// Helper: konversi URL YouTube ke format embed
+const youtubeEmbedUrl = computed(() => {
+  const url = profileForm.value.video_url;
+  if (!url) return '';
+
+  // Format yang didukung:
+  // - https://www.youtube.com/watch?v=VIDEO_ID
+  // - https://youtu.be/VIDEO_ID
+  // - https://www.youtube.com/embed/VIDEO_ID
+  // - https://www.youtube.com/shorts/VIDEO_ID
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+  ];
+
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}`;
+    }
+  }
+  return '';
 });
 
 watch(() => store.padukuhanProfile, (profile) => {
@@ -1352,7 +1499,10 @@ watch(() => store.padukuhanProfile, (profile) => {
 }, { immediate: true });
 
 const savePadukuhanProfile = async () => {
-  await store.updatePadukuhanProfile(profileForm.value, profileFileUpload.value);
+  await store.updatePadukuhanProfile(
+    profileForm.value,
+    profileFileUpload.value,
+  );
   profileFileUpload.value = null;
   triggerToast('Profil padukuhan berhasil disimpan!');
 };
@@ -1362,6 +1512,7 @@ const openAddModal = (type) => {
   isEditMode.value = false;
   currentModalType.value = type;
   fileUpload.value = null;
+  fileUploadMultiple.value = [];   // <-- TAMBAH
   editingId.value = null; // <-- RESET ID
   const base = { status: 'mendatang', type: 'foto', kategori: 'potensi_desa' };
   if (type === 'agenda') base.date = new Date().toISOString().split('T')[0];
@@ -1383,6 +1534,7 @@ const openEditModal = (type, item) => {
   isEditMode.value = true;
   currentModalType.value = type;
   fileUpload.value = null;
+  fileUploadMultiple.value = [];   // <-- TAMBAH
   editingId.value = item.id; // <-- SIMPAN ID DI VARIABEL TERPISAH
   const copy = { ...item };
 
@@ -1441,17 +1593,20 @@ const saveModalData = async () => {
     // Log untuk debugging
     console.log(`[saveModalData] mode=${editMode ? 'EDIT' : 'ADD'}, type=${type}, id=${id}`);
 
+    // Siapkan file array untuk modul yang pakai multiple upload
+    const multiFiles = fileUploadMultiple.value.length > 0 ? fileUploadMultiple.value : null;
+
     if (editMode) {
       // ==================== UPDATE ====================
       switch (type) {
         case 'news':
-          await store.updateNews(id, formData.value, fileUpload.value);
+          await store.updateNews(id, formData.value, multiFiles);
           break;
-        case 'products':
-          await store.updateProduct(id, formData.value, fileUpload.value);
+        case 'umkm':
+          await store.updateUmkm(id, formData.value, multiFiles);
           break;
         case 'gallery':
-          await store.updateGallery(id, formData.value, fileUpload.value);
+          await store.updateGallery(id, formData.value, multiFiles);
           break;
         case 'agenda':
           await store.updateAgenda(id, formData.value);
@@ -1472,7 +1627,7 @@ const saveModalData = async () => {
           await store.updateKependudukan(id, formData.value);
           break;
         case 'facilities':
-          await store.updatePotensi(id, formData.value, fileUpload.value);
+          await store.updatePotensi(id, formData.value, multiFiles);
           break;
         case 'kategori':
           await store.updateKategori(id, formData.value);
@@ -1486,13 +1641,13 @@ const saveModalData = async () => {
       // ==================== ADD ====================
       switch (type) {
         case 'news':
-          await store.addNews(formData.value, fileUpload.value);
+          await store.addNews(formData.value, multiFiles);
           break;
-        case 'products':
-          await store.addProduct(formData.value, fileUpload.value);
+        case 'umkm':
+          await store.addUmkm(formData.value, multiFiles);
           break;
         case 'gallery':
-          await store.addGallery(formData.value, fileUpload.value);
+          await store.addGallery(formData.value, multiFiles);
           break;
         case 'agenda':
           await store.addAgenda(formData.value);
@@ -1513,7 +1668,7 @@ const saveModalData = async () => {
           await store.addKependudukan(formData.value);
           break;
         case 'facilities':
-          await store.addPotensi(formData.value, fileUpload.value);
+          await store.addPotensi(formData.value, multiFiles);
           break;
         case 'kategori':
           await store.addKategori(formData.value);
@@ -1527,6 +1682,7 @@ const saveModalData = async () => {
 
     // Reset state
     fileUpload.value = null;
+    fileUploadMultiple.value = [];
     editingId.value = null;
     showModal.value = false;
   } catch (e) {
@@ -1544,7 +1700,7 @@ const executeDelete = async () => {
   const { type, id, name } = deleteTarget.value;
   try {
     if (type === 'news') await store.deleteNews(id);
-    else if (type === 'products') await store.deleteProduct(id);
+    else if (type === 'umkm') await store.deleteUmkm(id);
     else if (type === 'gallery') await store.deleteGallery(id);
     else if (type === 'agenda') await store.deleteAgenda(id);
     else if (type === 'pengumuman') await store.deletePengumuman(id);
